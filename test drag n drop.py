@@ -1,6 +1,7 @@
 
 import os
 import sys
+from parseline import parseline
 
 # check if file was first argument
 if len(sys.argv) < 2:
@@ -10,7 +11,6 @@ if len(sys.argv) < 2:
 
 # this is the file you dropped
 input_file = sys.argv[1]
-machine = sys.argv[2] if len(sys.argv) > 2 else None
 
 # provjeriti da li postoji file
 if not os.path.exists(input_file):
@@ -28,7 +28,7 @@ if not os.path.isfile(input_file):
 print("Datoteka učitana:", input_file)
 print("Pretraživanje linija\n")
 
-
+parse = parseline()
 
 # provjeriti da li je zaista tekstualna datoteka
 try:
@@ -36,7 +36,7 @@ try:
         for line in f:
             line = line.strip()
             print(line)
-
+            parse.ParseLine(line)
             
             
 except UnicodeDecodeError:

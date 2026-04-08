@@ -1,9 +1,10 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
@@ -11,12 +12,12 @@
         },
         {
             "name": "Python: test drag n drop",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/test drag n drop.py",
             "args": ["${workspaceFolder}/vj7-apt.txt", "tokarilica"],
             "console": "integratedTerminal",
-            "justMyCode": true,
+            "justMyCode": true
         }
     ]
 }

@@ -1,0 +1,6 @@
+[
+    {"catia" : "GOTO", "gcode" : "G1", "opis" : "Naredba za ..."},
+    {"catia" : "SPINDL", "gcode" : "S", "opis" : "Naredba za ..."},
+    {"catia" : "CCLW", "gcode" : "M4", "opis" : "Naredba za ..."},
+    {"catia" : "FEDRAT", "gcode" : "F", "opis" : "Naredba za ..."}
+]
