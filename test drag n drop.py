@@ -1,7 +1,8 @@
 
 import os
 import sys
-from parseline import parseline
+import logging
+from parseline import Myparseline
 
 # check if file was first argument
 if len(sys.argv) < 2:
@@ -28,16 +29,21 @@ if not os.path.isfile(input_file):
 print("Datoteka učitana:", input_file)
 print("Pretraživanje linija\n")
 
-parse = parseline()
+parse = Myparseline()
 
 # provjeriti da li je zaista tekstualna datoteka
 try:
     with open(input_file, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            parse.parseline(line)
-            
-            
+        myline = ""
+        for line in f:           
+            myline += line.strip()
+            if(myline.endswith("$")):
+                myline = myline[:-1]
+                continue
+            else:
+                parse.parseline(myline)
+                myline = ""
+
 except UnicodeDecodeError:
     print("Nevaljana vrsta datoteke. Molimo odaberite tekstualnu datoteku.")
     #input("Klikni Enter za dalje...")

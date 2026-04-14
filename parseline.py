@@ -6,58 +6,35 @@ lsplane=""
 lstiprotation=""
 lsrotation=""
 lstipfedrejt=""
-lssklop=""
-ls_x=""
-ls_y=""
-ls_z=""
+
 ls_i=""
 ls_j=""
 ls_k=""
 
 
 
-class parseline:
+class Myparseline:
+    koord_x = 0
+    koord_y = 0
+    koord_z = 0
+    ls_x = 0
+    ls_y = 0
+    ls_z = 0
+    lssklop=""
     def __init__(self):
+        self.koord_x = 0
+        self.koord_y = 0
+        self.koord_z = 0
+        self.ls_x = 0
+        self.ls_y = 0
+        self.ls_z = 0
+        self.lssklop=""
+        
         with open("bible1.json", "r", encoding="utf-8") as f:
             self.commands = json.load(f)
 
     def parseline(self, line):
-        
-        merged_lines = []
-        buffer = ""
-
-        with open(filename, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.rstrip()
-                buffer += line.strip()
-
-            if line.endswith("$"):
-                buffer = buffer[:-1] + " "
-            else:
-                merged_lines.append(buffer.strip())
-                buffer = ""
-
-    
-    for line in merged_lines:
-        self.parseline(line)
-        
-        global lsmovement
-        global lsplane
-        global lstiprotation
-        global lsrotation
-        global lstipfedrejt
-        global lssklop
-        global ls_x
-        global ls_y
-        global ls_z
-        global ls_i
-        global ls_j
-        global ls_k
-        global centar_x
-        global centar_y
-        global centar_z
-        
-        
+     
         if "CIRCLE" in line:
             elements = line.split(" ")
             command = elements[0].strip()
@@ -74,27 +51,59 @@ class parseline:
             elements = line.split("/")
             command = elements[0].strip()
             
+            
             if command == "GOTO":
                 coords = elements[1].strip().split(",")
                 x = coords[0].strip()
                 y = coords[1].strip()
                 z = coords[2].strip()
-                ls_x = x
-                ls_y = y
-                ls_z = z
                 
-                if float(y) == 0:
+                if y==self.ls_y:
                     ravnina="G18"
-                    koord=(f"X{x} Z{z}")
-                elif float(x) != 0:
+                    if x==self.ls_x:
+                        self.koord_x=""
+                    else:
+                        self.koord_x=(f"X{x}")
+                    if z==self.ls_z:
+                        self.koord_z=""                    
+                    else:
+                        self.koord_z=(f"Z{z}")
+                        
+                elif x!=self.ls_x:
                     ravnina="G17"
-                    koord=(f"X{x} Y{y}")
-                elif float(z) != 0:
+                    if x==self.ls_x:
+                        self.koord_x=""
+                    else:
+                        self.koord_x=(f"X{x}")
+                    if y==self.ls_y:
+                        self.koord_y=""
+                    else:
+                        self.koord_y=(f"Y{y}")
+                        
+                elif z!=self.ls_z:
                     ravnina="G19"
-                    koord=(f"Y{y} Z{z}")
+                    if y==self.ls_y:
+                        self.koord_y=""
+                    else:
+                        self.koord_y=(f"Y{y}")
+                    if z==self.ls_z:
+                        self.koord_z=""                    
+                    else:
+                        self.koord_z=(f"Z{z}")
                 else:
                     print(f"Provjeriti koordinate: {line}")
-                    return
+                           
+   #             if float(y) == 0:
+    #                ravnina="G18"
+     #               koord=(f"X{x} Z{z}")
+      #          elif float(x) != 0:
+       #             ravnina="G17"
+        #            koord=(f"X{x} Y{y}")
+         #       elif float(z) != 0:
+          #          ravnina="G19"
+           #         koord=(f"Y{y} Z{z}")
+            #    else:
+             #       print(f"Provjeriti koordinate: {line}")
                 
                 if lsplane != ravnina:
                     print(ravnina, end=" ")
@@ -102,7 +111,10 @@ class parseline:
                 else:
                     print(end="")
                     
-                print(koord)
+                print(self.koord_x, self.koord_y, self.koord_z)
+                self.ls_x=x
+                self.ls_y=y
+                self.ls_z=z
                 
             elif command =="SPINDL":
                 spindlDT = elements[1].strip().split(",")
@@ -172,9 +184,9 @@ class parseline:
                 drzac = izbor_alat[1].strip()
                 ostrica = izbor_alat[2].strip()
                 
-                if lssklop != sklop:
+                if self.lssklop != sklop:
                     print(f"T={sklop}")
-                    lssklop=sklop
+                    self.lssklop=sklop
                 else:
                     print(end="")
                 
@@ -217,3 +229,4 @@ class parseline:
             print(end="")
         else:
             print("Provjeriti: " + line)
+      
