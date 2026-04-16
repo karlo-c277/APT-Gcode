@@ -3,22 +3,26 @@ import re
 import math
 
 class Myparseline:
-    lsmovement=""
-    lsplane=""
-    lstiprotation=""
-    lsrotation=""
-    lstipfedrejt=""
-    lssklop=""
-    koord_x = 0.00000
-    koord_y = 0.00000
-    koord_z = 0.00000
-    ls_x = 0.00000
-    ls_y = 0.00000
-    ls_z = 0.00000
-    ls_i=0.00000
-    ls_j=0.00000
-    ls_k=0.00000
-    D=0.00000
+    if 1==1:
+        lsmovement=""
+        lsplane=""
+        lstiprotation=""
+        lsrotation=""
+        lstipfedrejt=""
+        lssklop=""
+        koord_x = 0.00000
+        koord_y = 0.00000
+        koord_z = 0.00000
+        ls_x = 0.00000
+        ls_y = 0.00000
+        ls_z = 0.00000
+        ls_i=0.00000
+        ls_j=0.00000
+        ls_k=0.00000
+        D=0.00000    
+    else:
+        print(end="")
+        
 
     
     
@@ -29,6 +33,7 @@ class Myparseline:
         self.lsrotation=""
         self.lstipfedrejt=""
         self.lssklop=""
+        self.lstip_rev=""
         self.ls_x = 0.000
         self.ls_y = 0.000
         self.ls_z = 0.000
@@ -36,23 +41,29 @@ class Myparseline:
         self.ls_j = 0.000
         self.ls_k = 0.000
         self.D = 0.000
+        self.lsnum = 0.000
+        self.minnumf = math.inf
         
     def parseline(self, line):
 
             if not line.strip():
                 print(end="")
             
-            elif line.startswith("$$ OPERATION NAME :"):
-                opname = line.split(":")
-                opname1 = opname[0].strip()
-                opname2 = opname[1].strip()
+            elif line.startswith("$$"):
+                if line.startswith("$$ OPERATION NAME"):
+                    opname = line.split(":")
+                    opname2 = opname[1].strip()
             
-                if "Tool" in opname2:
-                    print(end="")
+                    if "Tool" in opname2:
+                        print(end="")
+                    else:
+                        print(f";{opname2}")
+                elif line.startswith("$$ End of generation"):
+                    print("G0 X40 Z90")
                 else:
-                    print(f"#{opname2}")
+                    print(end="")
             
-            elif line.startswith("SWITCH") or line.startswith("LOADTL") or line.startswith("CUTTER") or line.startswith("TOOLNO") or line.startswith("INTOL") or line.startswith("OUTTOL") or line.startswith("AUTOPS") or line.startswith ("$$"):
+            elif line.startswith("SWITCH") or line.startswith("LOADTL") or line.startswith("CUTTER") or line.startswith("TOOLNO") or line.startswith("INTOL") or line.startswith("OUTTOL") or line.startswith("AUTOPS"):
                 print(end="")
             
             elif "CIRCLE" in line:
@@ -86,8 +97,8 @@ class Myparseline:
                     vektor2_z=float(self.ls_z)-float(centar_z)
                     D=float(self.ls_i)*vektor2_z-vektor2_x*float(self.ls_k)
                     
-                    vektor2_x=round(vektor2_x, 3)
-                    vektor2_z=round(vektor2_z, 3)
+                    vektor2_x=round(-(vektor2_x), 3)
+                    vektor2_z=round(-(vektor2_z), 3)
                 
                     if D<0:
                         movement="G2"
@@ -103,8 +114,8 @@ class Myparseline:
                     vektor2_x=float(self.ls_x)-float(centar_x)
                     D=float(self.ls_i)*vektor2_y-vektor2_x*float(self.ls_j)
 
-                    vektor2_y=round(vektor2_y, 3)
-                    vektor2_x=round(vektor2_x, 3)
+                    vektor2_y=round(-(vektor2_y), 3)
+                    vektor2_x=round(-(vektor2_x), 3)
                     
                     if D<0:
                         movement="G2"
@@ -120,8 +131,8 @@ class Myparseline:
                     vektor2_z=float(self.ls_z)-float(centar_z)
                     D=float(self.ls_j)*vektor2_z-vektor2_y*float(self.ls_k)
 
-                    vektor2_y=round(vektor2_y, 3)
-                    vektor2_z=round(vektor2_z, 3)  
+                    vektor2_y=round(-(vektor2_y), 3)
+                    vektor2_z=round(-(vektor2_z), 3)  
                     
                     if D<0:
                         movement="G2"
@@ -133,7 +144,7 @@ class Myparseline:
                 else:
                     print(f"Provjeriti ravninu: {line}")
             
-                print(movement, koord)
+                print(movement, koord, self.minnumf)
             
                 self.ls_x=kraj_x
                 self.ls_y=kraj_y
@@ -146,6 +157,11 @@ class Myparseline:
                 y = coords[2].strip()
                 z = coords[3].strip()
                 
+                if self.lsmovement !="G1":
+                    movement="G1"
+                else:
+                    movement=" "
+                
                 x = float(x)
                 y = float(y)
                 z = float(z)
@@ -156,33 +172,33 @@ class Myparseline:
                     if x==self.ls_x:
                         self.koord_x=" "
                     else:
-                        self.koord_x=(f"X{x}")
+                        self.koord_x=(f"X{round(x, 3)}")
                     if z==self.ls_z:
                         self.koord_z=" "                    
                     else:
-                        self.koord_z=(f"Z{z}")      
+                        self.koord_z=(f"Z{round(z, 3)}")      
                 elif x!=self.ls_x:
                     self.koord_z=" "
                     ravnina="G17"
                     if x==self.ls_x:
                         self.koord_x=" "
                     else:
-                        self.koord_x=(f"X{x}")
+                        self.koord_x=(f"X{round(x, 3)}")
                     if y==self.ls_y:
                         self.koord_y=" "
                     else:
-                        self.koord_y=(f"Y{y}")       
+                        self.koord_y=(f"Y{round(y, 3)}")       
                 elif z!=self.ls_z:
                     self.koord_x=" "
                     ravnina="G19"
                     if y==self.ls_y:
                         self.koord_y=" "
                     else:
-                        self.koord_y=(f"Y{y}")
+                        self.koord_y=(f"Y{round(y, 3)}")
                     if z==self.ls_z:
                         self.koord_z=" "                    
                     else:
-                        self.koord_z=(f"Z{z}")       
+                        self.koord_z=(f"Z{round(z, 3)}")       
                 else:
                     print(f"Provjeriti koordinate: {line}")
                            
@@ -192,10 +208,12 @@ class Myparseline:
                 else:
                     print(end="")
                     
-                print(self.koord_x, self.koord_y, self.koord_z)
+                print(movement,self.koord_x, self.koord_y, self.koord_z)
+                
                 self.ls_x=x
                 self.ls_y=y
                 self.ls_z=z
+                self.lsmovement=movement
                 
             elif line.startswith("SPINDL"):
                 spindlDT = re.split(r'[,/]+', line)
@@ -203,10 +221,14 @@ class Myparseline:
                 tip = spindlDT[2].strip()
                 rotation = spindlDT[3].strip()
                 
+                self.lsnum = round(float(num), 3)
+                
                 if tip == "SFM":
                     tipfedrejt=("G96 ")
+                    self.lstip_rev=tip
                 elif tip == "RPM":
                     tipfedrejt=("G97 ")
+                    self.lstip_rev=tip
                 else:
                     print(f"Provjeriti tip vrijednosti(spm ili rpm): {line}")
                     
@@ -229,12 +251,17 @@ class Myparseline:
                 else:
                     print(end="")
                     
-                print("S"+num)
+                print("S"+ str(round(float(num), 3)))
                 
             elif line.startswith("FEDRAT"):
                 feed = re.split(r'[,/]+', line)
                 numf = feed[1].strip()
                 vrstaf = feed[2].strip()
+                
+                if self.minnumf > float(numf) and self.minnumf != 0.000:
+                    self.minnumf = float(numf)
+                else:
+                    print(end="")
                 
                 if vrstaf == "MMPR":
                     fedrejt=("G95")   
@@ -257,7 +284,7 @@ class Myparseline:
                 else:
                         print(end="")
                 
-                print("F"+numf)
+                print("F"+ str(round(float(numf), 3)))
                 
             elif line.startswith("TPRINT"):
                 izbor_alat = re.split(r'[,/]+', line)
@@ -289,7 +316,34 @@ class Myparseline:
             
             elif line.startswith("PARTNO"):
                 print("G55" + "\n" + "DIAMOF" + "\n" + "#DEFINIRATI SIROVAC")
-           
+
+            elif line.startswith("CYCLE/TAP"):
+                tap= line.split(",")
+                depth= tap[1].strip()
+                pitch= tap[2].strip()
+                
+                holder=input(";Vrsta držača ureznice: pomični (Upišite 0) ili fiksni (Upišite 1): ")
+                if holder == "0":
+                    if self.lstip_rev == "SFM":
+                        F=self.lsnum * pitch
+                    elif self.lstip_rev == "RPM":
+                        F=pitch
+                    else:
+                        print("Provjeriti prethodnu vrijednost spindla ")
+                    print(f"G63 Z{depth} F{F}")
+                    if self.lsrotation == "M3 ":
+                        returnsmj = "M4"
+                    elif self.lsrotation == "M4 ":
+                        returnsmj = "M3"
+                    else:
+                        print("Provjeriti prethodnu vrijednost smjera vrtnje")
+                    print(f"G63 Z{self.ls_z} F{F} {returnsmj}")
+                elif holder == "1":
+                    print(f"G331 Z{depth} F{pitch}")
+                    print(f"G332 Z{depth} F{pitch}")
+                else:
+                    print("Krivi broj...")
+            
             else:
                 print("Provjeriti: " + line)
       
