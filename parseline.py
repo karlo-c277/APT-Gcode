@@ -1,7 +1,5 @@
-import json
 import re
 import math
-
 # Tapping obavezno preko Output "CYCLE"
 # Naziv, parametri, kompenzacije i svi podaci alata u CATIA-i se MORAJU poklapati sa onima u WinNC-u
 class Myparseline:
@@ -25,6 +23,8 @@ class Myparseline:
 
         
 
+    def __init__(self, LANG):
+        self.LANG = LANG
     
     
     def __init__(self):
@@ -67,6 +67,14 @@ class Myparseline:
             elif line.startswith("SWITCH/") or line.startswith("LOADTL/") or line.startswith("CUTTER/") or line.startswith("TOOLNO/") or line.startswith("INTOL/") or line.startswith("OUTTOL/") or line.startswith("AUTOPS/") or line.startswith("REWIND/"):
                 print(f";{line}")
             
+            elif line.startswith("TPRINT"):
+                izbor_alat = re.split(r'[,/]+', line)
+                sklop = izbor_alat[1].strip()
+                
+                if self.lssklop != sklop:
+                    print(f"T=\"{sklop}\"")
+                    self.lssklop=sklop
+                    
             elif "CIRCLE" in line:
                 elements = re.split(r'[ ,/()]+', line)
                 centar_x = elements[3].strip()
@@ -275,14 +283,6 @@ class Myparseline:
                         self.lsmovement=movement
                 
                 print("F"+ str(round(float(numf), 3)))
-                
-            elif line.startswith("TPRINT"):
-                izbor_alat = re.split(r'[,/]+', line)
-                sklop = izbor_alat[1].strip()
-                
-                if self.lssklop != sklop:
-                    print(f"T=\"{sklop}\"")
-                    self.lssklop=sklop
                 
             elif line.startswith("INDIRV"):
                 vektor = re.split(r'[,/]+', line)

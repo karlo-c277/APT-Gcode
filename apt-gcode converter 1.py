@@ -1,23 +1,6 @@
-
-import importlib.util
 import os
 import sys
 from parseline import Myparseline
-
-try:
-    from jezici import HR, EN
-except ImportError:
-    spec = importlib.util.spec_from_file_location("jezici", os.path.join(SCRIPT_DIR, "jezici.py"))
-    if spec and spec.loader:
-        jezici = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(jezici)
-        HR = jezici.HR
-        EN = jezici.EN
-    else:
-        print("Missing jezici module.")
-        sys.exit(1005)
-
-
 
 izbor = input("Choose language (HR/EN): ").strip().upper()
 if izbor == "HR":
@@ -28,7 +11,9 @@ else:
     print("Invalid language choice. Defaulting to English.")
     LANG = EN
 
-print(LANG["Post processor 3-aksijalne obare tokarenjem za CATIA APT file u WinNC G-kod"])
+print(LANG["def programa"])
+
+parseline = Myparseline(LANG)
 
 # check if file was first argument
 if len(sys.argv) < 2:
@@ -48,13 +33,13 @@ if not os.path.exists(input_file):
 
 # provjeriti da li je file tekstualni
 if not os.path.isfile(input_file):
-    print(LANG["Neispravna vrsta datoteke (potrebno je .txt)."])
+    print(LANG["Neispravna vrsta"])
     exit(1002)
 
 print(LANG["Datoteka učitana:"], input_file)
 print(LANG["Učitavanje linija"])
 
-parse = Myparseline(LANG)   
+parse = Myparseline()   
 
 # provjeriti da li je zaista tekstualna datoteka
 try:
@@ -70,11 +55,11 @@ try:
                 myline = ""
 
 except UnicodeDecodeError:
-    print(LANG["Nevaljana vrsta datoteke.  Odaberite tekstualnu datoteku."])
+    print(LANG["kriva vrsta"])
     #input("Klikni Enter za dalje...")
     exit(1003)
 except Exception as e:
-    print(LANG["Greška prilikom čitanja datoteke: " + str(e)])
+    print(LANG["error"] + str(e))
     #input("Klikni Enter za dalje...")
     exit(1004)
 
