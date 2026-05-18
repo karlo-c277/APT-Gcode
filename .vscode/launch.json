@@ -14,7 +14,7 @@
             "name": "Python: test drag n drop",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/test drag n drop.py",
+            "program": "${workspaceFolder}/apt-gcode converter 1.py",
             "args": ["${workspaceFolder}/dwelltest.txt", "tokarilica"],
             "console": "integratedTerminal",
             "justMyCode": true

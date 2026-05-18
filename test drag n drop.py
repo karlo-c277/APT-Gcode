@@ -28,7 +28,7 @@ else:
     print("Invalid language choice. Defaulting to English.")
     LANG = EN
 
-print(LANG["Post processor 3-aksijalne obare tokarenjem za CATIA APT file u WinNC G-kod"])
+print(LANG["def programa"])
 
 # check if file was first argument
 if len(sys.argv) < 2:
@@ -70,11 +70,11 @@ try:
                 myline = ""
 
 except UnicodeDecodeError:
-    print(LANG["Nevaljana vrsta datoteke.  Odaberite tekstualnu datoteku."])
+    print(LANG["kriva vrsta"])
     #input("Klikni Enter za dalje...")
     exit(1003)
 except Exception as e:
-    print(LANG["Greška prilikom čitanja datoteke: " + str(e)])
+    print(LANG["error" + str(e)])
     #input("Klikni Enter za dalje...")
     exit(1004)
 

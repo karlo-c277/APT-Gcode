@@ -6,7 +6,6 @@ HR = {
     "Neispravna vrsta"          : "Neispravna vrsta datoteke (potrebno je .txt).",
     "Datoteka učitana:"         : "Datoteka učitana:",
     "Učitavanje linija"         : "Učitavanje linija",
-    "kriva vrsta"               : "Nevaljana vrsta datoteke. Odaberite tekstualnu datoteku.",
     "error"                     : "Greška prilikom čitanja datoteke: ",
     "Gotovo."                   : "Gotovo."
 }

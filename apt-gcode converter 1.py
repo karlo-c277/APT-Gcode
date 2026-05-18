@@ -14,7 +14,7 @@ else:
 
 print(LANG["def programa"])
 
-parseline = Myparseline(LANG)
+
 
 # check if file was first argument
 if len(sys.argv) < 2:
@@ -40,7 +40,6 @@ if not os.path.isfile(input_file):
 print(LANG["Datoteka učitana:"], input_file)
 print(LANG["Učitavanje linija"])
 
-parse = Myparseline()   
 
 # provjeriti da li je zaista tekstualna datoteka
 try:
@@ -56,7 +55,7 @@ try:
                 myline = ""
 
 except UnicodeDecodeError:
-    print(LANG["kriva vrsta"])
+    print(LANG["Neispravna vrsta"])
     #input("Klikni Enter za dalje...")
     exit(1003)
 except Exception as e:
