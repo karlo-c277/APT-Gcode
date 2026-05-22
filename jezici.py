@@ -1,6 +1,6 @@
 
 HR = {
-    "def programa"              : "- Post processor 3-aksijalne obare tokarenjem za CATIA APT file u WinNC G-kod \n -SVI PODACI O NOŽEVIMA MORAJU BITI ISTI U OBA PROGRAMA \n- Za urezivanje navoja, potrebno je definirati operaciju kao Cycle \n- Pod naredbom FEEDRAT ne smije biti naredba RAPTO ",
+    "def programa"              : "- Post processor 3-aksijalne obare tokarenjem za CATIA APT file u WinNC G-kod \n -SVI PODACI O NOŽEVIMA MORAJU BITI ISTI U OBA PROGRAMA \n- Za urezivanje navoja, potrebno je definirati operaciju kao Cycle \n- Pod naredbom FEEDRAT ne smije biti naredba RAPTO \n- Nema definiranja linija ili točaka \n- Nema pomaka do točke, linje ili površine \n- Nema makro rutina \n-Nema definiranja varijabli \n-Nema grananja u programu\n- Nema logičkih uvjeta",
     "Nije predana datoteka."    : "Nije predana datoteka. ",
     "Nepostojeća datoteka."     : "Nepostojeća datoteka. ",
     "Neispravna vrsta"          : "Neispravna vrsta datoteke (potrebno je .txt). ",
@@ -16,7 +16,7 @@ HR = {
     "nepoznata ravnina"         : "Greška - ravnina nepravilno zapamćena nije (G17, G18 ili G19): ",
     "promjena 3x koord"         : "Greška - promjena 3 koordinate u jednoj liniji: ",
     "nepoznat posmak"           : "- Provjeriti način posmaka (sfm ili rpm): ",
-    "coolnt on off"             : "- Provjeriti liniju i unijeti vrijednost (ON/OFF/FLOOD/MIST): ",
+    "coolant on off"            : "- Provjeriti liniju i unijeti vrijednost (ON/OFF/FLOOD/MIST): ",
     "coolant"                   : "- Unesite ON ili OFF: ",
     "spindle m3/m4"             : "- Provjeriti i unijeti vrijednost smjera vrtnje (CCLW/CLW/OFF): ",
     "holder type"               : "- Definirajte vrstu držača ureznice: pomični (Upišite 0) ili fiksni (Upišite 1): ",
@@ -25,16 +25,22 @@ HR = {
     "feedrat err"               : "- Provjeriti feedrate vrijednost (Treba pisati MMPR ili MMPM): ",
     "posmak"                    : "- Unesite RPM ili SFM: ",
     "circle feed"               : "- Unesite brzinu posmaka za kružne pokrete za grubu i finu obradu: ",
-    "magazine slot"             : "Pozicija na magazinu broj ",
-    "insert r"                  : "Radijus oštrice: ",
+    "magazine slot"             : ";Pozicija na magazinu broj ",
+    "insert r"                  : ";Radijus oštrice: ",
     "spindle start"             : "- Prilikom pokretanja vretena iz M05 u M03/M04, trebali ponovo ispisivati okretaje / brzinu rezanja i smjer vrtnje ne? (DA/NE): ",
     "krivi spindle start"       : "- Neispravan odabir unesite ponovo",
-    "ls-clnt"                   : "- Odabrite način podmazivanja (FLOOD/MIST): "
+    "ls-clnt"                   : "- Odabrite način podmazivanja (FLOOD/MIST): ",
+    "neispravan godlta"         : "Greška - neispravan golta value: ",
+    "intol"                     : ";Unutarna tolerancija putanje: ",
+    "outtol"                    : ";Vanjska tolerancija putanje: ",
+    "toler"                     : ";Tolerancija putanje: ",
+    "Nema ciklusa"              : "Greška - Nema definiranog ciklusa: ",
+    "cycle drill"               : "- Unesite: os rupe (X/Y/Z) (potom kliknite Enter) pa visinu površine u odnosu na W točku po toj osi (potom kliknite Enter) pa unesite buši li se niz os (-/niz) ili uz os (+/uz) (potom kliknite Enter): "
 
 }
 
 EN = {
-    "def programa"              : "- Post processor for 3-axis lathe for CATIA APT file to WinNC G-code",
+    "def programa"              : "- Post processor for 3-axis lathe for CATIA APT file to WinNC G-code \n -ALL TOOL DATA MUST BE THE SAME IN BOTH PROGRAMS \n- For threading, it is necessary to define the operation as Cycle \n- After FEEDRAT command there must be no RAPTO command \n- No defining lines or points \n- No move to point, line or surface command \n- No macro routines \n-No defining variables \n-No program branching \n- No logical conditions",
     "Nije predana datoteka."    : "No file provided.",
     "Nepostojeća datoteka."     : "File does not exist.",
     "Neispravna vrsta"          : "Invalid file type (must be .txt).",
@@ -50,7 +56,7 @@ EN = {
     "nepoznata ravnina"         : "Error - plane not properly remembered (G17, G18 or G19): ",
     "promjena 3x koord"         : "Error - change of 3 coordinates in one line: ",
     "nepoznat posmak"           : "- Check the type of feedrate (sfm or rpm): ",
-    "coolnt on off"             : "- Check and enter the value (ON/OFF/FLOOD/MIST): ",
+    "coolant on off"            : "- Check and enter the value (ON/OFF/FLOOD/MIST): ",
     "coolant"                   : "- Enter ON or OFF: ",
     "spindle m3/m4"             : "- Check and enter the value of spindle rotation direction (CCLW/CLW/OFF): ",
     "holder type"               : "- Type of tool holder: moving (Enter 0) or fixed (Enter 1): ",
@@ -63,5 +69,11 @@ EN = {
     "insert r"                  : "Insert radius: ",
     "spindle start"             : "- When starting spindle from M05 to M03/M04, is it needed to reprint the rpm value / cutting speed and rotation direction? (YES/NO): ",
     "krivi spindle start"       : "- Invalid choice, please enter again",
-    "ls-clnt"                   : "- Odabrite način podmazivanja (FLOOD/MIST): "
+    "ls-clnt"                   : "- Odabrite način podmazivanja (FLOOD/MIST): ",
+    "neispravan godlta"         : "- Error - invalid golta value: ",
+    "intol"                     : ";Inside path tolerance: ",
+    "outtol"                    : ";Outside path tolerance: ",
+    "toler"                     : ";Path tolerance: ",
+    "Nema ciklusa"              : "Greška - Nema definiranog ciklusa: ",
+    "cycle drill"               : "- Enter: hole axis (then press Enter) and then height of surface relative to W point along that axis (then press Enter) and then enter if the hole is to be drilled along the axis (-/down) or perpendicular to the axis (+/up) (then press Enter): "
 }
