@@ -1,6 +1,6 @@
 
 HR = {
-    "def programa"              : "- Post processor 3-aksijalne obare tokarenjem za CATIA APT file u WinNC G-kod \n -SVI PODACI O NOŽEVIMA MORAJU BITI ISTI U OBA PROGRAMA \n- Za urezivanje navoja, potrebno je definirati operaciju kao Cycle \n- Pod naredbom FEEDRAT ne smije biti naredba RAPTO \n- Nema definiranja linija ili točaka \n- Nema pomaka do točke, linje ili površine \n- Nema makro rutina \n-Nema definiranja varijabli \n-Nema grananja u programu\n- Nema logičkih uvjeta",
+    "def programa"              : "- Post processor 3-aksijalne obare tokarenjem za CATIA APT file u WinNC G-kod \n -SVI PODACI O NOŽEVIMA MORAJU BITI ISTI U OBA PROGRAMA \n- Za urezivanje navoja, potrebno je definirati operaciju kao Cycle \n- Pod naredbom FEEDRAT ne smije biti naredba RAPTO \n- Nema definiranja linija ili točaka \n- Nema pomaka do točke, linje ili površine \n- Nema makro rutina \n- Nema definiranja varijabli \n- Nema grananja u programu\n- Nema logičkih uvjeta",
     "Nije predana datoteka."    : "Nije predana datoteka. ",
     "Nepostojeća datoteka."     : "Nepostojeća datoteka. ",
     "Neispravna vrsta"          : "Neispravna vrsta datoteke (potrebno je .txt). ",
@@ -9,7 +9,7 @@ HR = {
     "error"                     : "Greška prilikom čitanja datoteke: ",
     "Gotovo."                   : "M30\n- Gotovo. ",
     "Nepoznata naredba"         : "Greška - provjeriti naredbu (nije u niti jednoj kategoriji naredbe): ",
-    "catia comentari"           : "- Želite li zadržati komentare iz CATIA APT datoteke? (DA/NE): ",
+    "catia komentari"           : "- Želite li zadržati komentare iz CATIA APT datoteke? (DA/NE): ",
     "kriv odabir za komt"       : "- Neispravan odabir za komentare. Unesite ponovo. (DA/NE).",
     "cta crc cent nije isti"    : "Greška - centri luka se ne poklapaju: ",
     "sredina na tang"           : "Greška - Sredina luka na tangeni: ",
@@ -38,7 +38,8 @@ HR = {
     "unijeti ravninu - kruznica": "- Greška - Nije definirana ravnina obrade kružnog luka. Unesite (G17, G18 ili G19): ",
     "units"                     : "- Unesite vrstu mjernih jedinica (MM/INCH):",
     "neispravni podaci"         : "Greška - neispravni podaci za naredbu:",
-    "kraj"                      : ";Kraj programa"
+    "kraj"                      : ";Kraj programa",
+    "partno"                    : ";Dio: "
 
 }
 
@@ -52,7 +53,7 @@ EN = {
     "error"                     : "Error while reading file: ",
     "Gotovo."                   : "- Done.",
     "Nepoznata naredba"         : "Error - check the command (not in any of the command categories): ",
-    "catia comentari"           : "- Do you want to keep comments from the CATIA APT file? (YES/NO): ",
+    "catia komentari"           : "- Do you want to keep comments from the CATIA APT file? (YES/NO): ",
     "kriv odabir za komt"       : "- Invalid choice for comments. Please enter again (YES/NO).",
     "cta crc cent nije isti"    : "Error - centers do not match: ",
     "sredina na tang"           : "Error - center of arc on tangent: ",
@@ -81,7 +82,8 @@ EN = {
     "unijeti ravninu - kruznica": "- Error - plane for circular motion not defined. Enter (G17, G18 or G19): ",
     "units"                     : "- Enter measurement unit (INCH/MM)",
     "neispravni podaci"         : "Error - invalid data for this command:",
-    "kraj"                      : ";End of program"
+    "kraj"                      : ";End of program",
+    "partno"                    : ";Part: "
     
     
 }

@@ -6,12 +6,12 @@ class Myparseline:
   
         
 
-    def __init__(self, LANG, ccmt, ss):
+    def __init__(self, LANG, ccmt):
         self.LANG = LANG                        #Poziv ispisa na odabranom jeziku
         
         self.ccmt = ccmt                        #Varijabla koja određuje hoće li se komentari iz APT datoteke ispisati u izlaznoj datoteci
         
-        self.ss = ss                            #Varijabla koju određuje korisnik ovisno o tome treba li se prilikom pokretanja vretena M03/M04 ispisivati okretaji ili ne
+        self.ss = 3                          #Varijabla koju određuje korisnik ovisno o tome treba li se prilikom pokretanja vretena M03/M04 ispisivati okretaji ili ne
         
         self.lsmovement=""                      #Način kretanja alata
         self.lsplane=""                         #Ravnina xy, xz ili yz
@@ -33,7 +33,7 @@ class Myparseline:
         self.ls_clnt = ""                       #Zadnja definirana vrijednost podmazivanja (FLOOD / MIST / OFF)
         self.ls_cycle = ""                      #Zadnji definirani ciklus
         self.lsunits = ""                       #Mjerni sustav
-        self.komentari = ("LOADTL/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO")      #skraćivanje koda, na ovaj način se ne treba zapisivati line.startswith("comand_name") za svaku komandu posebno
+        self.komentari = ("LOADTL/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "$$", "OPERATION NAME")      #skraćivanje koda, na ovaj način se ne treba zapisivati line.startswith("comand_name") za svaku komandu posebno
         self.non_def = ("SWITCH/", "PPFUN", "TOOLNO/", "GO/", "AUTOPS/", "REWIND/" "INDIRP/")
         
         
@@ -48,7 +48,7 @@ class Myparseline:
             
             elif line.startswith("UNITS"):
                 
-                while "MM" in line or "INCH" in line or "1" in line or "0" in line:
+                while not ("MM" in line or "INCH" in line or "1" in line or "0" in line):
                     line = input(self.LANG["units"]).strip().upper()
                     
                 if "MM" in line or "1" in line:
@@ -60,17 +60,9 @@ class Myparseline:
                     print("G70")
                     self.lsunits = "G70"
    
-            elif line.startswith("$$"):
-                if "$$ OPERATION NAME" in line:
-                    opname = line.split(":")
-                    opname2 = opname[1].strip()
-
-                    print(";" + opname2)
-                #označavanje početka operacije u završnom kodu
-                
-                elif self.ccmt==1:
-                    line = re.sub(r"\$+", "", line)
-                    print(f";{line}")
+            elif self.ccmt ==1 and line.startswith("$$"):
+                line = re.sub(r"\$+", "", line)
+                print(f";{line}")
                 #omogućuje da se linije označene sa $$ ispišu u izlaznoj datoteci kao komentari
                 
             elif line.startswith(self.non_def):
@@ -104,12 +96,21 @@ class Myparseline:
                     print(self.LANG["kraj"])
                     
                 elif line.startswith("PARTNO"):
-                    line = line.split("/")[1].strip()
+                    line = re.split(r'PARTNO\s*/?|/',line)[0].strip()
                     print(self.LANG["partno"] + line)
-                #omogućuje da se linije označene sa navedenim komandama ispišu u izlaznoj datoteci po izboru korisnika kao komentari
                 
+                elif line. startswith("OPERATION NAME"):
+                    opname = line.split(":")
+                    opname2 = opname[1].strip()
+
+                    print(";" + opname2)
+                    
+                else:
+                    print("; " + line)
+                #omogućuje da se linije označene sa navedenim komandama ispišu u izlaznoj datoteci po izboru korisnika kao komentari
+                               
             elif line.startswith("TPRINT"):
-                izbor_alat = re.split(r'[,/]+', line)
+                izbor_alat = line.split(":")
                 sklop = izbor_alat[1].strip()
                 
                 if self.lssklop != sklop:
@@ -354,27 +355,40 @@ class Myparseline:
                         num = spindlDT[1].strip()
                         posmak_tip = spindlDT[2].strip()
                         rotation = spindlDT[3].strip()
-                
+                        
                         self.ls_spindle_speed = round(float(num), 3)
 
                         while posmak_tip not in ("SFM", "RPM"):
                             print(self.LANG["nepoznat posmak"] + line)
                             posmak_tip = input(self.LANG["posmak"]).strip().upper()
-
                         tipfedrejt = "G96 " if posmak_tip == "SFM" else "G97 "
                         self.ls_tip_rev = tipfedrejt.strip()
 
-                    
                         if self.ls_tip_rev != posmak_tip:
                             print(tipfedrejt, end=" ")
                             self.ls_tip_rev=tipfedrejt
-                    
                         print("S"+ str(round(float(num), 3)))
-                        
+                           
                     else:
                         print(self.LANG["neispravni podaci"])
                     
                 elif "ON" in line:
+                    while True:
+                        spindle_start = input(self.LANG["spindle start"]).strip().upper()
+    
+                        opcije_da = ("DA", "YES", "1")
+                        opcije_ne = ("NE", "NO", "0")
+    
+                        if spindle_start in opcije_da:
+                            self.ss = 1
+                            break
+                        elif spindle_start in opcije_ne:
+                            self.ss = 0
+                            break
+                        else:
+                            print(self.LANG["krivi spindle start"])
+
+                    
                     print(self.ls_on_rotation, end=" ")
                     if self.ss==1:
                         print("S"+ str(self.ls_spindle_speed)+ " " + self.ls_tip_rev)
@@ -565,12 +579,7 @@ class Myparseline:
                     self.ls_z = round((self.ls_z + z), 3)
                     
                     print(koord_x, koord_y, koord_z)
-                               
             
-                print("M30")
-            
-
-
             # elif line.startswith("CYCLE/"):       
             #     if "CYCLE/ON" in line:
             #         if self.ls_cycle != "":
