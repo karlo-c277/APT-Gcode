@@ -39,7 +39,8 @@ HR = {
     "units"                     : "- Unesite vrstu mjernih jedinica (MM/INCH):",
     "neispravni podaci"         : "Greška - neispravni podaci za naredbu:",
     "kraj"                      : ";Kraj programa",
-    "partno"                    : ";Dio: "
+    "partno"                    : ";Dio: ",
+    "unesite datoteku"           : "- Unesite naziv željene datoteke za parsiranje (.txt): "
 
 }
 
@@ -83,7 +84,7 @@ EN = {
     "units"                     : "- Enter measurement unit (INCH/MM)",
     "neispravni podaci"         : "Error - invalid data for this command:",
     "kraj"                      : ";End of program",
-    "partno"                    : ";Part: "
-    
+    "partno"                    : ";Part: ",
+    "unesite datoteku"           : "- Enter the name of the desired file to parse (.txt): "
     
 }
