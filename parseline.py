@@ -33,7 +33,7 @@ class Myparseline:
         self.ls_clnt = ""                       #Zadnja definirana vrijednost podmazivanja (FLOOD / MIST / OFF)
         self.ls_cycle = ""                      #Zadnji definirani ciklus
         self.lsunits = ""                       #Mjerni sustav
-        self.komentari = ("LOADTL/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "$$", "OPERATION NAME")      #skraćivanje koda, na ovaj način se ne treba zapisivati line.startswith("comand_name") za svaku komandu posebno
+        self.komentari = ("LOADTL/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "$$", "OPERATION NAME", "TLAXIS", "CUTCOM")      #skraćivanje koda, na ovaj način se ne treba zapisivati line.startswith("comand_name") za svaku komandu posebno
         self.non_def = ("SWITCH/", "PPFUN", "TOOLNO/", "GO/", "AUTOPS/", "REWIND/" "INDIRP/")
         
         
@@ -76,9 +76,14 @@ class Myparseline:
                     print(self.LANG["magazine slot"] + tool_slot)
                     
                 elif line.startswith("CUTTER/"):
-                    cutter = line.split("/")
-                    r_ostrice = cutter[1].strip()
-                    print(self.LANG["insert r"] + r_ostrice + "mm")
+                    if len(line.split(" ")) < 3:
+                        cutter = line.split("/")
+                        r_ostrice = cutter[1].strip()
+                        print(self.LANG["insert r"] + r_ostrice + "mm")
+                    elif len(line.split(" ")) >= 3:
+                        cutter = line.split(" ")
+                        r_ostrice = cutter[1].strip()
+                        print("The helly is ts " + line)
                     
                 elif line.startswith("INTOL/"):
                     intol = line.split("/")[1].strip()
@@ -96,7 +101,7 @@ class Myparseline:
                     print(self.LANG["kraj"])
                     
                 elif line.startswith("PARTNO"):
-                    line = re.split(r'PARTNO\s*/?|/',line)[0].strip()
+                    line = line.split("PARTNO")[0].strip()
                     print(self.LANG["partno"] + line)
                 
                 elif line. startswith("OPERATION NAME"):
@@ -104,13 +109,17 @@ class Myparseline:
                     opname2 = opname[1].strip()
 
                     print(";" + opname2)
+                
+                elif line.startswith("TLAXIS"):
+                    elements = line.split(" ")
+                    print(self.LANG["tlaxis"] + "X" + elements[1].strip() + " Y" + elements[2].strip() + " Z" + elements[3].strip())
                     
                 else:
                     print("; " + line)
                 #omogućuje da se linije označene sa navedenim komandama ispišu u izlaznoj datoteci po izboru korisnika kao komentari
                                
             elif line.startswith("TPRINT"):
-                izbor_alat = line.split(":")
+                izbor_alat = line.split("/")
                 sklop = izbor_alat[1].strip()
                 
                 if self.lssklop != sklop:
@@ -593,10 +602,17 @@ class Myparseline:
                         continue
                     
                 while True:
+                    
                     if clon=="ON" or clon=="1":
-                        print(self.ls_clnt_typ)
-
-                        break
+                        while True:
+                            if self.ls_clnt_typ=="":
+                                print(self.LANG["coolant on off"] + line)
+                                clon = input(self.LANG["coolant"]).strip().upper()
+                                break
+                            elif self.ls_clnt_typ=="M8" or self.ls_clnt_typ=="M7" or self.ls_clnt_typ=="M9":
+                                print(self.ls_clnt_typ)
+                                continue
+                        continue
                     elif clon=="OFF" or clon=="0":
                         print("M9")
                         self.ls_clnt="M9"
@@ -612,7 +628,7 @@ class Myparseline:
                         self.ls_clnt="M7"
                         break
                     else:
-                        print(self.LANG["coolnt on off"] + line)
+                        print(self.LANG["coolant on off"] + line)
                         clon = input(self.LANG["coolant"]).strip().upper()
                         continue
             

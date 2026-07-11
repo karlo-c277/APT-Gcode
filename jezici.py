@@ -16,7 +16,7 @@ HR = {
     "nepoznata ravnina"         : "Greška - ravnina nepravilno zapamćena nije (G17, G18 ili G19): ",
     "promjena 3x koord"         : "Greška - promjena 3 koordinate u jednoj liniji: ",
     "nepoznat posmak"           : "- Provjeriti način posmaka (sfm ili rpm): ",
-    "coolant on off"            : "- Provjeriti liniju i unijeti vrijednost (ON/OFF/FLOOD/MIST): ",
+    "coolant on off"            : "- Provjeriti slijedeću liniju i unijeti vrijednost (ON/OFF/FLOOD/MIST): ",
     "coolant"                   : "- Unesite ON ili OFF: ",
     "spindle m3/m4"             : "- Provjeriti i unijeti vrijednost smjera vrtnje (CCLW/CLW/OFF): ",
     "holder type"               : "- Definirajte vrstu držača ureznice: pomični (Upišite 0) ili fiksni (Upišite 1): ",
@@ -40,12 +40,13 @@ HR = {
     "neispravni podaci"         : "Greška - neispravni podaci za naredbu:",
     "kraj"                      : ";Kraj programa",
     "partno"                    : ";Dio: ",
-    "unesite datoteku"           : "- Unesite naziv željene datoteke za parsiranje (.txt): "
+    "unesite datoteku"          : "- Unesite naziv datoteke (s ekstenzijom .txt): ",
+    "tlaxis"                    : "; Osi alata su: "
 
 }
 
 EN = {
-    "def programa"              : "- Post processor for 3-axis lathe for CATIA APT file to WinNC G-code \n -ALL TOOL DATA MUST BE THE SAME IN BOTH PROGRAMS \n- For threading, it is necessary to define the operation as Cycle \n- After FEEDRAT command there must be no RAPTO command \n- No defining lines or points \n- No move to point, line or surface command \n- No macro routines \n-No defining variables \n-No program branching \n- No logical conditions ",
+    "def programa"              : "- Post processor for 3-axis lathe for CATIA APT file to WinNC G-code \n- ALL TOOL DATA MUST BE THE SAME IN BOTH PROGRAMS \n- For threading, it is necessary to define the operation as Cycle \n- After FEEDRAT command there must be no RAPTO command \n- No defining lines or points \n- No move to point, line or surface command \n- No macro routines \n- No defining variables \n- No program branching \n- No logical conditions ",
     "Nije predana datoteka."    : "No file provided.",
     "Nepostojeća datoteka."     : "File does not exist.",
     "Neispravna vrsta"          : "Invalid file type (must be .txt).",
@@ -61,7 +62,7 @@ EN = {
     "nepoznata ravnina"         : "Error - plane not properly remembered (G17, G18 or G19): ",
     "promjena 3x koord"         : "Error - change of 3 coordinates in one line: ",
     "nepoznat posmak"           : "- Check the type of feedrate (sfm or rpm): ",
-    "coolant on off"            : "- Check and enter the value (ON/OFF/FLOOD/MIST): ",
+    "coolant on off"            : "- Check next line and enter a value (ON/OFF/FLOOD/MIST): ",
     "coolant"                   : "- Enter ON or OFF: ",
     "spindle m3/m4"             : "- Check and enter the value of spindle rotation direction (CCLW/CLW/OFF): ",
     "holder type"               : "- Type of tool holder: moving (Enter 0) or fixed (Enter 1): ",
@@ -85,6 +86,7 @@ EN = {
     "neispravni podaci"         : "Error - invalid data for this command:",
     "kraj"                      : ";End of program",
     "partno"                    : ";Part: ",
-    "unesite datoteku"           : "- Enter the name of the desired file to parse (.txt): "
+    "unesite datoteku"          : "- Enter the file name (with .txt extension): ",
+    "tlaxis"                    : "; Tool axes are: "
     
 }
