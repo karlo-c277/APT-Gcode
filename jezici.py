@@ -56,7 +56,7 @@ HR = {
     "iso6983 command"           : "- Unesite G-komandu za aktivaciju ISO 6983 (stisnite ENTER ako je G291): ",
     "samo je iso"               : "Žao nam je, ali ovaj post procesor je samo za ISO 6983 standard. Provjerite postavke Vašeg CNC stroja.",
     "preset"                    : "- Odaberite program na vašem stroju za jednostavnije pokretanje (Costum/0   WinNC Sinumerik/1): ",
-    "enkripcija"                : "- Unesite -TOČAN- naziv enkripcije (utf-8, utf-8-sig, cp1250, iso-8859-2, latin-1): ",
+    "enkripcija"                : "- Unesite -TOČAN- naziv enkripcije (utf-8, utf-8-sig, cp1250, iso-8859-2, latin-1...): ",
     "zaglavlje output"          : "- Pošto niste odabrali valjani preset CNC kontroleri koriste provjeru zaglavlja (ne prikazuju je kada pišete kod na kontroleru), \nako ne unesete ispravno zaglavlje i enkripciju kontroler neće otvoriti datoteku \nAko znate točno zaglavlje i enkripciju koju koristi Vaš kontroler javite na karlo.ugrin@gmail.com)\nUnesite zaglavlje izlazne datoteke (stisnite ENTER za prazno): "
 
 }

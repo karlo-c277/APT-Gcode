@@ -17,7 +17,7 @@ class OutputFilter:
                     filename = input(self.LANG["naziv output fl"]).strip().split(".")[0] + ".MPF"
                     
                     with open(filename, "w", encoding="utf-8") as file:
-                        file.write("%_N_" + filename + "_MPF\nG291")
+                        file.write("%_N_" + filename + "_MPF\n")
                         for line in output_lines:
                             if not line.strip().startswith("- "):
                                 line = " ".join(line.split())

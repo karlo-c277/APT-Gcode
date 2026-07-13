@@ -6,6 +6,9 @@ from parseline import Myparseline
 from jezici import HR, EN
 from output import OutputFilter
 
+input_ext = (".txt", ".ncl", "cls", ".apt", ".aptsource")                               #dozvoljene ekstencijeq
+encp = ["utf-8", "utf-8-sig", "cp1250", "iso-8859-2", "ascii", "cp1252", "latin-1"]     #vrste enkripcije za otvaranje datoteka !!!latin-1 ZADNJI jer je ocito svemoguc
+
 class Tee:
     def __init__(self, *files):
         self.files = files
@@ -77,14 +80,14 @@ while True:
 while True:
     input_file = input(LANG["unesite datoteku"]).strip()
 
-    if not input_file.endswith(".txt"):
+    if "." not in input_file:
         input_file += ".txt"
 
     if not os.path.exists(input_file):
         print(LANG["Nepostojeća datoteka."] + "\n")
         continue
 
-    if not os.path.isfile(input_file) or not input_file.lower().endswith(".txt"):
+    if not os.path.isfile(input_file) or not input_file.lower().endswith(input_ext):
         print(LANG["Neispravna vrsta"] + "\n")
         continue
     break
@@ -97,7 +100,7 @@ sys.stdout = Tee(sys.stdout, terminal_output)
 print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\n" + "G55\nDIAMOF\n;UNITS!!!- mm\nG21\n" + LANG["DEFINIRATI SIROVAC"])
 
 try:
-    encp = ["utf-8",    "utf-8-sig",    "cp1250",   "iso-8859-2",   "latin-1"]
+    
     for enc in encp:
         try:
             with open(input_file, "r", encoding=enc) as f:
