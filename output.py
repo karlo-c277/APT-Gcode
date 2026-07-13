@@ -1,8 +1,7 @@
-from apt_gcode_startup import preset
+
 class OutputFilter:
     def __init__(self, LANG):
         self.LANG = LANG
-
     def save_filtered_output(self, output_lines):
 
         save_file = ""
@@ -13,47 +12,55 @@ class OutputFilter:
 
             if save_file in ["DA", "YES", "1"]:
                 
-                while True:
-                    filename = input(self.LANG["naziv output fl"]).strip()
-                    if "." not in filename:
-                        while True:
-                            ekstenzija = input(self.LANG["ekstenzija output"].strip())
-                    
-                            if ekstenzija == "":
-                                filename += ".txt"
-                                break
-                            elif "." not in ekstenzija:
-                                filename += "." + ekstenzija
-                                break
-                            elif ekstenzija.startswith("."):
-                                filename += ekstenzija
-                                break
-                            else:
-                                continue
-                        break                        
-                    else:
-                        if len(filename.split(".")) > 2 or len(filename.split(".")) == 1:
-                            print(self.LANG["neispravni naziv"])
-                            continue
-                        else:
-                            break
+                from apt_gcode_startup import preset
                 if preset == "1":
+                    filename = input(self.LANG["naziv output fl"]).strip().split(".")[0] + ".MPF"
+                    
                     with open(filename, "w", encoding="utf-8") as file:
-                        file.write("%_N_" + filename + "_MPF")
+                        file.write("%_N_" + filename + "_MPF\nG291")
                         for line in output_lines:
                             if not line.strip().startswith("- "):
                                 line = " ".join(line.split())
                                 file.write(line.strip() + "\n")
                 else:
-                    with open(filename, "w", encoding="utf-8") as file:
+                    while True:
+                        filename = input(self.LANG["naziv output fl"]).strip()
+                        if "." not in filename:
+                            while True:
+                                ekstenzija = input(self.LANG["ekstenzija output"].strip())
+                    
+                                if ekstenzija == "":
+                                    filename += ".txt"
+                                    break
+                                elif "." not in ekstenzija:
+                                    filename += "." + ekstenzija
+                                    break
+                                elif ekstenzija.startswith("."):
+                                    filename += ekstenzija
+                                    break
+                                else:
+                                    continue
+                            break                        
+                        else:
+                            if len(filename.split(".")) > 2 or len(filename.split(".")) == 1:
+                                print(self.LANG["neispravni naziv"])
+                                continue
+                            else:
+                                break
+                    zaglavlje = input(self.LANG["zaglavlje output"]).strip()
+                    while encry not in ("utf-8", "utf-8-sig", "cp1250", "iso-8859-2", "latin-1"):
+                        encry = input(self.LANG["enkripcija"]).strip()
+                        
+                        
+                    with open(filename, "w", encoding=encry) as file:
+                        zaglavlje = zaglavlje.strip()
                         for line in output_lines:
                             if not line.strip().startswith("- "):
                                 line = " ".join(line.split())
                                 file.write(line.strip() + "\n")
-
-
+                                
                 print(self.LANG["spremljeno u"] + filename)
-
+                
             elif save_file in ["NE", "NO", "0"]:
                 print(self.LANG["ne zeli spremiti"])
             

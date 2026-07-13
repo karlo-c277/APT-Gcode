@@ -1,11 +1,12 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
         {
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/Apt-gcode startup.py",
+            "program": "${workspaceFolder}/apt_gcode_startup.py",
             "console": "integratedTerminal"
         }
     ]

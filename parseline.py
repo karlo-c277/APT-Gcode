@@ -45,14 +45,14 @@ class Myparseline:
             
             elif line.startswith("UNITS"):
                 
-                while not ("MM" in line or "INCH" in line or "1" in line or "0" in line):
+                while not ("MM","INCH","1","0","IN") in line:
                     line = input(self.LANG["units"]).strip().upper()
                     
                 if "MM" in line or "1" in line:
-                    if self.lsunits != "G71":
-                        print("G71")
+                    if self.lsunits != "G21":
+                        print("G21")
                     else:
-                        self.lsunits = "G71"
+                        self.lsunits = "G21"
                 else:
                     print("G70")
                     self.lsunits = "G70"

@@ -94,7 +94,7 @@ terminal_output = io.StringIO()
 original_stdout = sys.stdout
 sys.stdout = Tee(sys.stdout, terminal_output)
 
-print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\n" + "G55\nDIAMOF\n" + LANG["DEFINIRATI SIROVAC"])
+print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\n" + "G55\nDIAMOF\n;UNITS!!!- mm\nG21\n" + LANG["DEFINIRATI SIROVAC"])
 
 try:
     encp = ["utf-8",    "utf-8-sig",    "cp1250",   "iso-8859-2",   "latin-1"]
