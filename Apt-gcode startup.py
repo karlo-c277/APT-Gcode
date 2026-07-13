@@ -33,7 +33,24 @@ while True:
         break
     else:
         print("- Invalid choice. Please enter HR or EN.")
-
+          
+while True:
+    if input(LANG["iso6983?"]).strip().upper() in ["DA", "YES", "1"]:
+        deafault = input(LANG["iso deafault/not"]).strip().upper()
+        if deafault in ["NOT", "NE", "NO", "0"]:
+            iso6983 = input(LANG["iso6983 command"]).strip().upper()
+            if iso6983 == "":
+                iso6983 = "G291"
+                break
+        elif deafault in ["DEFAULT", "DA", "YES", "1"]:
+            iso6983 = "G291"
+            break
+        else:
+            continue
+    else:
+        print(LANG["samo je iso"])
+        break
+    
 print(LANG["def programa"])
 
 while True:
@@ -71,9 +88,7 @@ terminal_output = io.StringIO()
 original_stdout = sys.stdout
 sys.stdout = Tee(sys.stdout, terminal_output)
 
-print(LANG["Datoteka učitana:"], input_file)
-print(LANG["Učitavanje linija"])
-print("G55\nDIAMOF\n#DEFINIRATI SIROVAC")
+print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\n" + "G55\nDIAMOF\n" + LANG["DEFINIRATI SIROVAC"])
 
 try:
     encp = ["utf-8",    "utf-8-sig",    "cp1250",   "iso-8859-2",   "latin-1"]

@@ -49,7 +49,12 @@ HR = {
     "save file y/n"             : "Želite li stvoriti izlaznu datoteku? (DA/NE): ",
     "neispravni naziv"          : "Greška - neispravan naziv datoteke.",
     "kraj"                      : "Kraj programa.",
-    "ne zeli spremiti"          : "G-code je ispisan u terminalu."
+    "ne zeli spremiti"          : "G-code je ispisan u terminalu.",
+    "DEFINIRATI SIROVAC"        : "# DEFINIRATI SIROVAC",
+    "iso6983?"                  : "- Podržava li Vaš CNC stroj ISO 6983 standard? (DA/NE): ",
+    "iso deafault/not"          : "- Da li je ISO 6983 aktiviran po defaultu ili ne (DA/NE): ",
+    "iso6983 command"           : "- Unesite G-komandu za aktivaciju ISO 6983 (stisnite ENTER ako je G291): ",
+    "samo je iso"               : "Žao nam je, ali ovaj post procesor je samo za ISO 6983 standard. Provjerite postavke Vašeg CNC stroja."
 
 }
 
@@ -103,6 +108,11 @@ EN = {
     "save file y/n"             : "Do you want to create an output file? (YES/NO): ",
     "neispravni naziv"          : "Error - invalid file name.",
     "kraj"                      : "End of program.",
-    "ne zeli spremiti"          : "G-code is printed in the terminal."
+    "ne zeli spremiti"          : "G-code is printed in the terminal.",
+    "DEFINIRATI SIROVAC"        : "# DEFINE WORKPIECE",
+    "iso6983?"                  : "- Does your CNC machine support ISO 6983 standard? (YES/NO): ",
+    "iso deafault/not"          : "- Is ISO 6983 activated by default or not (YES/NO): ",
+    "iso6983 command"           : "- Enter the G-command for activating ISO 6983 (press ENTER if it is G291): ",
+    "samo je iso"               : "Sorry but this post processor is only for ISO 6983 standard. Please check your CNC machine settings."
     
 }
