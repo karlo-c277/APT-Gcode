@@ -1,11 +1,12 @@
 import re                                       #Omugućuje re.split() funkciju za razdvajanje stringa po više znakova
 import math
-from apt_gcode_startup import preset
 # Tapping obavezno preko Output "CYCLE"
 # Naziv, parametri, kompenzacije i svi podaci alata u CATIA-i se MORAJU poklapati sa onima u WinNC-u
 class Myparseline:
 
     def __init__(self, LANG, ccmt):
+        from apt_gcode_startup import preset
+        
         self.LANG = LANG                        #Poziv ispisa na odabranom jeziku
         
         self.ccmt = ccmt                        #Varijabla koja određuje hoće li se komentari iz APT datoteke ispisati u izlaznoj datoteci
