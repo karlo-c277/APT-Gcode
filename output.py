@@ -1,4 +1,4 @@
-from (Apt-gcode startup.py) import preset
+from apt_gcode_startup import preset
 class OutputFilter:
     def __init__(self, LANG):
         self.LANG = LANG
@@ -37,13 +37,19 @@ class OutputFilter:
                             continue
                         else:
                             break
-
-                with open(filename, "w", encoding="utf-8") as file:
-                    if 
-                    for line in output_lines:
-                        if not line.strip().startswith("- "):
-                            line = " ".join(line.split())
-                            file.write(line.strip() + "\n")
+                if preset == "1":
+                    with open(filename, "w", encoding="utf-8") as file:
+                        file.write("%_N_" + filename + "_MPF")
+                        for line in output_lines:
+                            if not line.strip().startswith("- "):
+                                line = " ".join(line.split())
+                                file.write(line.strip() + "\n")
+                else:
+                    with open(filename, "w", encoding="utf-8") as file:
+                        for line in output_lines:
+                            if not line.strip().startswith("- "):
+                                line = " ".join(line.split())
+                                file.write(line.strip() + "\n")
 
 
                 print(self.LANG["spremljeno u"] + filename)
