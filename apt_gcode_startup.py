@@ -9,6 +9,17 @@ from output import OutputFilter
 input_ext = (".txt", ".ncl", "cls", ".apt", ".aptsource")                               #dozvoljene ekstencijeq
 encp = ["utf-8", "utf-8-sig", "cp1250", "iso-8859-2", "ascii", "cp1252", "latin-1"]     #vrste enkripcije za otvaranje datoteka !!!latin-1 ZADNJI jer je ocito svemoguc
 
+
+def normalize_input_path(path):
+    path = path.strip()
+    if "." not in path:
+        path += ".txt"
+    return path
+
+
+def parse_yes_no(value):
+    return str(value).strip().upper() in ("DA", "YES", "1")
+
 class Tee:
     def __init__(self, *files):
         self.files = files
@@ -92,7 +103,7 @@ while True:
         continue
     break
 
-parse = Myparseline(LANG, ccmt)
+parse = Myparseline(LANG, ccmt, preset)
 terminal_output = io.StringIO()
 original_stdout = sys.stdout
 sys.stdout = Tee(sys.stdout, terminal_output)
@@ -124,6 +135,6 @@ finally:
     sys.stdout = original_stdout
 
 output_lines = terminal_output.getvalue().splitlines(True)
-filter_output = OutputFilter(LANG)
+filter_output = OutputFilter(LANG, preset)
 filter_output.save_filtered_output(output_lines)
 exit(0)

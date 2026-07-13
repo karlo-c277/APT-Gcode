@@ -4,11 +4,9 @@ import math
 # Naziv, parametri, kompenzacije i svi podaci alata u CATIA-i se MORAJU poklapati sa onima u WinNC-u
 class Myparseline:
 
-    def __init__(self, LANG, ccmt):
-        from apt_gcode_startup import preset
-        
+    def __init__(self, LANG, ccmt, preset):
         self.LANG = LANG                        #Poziv ispisa na odabranom jeziku
-        
+
         self.ccmt = ccmt                        #Varijabla koja određuje hoće li se komentari iz APT datoteke ispisati u izlaznoj datoteci
         
         self.ss = 3                          #Varijabla koju određuje korisnik ovisno o tome treba li se prilikom pokretanja vretena M03/M04 ispisivati okretaji ili ne
@@ -46,17 +44,18 @@ class Myparseline:
                 #preskakivanje praznih linija
             
             elif line.startswith("UNITS"):
-                
-                while not ("MM","INCH","1","0","IN") in line:
+                # Ensure the line contains a known unit; prompt until valid
+                while not any(opt in line for opt in ("MM", "INCH", "1", "0", "IN")):
                     line = input(self.LANG["units"]).strip().upper()
-                    
+
+                # Set measurement system and emit G-code only when changing
                 if "MM" in line or "1" in line:
                     if self.lsunits != "G21":
                         print("G21")
-                    else:
-                        self.lsunits = "G21"
+                    self.lsunits = "G21"
                 else:
-                    print("G70")
+                    if self.lsunits != "G70":
+                        print("G70")
                     self.lsunits = "G70"
    
             elif self.ccmt ==1 and line.startswith("$$"):
