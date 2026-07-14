@@ -48,7 +48,8 @@ while True:
     else:
         print("- Invalid choice. Please enter HR or EN.")
         
-preset = input(LANG["preset"]).strip().upper()
+atp_vrsta = input(LANG["atp_vrsta"]).strip
+preset = input(LANG["preset"]).strip()
           
 while True:
     if preset == "1":
@@ -103,8 +104,8 @@ while True:
         print(LANG["Neispravna vrsta"] + "\n")
         continue
     break
-
-parse = Myparseline(LANG, ccmt, preset)
+if atp_vrsta ==1:
+    parse = Myparseline(LANG, ccmt, preset)
 terminal_output = io.StringIO()
 original_stdout = sys.stdout
 sys.stdout = Tee(sys.stdout, terminal_output)

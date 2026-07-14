@@ -57,8 +57,8 @@ HR = {
     "samo je iso"               : "Žao nam je, ali ovaj post procesor je samo za ISO 6983 standard. Provjerite postavke Vašeg CNC stroja.",
     "preset"                    : "- Odaberite program na vašem stroju za jednostavnije pokretanje (Costum/0   WinNC Sinumerik/1): ",
     "enkripcija"                : "- Unesite -TOČAN- naziv enkripcije (utf-8, utf-8-sig, cp1250, iso-8859-2, latin-1...): ",
-    "zaglavlje output"          : "- Pošto niste odabrali valjani preset CNC kontroleri koriste provjeru zaglavlja (ne prikazuju je kada pišete kod na kontroleru), \nako ne unesete ispravno zaglavlje i enkripciju kontroler neće otvoriti datoteku \nAko znate točno zaglavlje i enkripciju koju koristi Vaš kontroler javite na karlo.ugrin@gmail.com)\nUnesite zaglavlje izlazne datoteke (stisnite ENTER za prazno): "
-
+    "zaglavlje output"          : "- Pošto niste odabrali valjani preset CNC kontroleri koriste provjeru zaglavlja (ne prikazuju je kada pišete kod na kontroleru), \nako ne unesete ispravno zaglavlje i enkripciju kontroler neće otvoriti datoteku \nAko znate točno zaglavlje i enkripciju koju koristi Vaš kontroler javite na karlo.ugrin@gmail.com)\nUnesite zaglavlje izlazne datoteke (stisnite ENTER za prazno): ",
+    "atp_vrsta"                 : "Odaberite vrstu ulaznog ATP koda -> CATIAV5 1.0 (1) : (unesite broj) "
 }
 
 EN = {
@@ -119,6 +119,6 @@ EN = {
     "samo je iso"               : "Sorry but this post processor is only for ISO 6983 standard. Please check your CNC machine settings.",
     "preset"                    : "- Select the program on your machine for easier startup (Costum/0   WinNC Sinumerik/1): ",
     "enkripcija"                : "- Enter the -EXACT- name of the encoding (utf-8, utf-8-sig, cp1250, iso-8859-2, latin-1): ",
-    "zaglavlje output"          : "- Since you did not select a valid preset, CNC controllers use header check (they do not display it when you write code on the controller), \nso if you do not enter the correct header and encoding, the controller will not open the file \nIf you know the exact header and encoding used by your controller, please email karlo.ugrin@gmail.com\nEnter the header of the output file (press ENTER for empty): "
-    
+    "zaglavlje output"          : "- Since you did not select a valid preset, CNC controllers use header check (they do not display it when you write code on the controller), \nso if you do not enter the correct header and encoding, the controller will not open the file \nIf you know the exact header and encoding used by your controller, please email karlo.ugrin@gmail.com\nEnter the header of the output file (press ENTER for empty): ",
+    "atp_vrsta"                 : "Choose the version of ATP code -> CATIAV5 ATP1.0 (1): (enter number) "
 }

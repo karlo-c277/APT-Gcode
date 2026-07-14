@@ -1,3 +1,4 @@
+#CATIAV5
 import re                                       #Omugućuje re.split() funkciju za razdvajanje stringa po više znakova
 import math
 # Tapping obavezno preko Output "CYCLE"
@@ -12,6 +13,8 @@ class Myparseline:
         self.ss = 3                             #Varijabla koju određuje korisnik ovisno o tome treba li se prilikom pokretanja vretena M03/M04 ispisivati okretaji ili ne
         
         self.preset = preset                    #Varijabla koja određuje hoće li se izlazna datoteka spremiti u MPF formatu ili ne
+        
+        self.tol_coord = 1e-3                   #tolerancija na 0.001
         
         self.lsmovement=""                      #Način kretanja alata
         self.lsplane=""                         #Ravnina xy, xz ili yz
@@ -36,6 +39,10 @@ class Myparseline:
         self.non_def = ("SWITCH/", "PPFUN", "GO/", "AUTOPS/", "INDIRP/")
         self.lsautops = 0
         self.ls_feed_speed = 0.0
+        self.ls_ls_x=0.0
+        self.ls_ls_y=0.0
+        self.ls_ls_z=0.0
+        self.rapto=0
         
         
     def parseline(self, line):
@@ -102,7 +109,7 @@ class Myparseline:
                     line = line.split("PARTNO")[0].strip()
                     print(self.LANG["partno"] + line)
                 
-                elif line. startswith("OPERATION NAME"):
+                elif line.startswith("OPERATION NAME"):
                     opname = line.split(":")
                     opname2 = opname[1].strip()
 
@@ -134,19 +141,14 @@ class Myparseline:
                 kraj_z = float(elements[14].strip())
                 
                 if self.lsplane == "0":                                         
-                    while True:                                                 #U INDIRV ako je jedinični vektor definiran preko 2 vektora onda se odmah dobiva podatak o ravnini, a ako je definiran preko jednog vektora onda se ovdje provjerava koji su centri luka isti i na temelju toga se određuje ravnina
-                        if centar_x==kraj_x==self.ls_x:
-                            self.lsplane="G19"
-                            break
-                        elif centar_y==kraj_y==self.ls_y:
-                            self.lsplane="G18"
-                            break
-                        elif centar_z==kraj_z==self.ls_z:
-                            self.lsplane="G17"
-                            break
-                        else:
-                            print(self.LANG["promjena 3x koord"] + line)
-                            continue
+                    if math.isclose(centar_x, kraj_x, abs_tol=self.tol_coord) and math.isclose(centar_x, self.ls_x, abs_tol=self.tol_coord):
+                        self.lsplane = "G19"
+                    elif math.isclose(centar_y, kraj_y, abs_tol=self.tol_coord) and math.isclose(centar_y, self.ls_y, abs_tol=self.tol_coord):
+                        self.lsplane = "G18"
+                    elif math.isclose(centar_z, kraj_z, abs_tol=self.tol_coord) and math.isclose(centar_z, self.ls_z, abs_tol=self.tol_coord):
+                        self.lsplane = "G17"
+                    else:
+                        print(self.LANG["promjena 3x koord"] + line)
                     
                     print(self.lsplane)
                     
@@ -154,9 +156,8 @@ class Myparseline:
                 kraj_y = round(float(kraj_y), 3)
                 kraj_z = round(float(kraj_z), 3)
 
-                if centar_x!=centar2_x or centar_y!=centar2_y or centar_z!=centar2_z:
+                if (not math.isclose(centar_x, centar2_x, abs_tol=self.tol_center)or not math.isclose(centar_y, centar2_y, abs_tol=self.tol_center)or not math.isclose(centar_z, centar2_z, abs_tol=self.tol_center)):
                     print(self.LANG["cta crc cent nije isti"], line)
-                    #provjera ispravnosti podataka u apt file-u
                     
                 if self.lsplane == "G18":
                     #odabir koordinata za kružnicu u xz ravini
@@ -199,7 +200,7 @@ class Myparseline:
                     D=float(self.ls_j)*vektor2_z-vektor2_y*float(self.ls_k)
 
                     vektor2_y=round(-(vektor2_y), 3)
-                    vektor2_z=round(-(vektor2_z), 3)  
+                    vektor2_z=round(-(vektor2_z), 3)
                     
                     if D<0:
                         movement="G2"
@@ -280,6 +281,9 @@ class Myparseline:
                     koord_y="Y"+str(y)
                 if z!=self.ls_z:
                     koord_z="Z"+str(z)
+                    
+                if self.rapto==1:
+                    
                  
                 print(koord_x, koord_y, koord_z)
                 
@@ -356,7 +360,6 @@ class Myparseline:
                 print("")    
                 
             elif line.startswith("FEDRAT"):
-                #if "RAPTO" in line:
                 feed = re.split(r'[,/]+', line)
                 numf = feed[1].strip()
                 vrstaf = feed[2].strip()
@@ -375,6 +378,12 @@ class Myparseline:
                 if self.lsmovement != movement:
                         print(movement, end=" ")
                         self.lsmovement = movement
+                        
+                if "RAPTO" in line:
+                    self.ls_ls_x = self.ls_x
+                    self.ls_ls_y = self.ls_y
+                    self.ls_ls_z = self.ls_z
+                    self.rapto=1
                 
                 print("F"+ str(round(float(numf), 3)))
                 
@@ -402,7 +411,7 @@ class Myparseline:
                     print("G0 ")
                     self.lsmovement="G0"
                 
-                #u starijim verzijama APT koda RAPUD se može spajati sa drugim komandama poput GOTO ili GODLTA    
+                #u starijim verzijama APT koda RAPID se može spajati sa drugim komandama poput GOTO ili GODLTA    
                 if "GOTO" in line:
                     if self.ls_dim_typ != "G90":
                         print("G90", end=" ")
