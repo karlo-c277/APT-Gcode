@@ -63,7 +63,7 @@ while True:
                 iso6983 = "G291"
                 break
         elif deafault in ["DEFAULT", "DA", "YES", "1"]:
-            iso6983 = "G291"
+            iso6983 = ""
             break
         else:
             continue
@@ -108,7 +108,7 @@ terminal_output = io.StringIO()
 original_stdout = sys.stdout
 sys.stdout = Tee(sys.stdout, terminal_output)
 
-print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\n" + "G55\nDIAMOF\n;UNITS!!!- mm\nG21\n" + LANG["DEFINIRATI SIROVAC"])
+print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\nG55\nDIAMOF\n;UNITS!!!- mm\nG21\n" + LANG["DEFINIRATI SIROVAC"] + iso6983)
 
 try:
     

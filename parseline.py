@@ -9,32 +9,33 @@ class Myparseline:
 
         self.ccmt = ccmt                        #Varijabla koja određuje hoće li se komentari iz APT datoteke ispisati u izlaznoj datoteci
         
-        self.ss = 3                          #Varijabla koju određuje korisnik ovisno o tome treba li se prilikom pokretanja vretena M03/M04 ispisivati okretaji ili ne
+        self.ss = 3                             #Varijabla koju određuje korisnik ovisno o tome treba li se prilikom pokretanja vretena M03/M04 ispisivati okretaji ili ne
         
-        self.preset = preset                      #Varijabla koja određuje hoće li se izlazna datoteka spremiti u MPF formatu ili ne
+        self.preset = preset                    #Varijabla koja određuje hoće li se izlazna datoteka spremiti u MPF formatu ili ne
         
         self.lsmovement=""                      #Način kretanja alata
         self.lsplane=""                         #Ravnina xy, xz ili yz
-        self.lsrotation=""                     #Smjer vrtnje vretena 
+        self.lsrotation=""                      #Smjer vrtnje vretena 
         self.ls_tip_rev=""                      #Način definiranja brzine vrtnje
         self.ls_tip_posmak=""                   #Način posmaka
         self.lssklop=""                         #Zadnji pozvani alat
-        self.ls_x = 0.00000                     #Zadnja x koordinata alata
-        self.ls_y = 0.00000                     #Zadnja y koordinata alata
-        self.ls_z = 0.00000                     #Zadnja z koordinata alata
-        self.ls_i = 0.00000                     #Zadnja vrijednost i vektora
-        self.ls_j = 0.00000                     #Zadnja vrijednost j vektora
-        self.ls_k = 0.00000                     #Zadnja vrijednost k vektora
-        self.ls_spindle_speed = 0.00000         #Zadnja vrijednost okretaja vretena
-        self.circlefeed = 0.0                   #Brzina posmaka za kružne pokrete
+        self.ls_x = 0.0                         #Zadnja x koordinata alata
+        self.ls_y = 0.0                         #Zadnja y koordinata alata
+        self.ls_z = 0.0                         #Zadnja z koordinata alata
+        self.ls_i = 0.0                         #Zadnja vrijednost i vektora
+        self.ls_j = 0.0                         #Zadnja vrijednost j vektora
+        self.ls_k = 0.0                         #Zadnja vrijednost k vektora
+        self.ls_spindle_speed = 0.0             #Zadnja vrijednost okretaja vretena
         self.ls_on_rotation = ""                #Zadnja vrijednost smjera vrtnje vretena
         self.ls_dim_typ = ""                    #Način definiranja koordinata (apsolutno / inkrementno)
         self.ls_clnt_typ = ""                   #Način podmazivanja (FLOOD / MIST)
         self.ls_clnt = ""                       #Zadnja definirana vrijednost podmazivanja (FLOOD / MIST / OFF)
         self.ls_cycle = ""                      #Zadnji definirani ciklus
-        self.lsunits = ""                       #Mjerni sustav
-        self.komentari = ("PPRINT","LOADTL/", "TOOLNO/", "REWIND/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "$$", "OPERATION NAME", "TLAXIS", "CUTCOM")      #skraćivanje koda, na ovaj način se ne treba zapisivati line.startswith("comand_name") za svaku komandu posebno
+        self.lsunits = "G21"                    #Mjerne jedinice
+        self.komentari = ("TPRINT", "PPRINT","LOADTL/", "TOOLNO/", "REWIND/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "$$", "OPERATION NAME", "TLAXIS", "CUTCOM")      #skraćivanje koda, na ovaj način se ne treba zapisivati line.startswith("comand_name") za svaku komandu posebno
         self.non_def = ("SWITCH/", "PPFUN", "GO/", "AUTOPS/", "INDIRP/")
+        self.lsautops = 0
+        self.ls_feed_speed = 0.0
         
         
     def parseline(self, line):
@@ -54,9 +55,9 @@ class Myparseline:
                         print("G21")
                     self.lsunits = "G21"
                 else:
-                    if self.lsunits != "G70":
-                        print("G70")
-                    self.lsunits = "G70"
+                    if self.lsunits != "G20":
+                        print("G20")
+                    self.lsunits = "G20"
    
             elif self.ccmt ==1 and line.startswith("$$"):
                 line = re.sub(r"\$+", "", line)
@@ -111,43 +112,37 @@ class Myparseline:
                 elif line.startswith("TLAXIS"):
                     elements = line.split(" ")
                     print(self.LANG["tlaxis"] + " I" + elements[1].strip() + " J" + elements[2].strip() + " K" + elements[3].strip())
-                    
+                
                 else:
                     print("; " + line)
                 #omogućuje da se linije označene sa navedenim komandama ispišu u izlaznoj datoteci po izboru korisnika kao komentari
-                               
-            elif line.startswith("TPRINT"):
-                izbor_alat = line.split("/")
-                sklop = izbor_alat[1].strip()
-                
-                if self.lssklop != sklop:
-                    print(f"T=\"{sklop}\"")
-                    self.lssklop=sklop
-                #poziv alata        
-
-            elif "CIRCLE" in line:
+            
+            elif line.startswith("AUTOPS"):
+                self.lsautops=1
+                                     
+            elif "CIRCLE" in line and self.lsautops==1:
                 #kretanje alata po krucnici
                 elements = re.split(r'[ ,/()]+', line)                          #izvacenje potrebnih podataka iz linije
-                centar_x = elements[3].strip()
-                centar_y = elements[4].strip()
-                centar_z = elements[5].strip()
+                centar_x = float(elements[3].strip())
+                centar_y = float(elements[4].strip())
+                centar_z = float(elements[5].strip())
                 #radius = elements[6].strip()
-                centar2_x = elements[9].strip()
-                centar2_y = elements[10].strip()
-                centar2_z = elements[11].strip()
-                kraj_x = elements[12].strip()
-                kraj_y = elements[13].strip()
-                kraj_z = elements[14].strip()
+                centar2_x = float(elements[9].strip())
+                centar2_y = float(elements[10].strip())
+                centar2_z = float(elements[11].strip())
+                kraj_x = float(elements[12].strip())
+                kraj_y = float(elements[13].strip())
+                kraj_z = float(elements[14].strip())
                 
-                if self.lsplane == "0":                                         #Postoji situacija da nož dođe do kružnog luka u racličitoj ravnini od samog luka, za skraćivanje računanja pod INDIRV se provjerava,
-                    while True:                                                 #ako je jedinični vektor definiran preko 2 vektora onda se odmah dobiva podatak o ravnini, a ako je definiran preko 3 vektora ili jednog vektora onda se provjerava koji su centri luka isti i na temelju toga se određuje ravnina
-                        if centar_x==kraj_x:
+                if self.lsplane == "0":                                         
+                    while True:                                                 #U INDIRV ako je jedinični vektor definiran preko 2 vektora onda se odmah dobiva podatak o ravnini, a ako je definiran preko jednog vektora onda se ovdje provjerava koji su centri luka isti i na temelju toga se određuje ravnina
+                        if centar_x==kraj_x==self.ls_x:
                             self.lsplane="G19"
                             break
-                        elif centar_y==kraj_y:
+                        elif centar_y==kraj_y==self.ls_y:
                             self.lsplane="G18"
                             break
-                        elif centar_z==kraj_z:
+                        elif centar_z==kraj_z==self.ls_z:
                             self.lsplane="G17"
                             break
                         else:
@@ -217,24 +212,27 @@ class Myparseline:
                     
                 else:
                     print(self.LANG["nepoznata ravnina"] + line)
-                
-                while self.circlefeed <= 0.0:                                     #pošto je potrebno definirati brzinu posmaka za kružne pokrete, korisnik mora unijeti vrijednost posmaka
-                    self.circlefeed = round(float(input(self.LANG["circle feed"] + self.ls_tip_posmak)), 3)
             
-                print(movement, koord, self.circlefeed)
+                print(movement, koord, self.ls_feed_speed, self.ls_tip_posmak)
             
                 self.ls_x=kraj_x
                 self.ls_y=kraj_y
                 self.ls_z=kraj_z
                 self.lsmovement=movement
+                self.lsautops=0
             
             elif line.startswith("GODLTA"):
+                koord_x=""
+                koord_y=""
+                koord_z=""
+                
                 #definiranje incrementnog pomaka
                 if self.ls_dim_typ != "G91":
                     print("G91", end=" ")
                     self.ls_dim_typ="G91"
                     
                 coords = re.split(r'[,/]+', line)
+                
                 if len(coords)==4:
                     x = float(coords[1].strip())
                     y = float(coords[2].strip())
@@ -248,54 +246,25 @@ class Myparseline:
                 else:
                     print(self.LANG["neispravan godlta"] + line)
                     return
-                
-                if y==0:                                #ako je y=0 onda nije yz niti xy nego xz
-                    koord_y=""
-                    ravnina="G18"
-                    if x==0:
-                        koord_x=""                     #ako je x=0 onda se nezapisuje x koord
-                    else:
-                        koord_x=(f"X{round(x, 3)}")     #ako je x!=0 onda se zapisuje x koord
-                    if z==0:
-                        koord_z=""                     #ako je z=0 onda se nezapisuje z koord
-                    else:
-                        koord_z=(f"Z{round(z, 3)}")     #ako je z!=0 onda se zapisuje z koord
-                elif x!=0:                              #ako y nije =0 onda. je neki broj znači yz ili xy, pa ako je x!=0 onda je xy
-                    koord_z=""
-                    ravnina="G17"
-                    if x==0:
-                        koord_x=""
-                    else:
-                        koord_x=(f"X{round(x, 3)}")
-                    if y==0:
-                        koord_y=""
-                    else:
-                        koord_y=(f"Y{round(y, 3)}")       
-                elif z!=0:                              #ako y!=0 i z je neki broj onda je yz ravnina
-                    koord_x=""
-                    ravnina="G19"
-                    if y==0:
-                        koord_y=""
-                    else:
-                        koord_y=(f"Y{round(y, 3)}")
-                    if z==0:
-                        koord_z=""                    
-                    else:
-                        koord_z=(f"Z{round(z, 3)}")       
-                else:                                   #ako su x,y,z!=0 onda je promjena 3 koordinate u jednoj liniji što nije moguće bez multiaxis
-                    print(self.LANG["promjena 3x koord"] + line)
-                    
-                if self.lsplane != ravnina:             #ako je ravnina promijenjena onda se ispisuje nova ravnina
-                    print(ravnina, end=" ")
-                    self.lsplane=ravnina
-                    
+
                 self.ls_x = round((self.ls_x + x), 3)   #definiranje novih koordinata alata u odnosu na prethodne koordinate obzirom da je inkrementni pomak, aidući pomak može biti apsolutni
                 self.ls_y = round((self.ls_y + y), 3)
                 self.ls_z = round((self.ls_z + z), 3)
 
+                if x!=0:
+                    koord_x="X"+str(x)
+                if y!=0:
+                    koord_y="Y"+str(y)
+                if z!=0:
+                    koord_z="Z"+str(z)
+                
                 print(koord_x, koord_y, koord_z)
         
             elif line.startswith("GOTO"):
+                koord_x=""
+                koord_y=""
+                koord_z=""
+                
                 #definiranje apsolutnog pomaka
                 if self.ls_dim_typ != "G90":
                     print("G90", end=" ")
@@ -306,46 +275,13 @@ class Myparseline:
                 y = float(coords[2].strip())
                 z = float(coords[3].strip())
                 
-                if y==self.ls_y:
-                    koord_y=""
-                    ravnina="G18"
-                    if x==self.ls_x:
-                        koord_x=""
-                    else:
-                        koord_x=(f"X{round(x, 3)}")
-                    if z==self.ls_z:
-                        koord_z=""                    
-                    else:
-                        koord_z=(f"Z{round(z, 3)}")      
-                elif x!=self.ls_x:
-                    koord_z=""
-                    ravnina="G17"
-                    if x==self.ls_x:
-                        koord_x=""
-                    else:
-                        koord_x=(f"X{round(x, 3)}")
-                    if y==self.ls_y:
-                        koord_y=""
-                    else:
-                        koord_y=(f"Y{round(y, 3)}")       
-                elif z!=self.ls_z:
-                    koord_x=""
-                    ravnina="G19"
-                    if y==self.ls_y:
-                        koord_y=""
-                    else:
-                        koord_y=(f"Y{round(y, 3)}")
-                    if z==self.ls_z:
-                        koord_z=""                    
-                    else:
-                        koord_z=(f"Z{round(z, 3)}")       
-                else:
-                    print(self.LANG["promjena 3x koord"] + line)
-                           
-                if self.lsplane != ravnina:
-                    print(ravnina, end=" ")
-                    self.lsplane=ravnina                  
-                    
+                if x!=self.ls_x:
+                    koord_x="X"+str(x)
+                if y!=self.ls_y:
+                    koord_y="Y"+str(y)
+                if z!=self.ls_z:
+                    koord_z="Z"+str(z)
+                 
                 print(koord_x, koord_y, koord_z)
                 
                 self.ls_x=x
@@ -418,11 +354,10 @@ class Myparseline:
                         print(" ")
                         
                     self.lsrotation=smjervrtnje
-                    
-            elif line.startswith("FEDRAT"):
-                if "RAPTO" in line:                             #RAPTO se koristi u starijim verzijama APT koda ali se može pojaviti i u novijim verzijama, RAPTO ide nakon standarnog definiranja FEDRAT/ i kaže
-                    line = line.replace("RAPTO", "").strip()    #da se alat kreće u brzome hodu do neke udaljenosti od zavšne točke po liniji (linija može biti kosa) i da nastavi hod do kraja po zadanom feedrate-u
+                print("")    
                 
+            elif line.startswith("FEDRAT"):
+                #if "RAPTO" in line:
                 feed = re.split(r'[,/]+', line)
                 numf = feed[1].strip()
                 vrstaf = feed[2].strip()
@@ -477,47 +412,7 @@ class Myparseline:
                     elements = re.split(r'[ ,/]+', line)
                     x = float(elements[2].strip())
                     y = float(elements[3].strip())
-                    z = float(elements[4].strip())
-                    
-                    if y==self.ls_y:
-                        koord_y=""
-                        ravnina="G18"
-                        if x==self.ls_x:
-                            koord_x=""
-                        else:
-                            koord_x=(f"X{round(x, 3)}")
-                        if z==self.ls_z:
-                            koord_z=""                    
-                        else:
-                            koord_z=(f"Z{round(z, 3)}")      
-                    elif x!=self.ls_x:
-                        koord_z=""
-                        ravnina="G17"
-                        if x==self.ls_x:
-                            koord_x=""
-                        else:
-                            koord_x=(f"X{round(x, 3)}")
-                        if y==self.ls_y:
-                            koord_y=""
-                        else:
-                            koord_y=(f"Y{round(y, 3)}")       
-                    elif z!=self.ls_z:
-                        koord_x=""
-                        ravnina="G19"
-                        if y==self.ls_y:
-                            koord_y=""
-                        else:
-                            koord_y=(f"Y{round(y, 3)}")
-                        if z==self.ls_z:
-                            koord_z=""                    
-                        else:
-                            koord_z=(f"Z{round(z, 3)}")       
-                    else:
-                        print(self.LANG["promjena 3x koord"] + line)
-                           
-                    if self.lsplane != ravnina:
-                        print(ravnina, end=" ")
-                        self.lsplane=ravnina                  
+                    z = float(elements[4].strip())                 
                 
                     self.ls_x=x
                     self.ls_y=y
@@ -541,46 +436,6 @@ class Myparseline:
                         z = float(elements[2].strip())
                     else:
                         print(self.LANG["neispravan godlta"] + line)
-                
-                    if y==0:
-                        koord_y=""
-                        ravnina="G18"
-                        if x==0:
-                            koord_x=""
-                        else:
-                            koord_x=(f"X{round(x, 3)}")
-                        if z==0:
-                            koord_z=""                    
-                        else:
-                            koord_z=(f"Z{round(z, 3)}")      
-                    elif x!=0:
-                        koord_z=""
-                        ravnina="G17"
-                        if x==0:
-                            koord_x=""
-                        else:
-                            koord_x=(f"X{round(x, 3)}")
-                        if y==0:
-                            koord_y=""
-                        else:
-                            koord_y=(f"Y{round(y, 3)}")       
-                    elif z!=0:  
-                        koord_x=""
-                        ravnina="G19"
-                        if y==0:
-                            koord_y=""
-                        else:
-                            koord_y=(f"Y{round(y, 3)}")
-                        if z==0:
-                            koord_z=""                    
-                        else:
-                            koord_z=(f"Z{round(z, 3)}")       
-                    else:
-                        print(self.LANG["promjena 3x koord"] + line)
-                    
-                    if self.lsplane != ravnina:
-                        print(ravnina, end=" ")
-                        self.lsplane=ravnina
                         
                     self.ls_x = round((self.ls_x + x), 3)
                     self.ls_y = round((self.ls_y + y), 3)
@@ -631,7 +486,7 @@ class Myparseline:
                         clon = input("").strip().upper()
                         continue
             
-            elif line.startswith("DELAY"):
+            elif line.startswith("DELAY") or line.startswith("DWELL"):
                 delay=line.split("/")
                 dwell=delay[1].strip()
                 
