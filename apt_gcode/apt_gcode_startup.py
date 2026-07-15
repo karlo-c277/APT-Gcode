@@ -48,7 +48,7 @@ while True:
     else:
         print("- Invalid choice. Please enter HR or EN.")
         
-atp_vrsta = input(LANG["atp_vrsta"]).strip
+atp_vrsta = input(LANG["atp_vrsta"]).strip()
 preset = input(LANG["preset"]).strip()
           
 while True:

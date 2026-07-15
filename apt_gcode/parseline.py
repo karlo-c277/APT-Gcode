@@ -535,6 +535,7 @@ class Myparseline:
                     print(f"G4 S{round(float(dwell), 3)}")
             
             elif line.startswith("CYCLE/"):
+                print("Sorry cycle syntax not resolved in the code, it will be aviable in v1.0, or you can make a pull request and make a new file with complete documentation on apt catia cycle syntacs")
                 if "CYCLE/ON" in line:
                     if self.ls_cycle != "":
                         print(self.ls_cycle)
