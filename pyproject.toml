@@ -3,7 +3,7 @@ requires = ["setup>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [projects]
-name= "apt-gcode"
+name= "pyproject"
 version = "0.1.0"
 descrition = "Post processor for APT code into ISO 6983"
 readme = "README.md"
