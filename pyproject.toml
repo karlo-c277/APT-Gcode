@@ -13,7 +13,7 @@ authors = [{ name = "karlo-c277" }]
 keywords = ["apt", "gcode", "catia", "parser", "iso6983", "atp", "cnc", "post processor", "nc"]
 
 [project.scripts]
-apt-gcode = "apt_gcode_startup:main"
+pyproject = "apt_gcode_startup:main"
 
 [tool.setuptools]
 py-modules = ["apt_gcode_startup", "jezici", "parseline", "output"]
