@@ -104,13 +104,13 @@ while True:
         print(LANG["Neispravna vrsta"] + "\n")
         continue
     break
-if atp_vrsta ==1:
+if atp_vrsta == "1" :
     parse = Myparseline(LANG, ccmt, preset)
 terminal_output = io.StringIO()
 original_stdout = sys.stdout
 sys.stdout = Tee(sys.stdout, terminal_output)
 
-print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\nG55\nDIAMOF\n;UNITS!!!- mm\nG21\n" + LANG["DEFINIRATI SIROVAC"] + iso6983)
+print(LANG["Datoteka učitana:"], input_file, "\n",LANG["Učitavanje linija"], "\nG55\nDIAMOF\n;UNITS!!!- mm\nG21\n" + LANG["DEFINIRATI SIROVAC"] + " " + iso6983)
 
 try:
     
