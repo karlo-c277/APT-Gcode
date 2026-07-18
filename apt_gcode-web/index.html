@@ -26,7 +26,9 @@
                 <option value="DEMO7.txt">DEM07</option>
             </select>
         </div>
-        <button onclick="sendToPython()">APT-Gcode translate</button>
+        <button id="translateButton">
+            APT-Gcode translate
+        </button>
         <div class="inputSettings">
             <label for="inputSettings">Choose settings for input file</label>
             <select name="Language" id="language">
@@ -54,7 +56,15 @@
                 <input type="text" id="command-to-iso" placeholder="Enter G-code command to switch to ISO6983 mode">
             </div>
         </div>
-        <button onclick="sendToPython()">APT-Gcode translate</button>
+        <div id="outputOptions" class="hidden-panel">
+            <h4>Output settings</h4>
+                <div class="outputSettings">
+                    <label>
+                        <input type="checkbox" id="downloadOutput">
+                        Automatically downlad output file
+                    </label>
+                </div>
+        </div>
         <div class="terminal-container">
             <h3>Output:</h3>
             <pre id="terminalOutput">-no output select a file and translate it to generate output</pre>
