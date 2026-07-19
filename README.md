@@ -1,13 +1,11 @@
 >Web versions will be defined as followed: v1.2.3.4 where the 1. stands for web software version, 2. stands for web patch number, 3. Post processor version, 4 post processor patch number  
-
+>last edited 19.7.2026.
 # APT-Gcode
 This is an open source post processor for ATP files outputed by CAM programs  
 It features - translating ATP commands into G-code, also it has select presets for output files, so you dont need to worry if your controler will open the file. But also it allows to make a costum file header, name and extension  
 
 # Usage
-The program will ask you to select some options, and the rest is automated  
-    - Select the program on your machine for easier startup (Costum/0   WinNC Sinumerik/1):  
-        -> here you can choose to load a finished preset or configure the needed information by hand  
+Once parselien.py is trensfered into parseline.js (java script) the project will be published on a website not yet but soon
 
 # Documentatuion and recources
 Most of information about APT and Gcode that used is directly from school  
@@ -26,7 +24,10 @@ v0.9 CYCLE/ commands full support
 v1.0 Helix tool path support  
 v1.+ G-code output in ISO 6983, WinNC Sinumerik, WinNC Fanuc  
 v2.0 SolidWorks APT code support  
-v2.+ Support for other CNC controlers  
+v2.+ Support for other CNC controlers
+
+# Post processor development plan
+apt_gcode is the python version of the program thet is where you test your parser logic, since pyhton is uch easier than Java and you don't need Internet or web or local hosting for that, just you and your terminal.
 
 # Contributing
 Can contact me on karlo.ugrin@gmail.com if you want to learn more or do some coding

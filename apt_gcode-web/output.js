@@ -1,4 +1,4 @@
-import { generateHeader } from "./apt_gcode-web/settings";
+import { generateHeader } from "./settings";
 
 let output = [];
 export function clearOutput(){
