@@ -1,12 +1,15 @@
 import {getSettings, validateSettings} from "./settings.js";
-import {MyParseline} from "./parseline-catiav5-apt1.js";
-import {OutputFilter} from "output.js";
+import {MyParseline} from "./parseline.js";
+import {clearOutput, buildOutput, dowloadOutput} from "./output.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("translateButton");
     button.addEventListener("click", translateAPT);});
 
+
+
 async function translateAPT(){
+    clearOutput();
     try {
         const settings = getSettings();
         validateSettings(settings);
@@ -16,27 +19,32 @@ async function translateAPT(){
         for (const command of commands) {
             parser.parseLine(command);
         }
-        const output = parser.getOutput();
-        document.getElementById("terminalOutput").textContent =
-        output.join("\n");
-        const filter = new OutputFilter(settings);
-        filter.download(output);
+        const result = buildOutput(settings);
+        document.getElementById("terminalOutput").textContent = result;
+        if (settings.downloadOutput) {
+            downloadOutput(result, settings);
+        }
     }
     catch (error) {
         document.getElementById("terminalOutput").textContent=
-            error.messagte;
+            error.message;
         console.error(error);
     }
 }
 async function loadAPT(settings) {
     if (settings.file) {
-        return await settings.file.text();
+        const buffer = await settings.file.arrayBuffer();
+        const decoder = new TextDecoder(settings.inputEncoding);
+        return decoder.decode(buffer);
     }
     if (settings.demo) {
         const response = await fetch("demo/"+settings.demo);
         if (!response.ok)
             throw new Error("Demo file not found.");
         return await response.text();
+        const buffer = await response.arrayBuffer();
+        const decoder = new TextDecoder(settings.inputEncoding);
+        return decoder.decode(buffer);
     }
     throw new Error("No input file selected.");
 }
@@ -51,7 +59,7 @@ function splitAPT(text) {
             continue;
         }
         if (current !==""){
-            command.puch(current);
+            commands.push(current);
         }
         current = "";
     }

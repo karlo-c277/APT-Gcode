@@ -31,45 +31,66 @@
         </button>
         <div class="inputSettings">
             <label for="inputSettings">Choose settings for input file</label>
-            <select name="Language" id="language">
-                <option value="">-- Choose Language --</option>
-                <option value="HR">CRO/Hrvatski</option>
-                <option value="EN">ENG/English</option>
-            </select>
 
             <select name="APT code type" id="apt-code-version">
                 <option value="">-- Choose APT code type --</option>
                 <option value="catiav5_1.0">CATIAV5 APT1.0</option>
             </select>
-
+        </div>
+        <div class="outputSettings">
+            <label for="outputSettings">Choose output settings</label>
             <select name="Output" id="preset">
-                <option value="">-- Select preset output file --</option>
+                <option value="">-- Select preset output code --</option>
                 <option value="costum">Costum</option>
                 <option value="WinNC Sinumerik">WinNC Sinumerik</option>
             </select>
-
+            <label>File name (needed for header and file output)</label>
+            <input type="text" id="filename" placeholder="CNC_gcode">
+            <div class="outputSettings">
+                <input type="checkbox" id="downloadOutput">
+                Automatically download output file
+            </div>
         </div>
-        <div id="costumOptions" class="hidden-panel" style="display: none">
+        <div id="costumOptions" class="hiddenPanel" style="display: none">
             <h4>Costum settings</h4>
             <div class="costumSettings">
                 <label>Costum settings</label>
                 <input type="text" id="command-to-iso" placeholder="Enter G-code command to switch to ISO6983 mode">
+                <label>Header - some programs check for specific frazes in the header name</label>
+                <input type="text" id="output_header" placeholder="%$.K_Baked__Beans.MPF_.$%">
             </div>
         </div>
-        <div id="outputOptions" class="hidden-panel">
-            <h4>Output settings</h4>
-                <div class="outputSettings">
-                    <label>
-                        <input type="checkbox" id="downloadOutput">
-                        Automatically downlad output file
-                    </label>
-                </div>
+        <div id="costumOutput" class="hiddenPanel" style="display: none">
+            <h5>Output settings</h5>
+            <div class="costumOutputFile">
+                <label>Output file encoding</label>
+                <select name="encodingtyp" id="enc_output">
+                    <option value="windows-1252">ASCII</option>
+                    <option value="utf-8">UTF-8</option>
+                    <option value="windows-1252">WINDOWS-1252</option>
+                    <option value="iso-8859-1">ISO-8859-1</option>
+                    <option value="iso-8859-15">ISO-8859-15</option>
+                    <option value="shift_jis">SHIFT_JIS</option>
+                    <option value="euc-jp">EUC-JP</option>
+                    <option value="iso-2022-jp">ISO-2022-JP</option>
+                    <option value="gbk">GBK</option>
+                    <option value="gb18030">GB18030</option>
+                    <option value="big5">BIG5</option>
+                    <option value="euc-kr">EUC-KR</option>
+                    <option value="utf-16le">UTF-16LE</option>
+                    <option value="utf-16be">UTF-16BE</option>
+                </select>
+                <label>File extension</label>
+                <input type="text" id="extension" placeholder=".extension">
+            </div>
         </div>
+
         <div class="terminal-container">
             <h3>Output:</h3>
             <pre id="terminalOutput">-no output select a file and translate it to generate output</pre>
 
         </div>
+        <div id="errorBox"></div>
     </div>
     <script type="module" src="script.js"></script>
 </body>

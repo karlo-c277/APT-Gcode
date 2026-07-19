@@ -1,36 +1,27 @@
-document.addEventListener("DOMContentLoaded", ()=>{
-    const presetSelect = document.getElementById("preset");
-    const costumOptions = document.getElementById("costumOptions");
-    presetSelect.addEventListener("change", () => {
-        if (presetSelect.value === "costum") {
-            costumOptions.style.display = "block";}
-        else {
-            costumOptions.style.display="none";
-        }
-    });
-});
-
-async function sendToPython(){
-    const terminalOutput = document.getElementById("terminalOutput");
-    const fileInput = document.getElementById("costumFilename");
-    const demoSelect = document.getElementById("demoSelect").value;
-    const language = document.getElementById("language").value;
-    const aptVersion = document.getElementById("apt-code-version").value;
-    const preset = document.getElementById("preset").value;
-    const commandToIso = document.getElementById("command-to-iso").value;
-
-    const formData = new FormData();
-    formData.append("language", language);
-    formData.append("aptVersion, aptVersion");
-    formData.append("preset", preset);
-    formData.append("commandToIso", commandToIso);
-
-    if (fileInput.files[0]){
-        formData.append("file", demoSelect);
-        formData.append("isDemo", false)}
-    else {
-        formData.append("file", demoSelect);
-        formData.append("isDemo", true);}
-
+export function generateHeader(settings){
+    return settings.output.header.replace("{filename}", settings.output.filename);
 }
+export function getSettings(){
+    const preset = document.getElementById("preset").value;
 
+    let settings = {
+        preset: preset,
+        output: {}
+    };
+    if (preset === "costum"){
+        settings.output.filename = document.getElementById("filename").value;
+        settings.output.encoding = document.getElementById("enc_output").value;
+        settings.output.extension = document.getElementById("extension").value;
+        settings.output.header = document.getElementById("output_header").value;
+        settings.output.isoCommand = document.getElementById("command-to-iso").value;
+
+    }
+    else if (preset === "WinNC Sinumerik") {
+        settings.output.filename = document.getElementById("filename").value;
+        settings.output.encoding = "utf-8";
+        settings.output.extension = ".mpf";
+        settings.output.header = "%_N_{filename}_MPF";
+        settings.output.isoCommand = "G291";
+    }
+    return settings;
+}
