@@ -5,7 +5,7 @@ This is an open source post processor for ATP files outputed by CAM programs
 It features - translating ATP commands into G-code, also it has select presets for output files, so you dont need to worry if your controler will open the file. But also it allows to make a costum file header, name and extension  
 
 # Usage
-Once parselien.py is trensfered into parseline.js (java script) the project will be published on a website not yet but soon
+Once parseline.py is trensfered into parseline.js (java script) the project will be published on a website not yet but soon
 
 # Documentatuion and recources
 Most of information about APT and Gcode that used is directly from school  
