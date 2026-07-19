@@ -10,7 +10,7 @@ Once parselien.py is trensfered into parseline.js (java script) the project will
 # Documentatuion and recources
 Most of information about APT and Gcode that used is directly from school  
     But for some things there just is no way for me to understand from 15 APT code files therefore I had to turn to Chrome's smart internet search tool  
-    I also used https://archive.org/details/numericalcontrol0000stan for APT commands, but what is the problem? That book is from 1988. So i naturarly used everything from that book since it explains everything  
+    I also used https://archive.org/details/numericalcontrol0000stan for APT commands, but what is the problem? That book is from 1988. So I used everything from that book since it explains everything  
     Then I used those 15 APT file that I mentioned  
 
 # Main problem and some other issues
