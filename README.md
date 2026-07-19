@@ -27,7 +27,7 @@ v2.0 SolidWorks APT code support
 v2.+ Support for other CNC controlers
 
 # Post processor development plan
-apt_gcode is the python version of the program thet is where you test your parser logic, since pyhton is uch easier than Java and you don't need Internet or web or local hosting for that, just you and your terminal.
+apt_gcode is the python version of the program that is where you test your parser logic, since pyhton is much easier than Java and you don't need Internet or web or local hosting for that, just you and your terminal.
 
 # Contributing
 Can contact me on karlo.ugrin@gmail.com if you want to learn more or do some coding
