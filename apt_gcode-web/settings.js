@@ -7,6 +7,10 @@ export function getSettings(){
 
     let settings = {
         preset: preset,
+        file: document.getElementById("costumFilename").files[0],
+        demo: document.getElementById("demoSelect").value,
+        inputEncoding: "utf-8",
+        downloadOutput: document.getElementById("downloadOutput").checked,
         output: {}
     };
     if (preset === "costum"){

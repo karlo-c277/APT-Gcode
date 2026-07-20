@@ -4,6 +4,7 @@ console.log("1");
 //import {MyParseline} from "./parseline.js";
 console.log("2");
 import {clearOutput, buildOutput, downloadOutput} from "./output.js";
+import {MyParseline} from "./parseline.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("translateButton");
@@ -20,7 +21,7 @@ async function translateAPT(){
         const commands =splitAPT(aptText);
         const parser = new MyParseline(settings);
         for (const command of commands) {
-            parser.parseLine(command);
+            parser.parseline(command);
         }
         const result = buildOutput(settings);
         document.getElementById("terminalOutput").textContent = result;
