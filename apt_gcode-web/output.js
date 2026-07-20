@@ -6,7 +6,7 @@ export function clearOutput(){
     output = [];
 }
 export function write(line){
-    output.push(line);
+    output.push(line.trim());
 }
 export function getOutput(){
     return output.join("\n");
@@ -19,7 +19,9 @@ export function buildOutput(settings){
     if (settings.output.isoCommand && settings.output.isoCommand.trim() !==""){
         finalOutput.push(settings.output.isoCommand);
     }
-    if (finalOutput.lenght > 0){
+    finalOutput.push(settings.output.default_units);
+    finalOutput.push("#DEFINE THE WORKPIECE");
+    if (finalOutput.length > 0){
         finalOutput.push("");
     }
     finalOutput.push(...output);

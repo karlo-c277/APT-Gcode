@@ -32,16 +32,20 @@
         </button>
         <div class="inputSettings">
             <h4>Choose settings for input file</h4>
-
             <select name="APT code type" id="apt-code-version">
                 <option value="">-- Choose APT code type --</option>
                 <option value="catiav5_1.0">CATIAV5 APT1.0</option>
+            </select>
+            <select name="default measurement units" id="default_units">
+                <option value="G21">Millimiters</option>
+                <option value="G20">Inch</option>
             </select>
         </div>
         <div class="outputSettings">
             <h4>Choose output settings</h4>
             <select name="Output" id="preset">
                 <option value="">-- Select preset output code --</option>
+                <option value="ISO6983">ISO 6983</option>
                 <option value="costum">Costum</option>
                 <option value="WinNC Sinumerik">WinNC Sinumerik</option>
             </select>

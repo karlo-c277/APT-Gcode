@@ -19,6 +19,7 @@ export function getSettings(){
         settings.output.extension = document.getElementById("extension").value;
         settings.output.header = document.getElementById("output_header").value;
         settings.output.isoCommand = document.getElementById("command-to-iso").value;
+        settings.output.default_units = document.getElementById("default_units").value;
 
     }
     else if (preset === "WinNC Sinumerik") {
@@ -27,6 +28,15 @@ export function getSettings(){
         settings.output.extension = ".mpf";
         settings.output.header = "%_N_{filename}_MPF";
         settings.output.isoCommand = "G291";
+        settings.output.default_units = "G21";
+    }
+    else if (preset === "ISO6983"){
+        settings.output.filename = document.getElementById("filename").value;
+        settings.output.encoding = "utf-8";
+        settings.output.extension = ".txt";
+        settings.output.header = "NO HEADER";
+        settings.output.isoCommand = "";
+        settings.output.default_units = "G21";
     }
     return settings;
 }
