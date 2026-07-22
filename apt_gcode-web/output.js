@@ -4,6 +4,10 @@ import { generateHeader } from "./settings.js";
 let output = [];
 export function clearOutput(){
     output = [];
+    const terminal = document.getElementById("terminalOutput");
+    if (terminal) {
+        terminal.textContent = "Translating... Please wait."; 
+    }
 }
 export function write(line){
     output.push(line.trim());

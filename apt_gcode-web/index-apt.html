@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>apt-gcodev0.8-html</title>
-    <!--<link rel="stylesheet" href="style.css">-->
+    <link rel="stylesheet" href="style-index.css">
 </head>
 <body>
     <div class="container">
         <h1>APT-Gcode-v0.8</h1>
         <h2>Settings</h2>
+        <div class="main-grid">
         <div class="form-group">
-            <label for="costumFilename">Enter file name:</label>
+            <label for="costumFilename">Select a file:</label>
             <input type="file" id="costumFilename" placeholder="beans.aptsource">
         </div>
         <div class="form-group2">
@@ -24,12 +25,8 @@
                 <option value="DEMO4.txt">DEMO4</option>
                 <option value="DEMO5.txt">DEMO5</option>
                 <option value="DEMO6.txt">DEMO6</option>
-                <option value="DEMO7.txt">DEM07</option>
             </select>
         </div>
-        <button id="translateButton">
-            APT-Gcode translate
-        </button>
         <div class="inputSettings">
             <h4>Choose settings for input file</h4>
             <select name="APT code type" id="apt-code-version">
@@ -37,7 +34,7 @@
                 <option value="catiav5_1.0">CATIAV5 APT1.0</option>
             </select>
             <select name="default measurement units" id="default_units">
-                <option value="G21">Millimiters</option>
+                <option value="G21">Millimeters</option>
                 <option value="G20">Inch</option>
             </select>
         </div>
@@ -89,9 +86,12 @@
                 <input type="text" id="extension" placeholder=".extension">
             </div>
         </div>
-
+        </div>
+        <button id="translateButton">
+            APT-Gcode translate
+        </button>
+        
         <div class="terminal-container">
-            <h4>Output:</h4>
             <pre id="terminalOutput">-no output select a file and translate it to generate output</pre>
 
         </div>

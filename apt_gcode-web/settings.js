@@ -28,7 +28,7 @@ export function getSettings(){
         settings.output.extension = ".mpf";
         settings.output.header = "%_N_{filename}_MPF";
         settings.output.isoCommand = "G291";
-        settings.output.default_units = "G21";
+        settings.output.default_units = document.getElementById("default_units").value;
     }
     else if (preset === "ISO6983"){
         settings.output.filename = document.getElementById("filename").value;
@@ -36,7 +36,7 @@ export function getSettings(){
         settings.output.extension = ".txt";
         settings.output.header = "NO HEADER";
         settings.output.isoCommand = "";
-        settings.output.default_units = "G21";
+        settings.output.default_units = document.getElementById("default_units").value;
     }
     return settings;
 }

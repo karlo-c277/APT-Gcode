@@ -22,8 +22,8 @@ export class MyParseline{
             this.ls_dim_typ = "";
             this.ls_clnt_typ = "";
             this.ls_cycle = "";
-            this.lsunits = document.getElementById ? document.getElementById(settings.output.default_units) : null;
-            this.comments = ["TPRINT", "PPRINT", "LOADTL/", "TOOLNO/", "REWIND/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "$$", "OPERATION NAME", "TLAXIS", "CUTCOM"];
+            this.lsunits = settings.output.default_units;
+            this.comments = ["TPRINT", "PPRINT", "LOADTL/", "TOOLNO/", "REWIND/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS", "CUTCOM"];
             this.non_def = ["SWITCH/", "PPFUN", "GO/", "INDIRP/"];
             this.lsautops = 0;
             this.ls_feed_speed = 0.0;
@@ -44,54 +44,52 @@ export class MyParseline{
             }
         }
     parseline(line){
-        if (1===1){
-            let line
-            let elements
-            let centar_x
-            let centar_y
-            let centar_z
-            let centar2_x
-            let centar2_y
-            let centar2_z
-            let kraj_x
-            let kraj_y
-            let kraj_z
-            let vektor2_x
-            let vektor2_y
-            let vektor2_z
-            let D
-            let movement
-            let koord
-            let koord_x
-            let koord_y
-            let koord_z
-            let x
-            let y
-            let z
-            let dist
-            let ratio
-            let rdtx
-            let rdty
-            let rdtz
-            let koord__x
-            let koord__y
-            let koord__z
-            let dtx
-            let dty
-            let dtz
-            let spindlDT
-            let num
-            let rotation
-            let rotation_typ
-            let feednumf
-            let tooln
-            let cutter
-            let intol
-            let outol
-            let toler
-            let feed
+            let elements;
+            let centar_x;
+            let centar_y;
+            let centar_z;
+            let centar2_x;
+            let centar2_y;
+            let centar2_z;
+            let kraj_x;
+            let kraj_y;
+            let kraj_z;
+            let vektor2_x;
+            let vektor2_y;
+            let vektor2_z;
+            let D;
+            let movement;
+            let koord;
+            let koord_x;
+            let koord_y;
+            let koord_z;
+            let x;
+            let y;
+            let z;
+            let dist;
+            let ratio;
+            let rdtx;
+            let rdty;
+            let rdtz;
+            let koord__x;
+            let koord__y;
+            let koord__z;
+            let dtx;
+            let dty;
+            let dtz;
+            let spindlDT;
+            let num;
+            let rotation;
+            let rotation_typ;
+            let feednumf;
+            let tool_slot;
+            let cutter;
+            let intol;
+            let outol;
+            let toler;
+            let feed;
+            let numf;
 
-        }
         console.log(line);
         if (!line || !line.trim()) return;
 
@@ -107,29 +105,26 @@ export class MyParseline{
                     this.lsunits = "G20";
                 }
             } else {
-                write("Unknown unit size " + line);
+                write("Unknown unit type " + line);
             }
-        }
-        else if (line.startsWith("$$")){
-            line = line.replace(/^\$\$/,";");
-            write(line);
-        }
-        else if (line.startsWith(this.non_def)){
+        }                          
+        else if (this.non_def.some(word => line.startsWith(word))){
             write("not defined:" + line);
         }
-        else if (line.startsWith(this.comments)){
-            if (line.startsWith("LOADTL/") || line.startWith("SELECTL/")){
-                 tooln = line.split("/")[1].trim();
+        else if (this.comments.some(word => line.startsWith(word))){
+            if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
+                 tool_slot = line.split("/")[1].trim();
                 write(";Magazine slot number: " + tool_slot);
             }
             else if (line.startsWith("CUTTER/")){
-                if (line.split(" ").length < 3){
+                let unit = (this.lsunits === "G21" || line.includes("MM")) ? "MM" : "INCH";
+                if (line.split(/[,\/()]+/).length < 3){
                      cutter = line.split("/")[1].trim();
-                    write(";Tool cutter radius: " + r_cuter + this.ls_units_word);
+                    write(";Tool cutter radius: " + cutter + " " + unit);
                 }
-                else if (line.split(" ").length >=3){
+                else if (line.split(/[,\/()]+/).length >=3){
                      cutter = line.split("/")[1].trim();
-                    write("Tool cutter radius: " + r_cuter + this.ls_units_word);
+                    write(";Tool cutter radius: " + cutter + " " + unit);
                 }
             }
             else if (line.startsWith("INTOL/")){
@@ -166,7 +161,7 @@ export class MyParseline{
         else if (line.startsWith("AUTOPS")){
             this.autops = 1;
         }
-        else if (line.includes("CIRCLE") && self.lsautops === 1){
+        else if (line.includes("CIRCLE") && this.lsautops === 1){
              elements = line.split(/[,\/()]+/).filter(Boolean);
              centar_x = +elements[3];
              centar_y = +elements[4];
@@ -341,13 +336,13 @@ export class MyParseline{
              y = +koord[2];
              z = +koord[3];
 
-            if (x !== self.ls_x){
+            if (x !== this.ls_x){
                  koord_x = " X" + x;
             }
-            if (y !== self.ls_y){
+            if (y !== this.ls_y){
                  koord_y = " Y" + y;
             }
-            if (z !== self.ls_z){
+            if (z !== this.ls_z){
                  koord_z = " Z" + z;
             }
 
@@ -368,7 +363,7 @@ export class MyParseline{
 
                 this.rapto = 0;
             }
-            write(koord_x, koord_y, koord_z);
+            write(koord_x + koord_y + koord_z);
             
             this.ls_x=x;
             this.ls_y=y;
@@ -401,15 +396,15 @@ export class MyParseline{
                         this.ls_tip_rev = rotation_typ;
                     }
                     if (line.includes("CLW")){
-                        this.lsroation = "M3";
+                        this.lsrotation = "M3";
                     }
                     else if (line.includes("CCLW")){
-                        this.lsroation = "M4";
+                        this.lsrotation = "M4";
                     }
                     else {
                         write("ERROR SPINDLE DIRECTION NOT DEFINED " +line);
                     }
-                    this.ls_on_rotation = "S" + this.ls_spindle_speed + " " + this.ls_tip_rev + " " + this.lsrotation;
+                    this.ls_on_rotation = ("S" + this.ls_spindle_speed + " " + this.ls_tip_rev + " " + this.lsrotation);
                     write(this.ls_on_rotation);
                 }
                 else {
@@ -422,7 +417,7 @@ export class MyParseline{
         }
         else if (line.startsWith("FEDRAT")){
             feed = line.split(/[,/]+/);
-            numf = feed[2].trim();
+            numf = feed[1].trim();
 
             if (line.includes("MMPR")||line.includes("IPR")||line.includes("REV")){
                 this.ls_tip_posmak = "G95";
@@ -458,13 +453,13 @@ export class MyParseline{
                  y = +koord[2];
                  z = +koord[3];
 
-                if (x !== self.ls_x){
+                if (x !== this.ls_x){
                      koord_x = " X" + x;
                 }
-                if (y !== self.ls_y){
+                if (y !== this.ls_y){
                      koord_y = " Y" + y;
                 }
-                if (z !== self.ls_z){
+                if (z !== this.ls_z){
                      koord_z = " Z" + z;
                 }
 
@@ -562,7 +557,7 @@ export class MyParseline{
                 write("M9");
             }
             else if (line.includes("ON")){
-                if (ls_clnt_typ !== ""){
+                if (this.ls_clnt_typ !== ""){
                     write(this.ls_clnt_typ);
                 }
                 else {
@@ -579,6 +574,13 @@ export class MyParseline{
             else{
                 write("G4 S" + +dwell.toFixed(3));
             }
+        }
+        else if (line.startsWith("CYCLE")){
+            write(line);
+        }
+        else if (line.startsWith("$$")){
+            line = line.split("$$")[1];
+            write(";" + line);
         }
     }
 }
