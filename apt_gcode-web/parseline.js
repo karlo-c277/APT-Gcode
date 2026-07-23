@@ -2,7 +2,7 @@ import {write} from "./output.js";
 
 console.log("parser")
 
-export class MyParseline{
+export class catiav5_1_0{
     constructor(settings){
             this.tolr_coord = 1e-3;
             this.lsmovement = "";

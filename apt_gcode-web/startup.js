@@ -4,13 +4,11 @@ console.log("1");
 //import {MyParseline} from "./parseline.js";
 console.log("2");
 import {clearOutput, buildOutput, downloadOutput} from "./output.js";
-import {MyParseline} from "./parseline.js";
+import {catiav5_1_0} from "./parseline.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("translateButton");
     button.addEventListener("click", translateAPT);});
-
-
 
 async function translateAPT(){
     clearOutput();
@@ -19,7 +17,7 @@ async function translateAPT(){
         validateSettings(settings);
         const aptText = await loadAPT(settings);
         const commands =splitAPT(aptText);
-        const parser = new MyParseline(settings);
+        const parser = document.getElementById("apt-code-version").value;
         for (const command of commands) {
             parser.parseline(command);
         }

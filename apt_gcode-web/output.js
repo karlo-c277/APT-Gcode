@@ -2,6 +2,29 @@ console.log("output")
 import { generateHeader } from "./settings.js";
 
 let output = [];
+let jsonOutput = [];
+
+
+export function kk(line){
+    jsonOutput.push(line.trim());
+}
+
+
+export function getJSON(){
+    return JSON.stringify(
+        jsonOutput,
+        null,
+        2
+    );
+}
+
+
+export function clearJSON(){
+    jsonOutput = []
+}
+
+
+
 export function clearOutput(){
     output = [];
     const terminal = document.getElementById("terminalOutput");
@@ -9,12 +32,18 @@ export function clearOutput(){
         terminal.textContent = "Translating... Please wait."; 
     }
 }
+
+
 export function write(line){
     output.push(line.trim());
 }
+
+
 export function getOutput(){
     return output.join("\n");
 }
+
+
 export function buildOutput(settings){
     let finalOutput = [];
     if (settings.output.header && settings.output.header.trim() !==""){
@@ -31,6 +60,8 @@ export function buildOutput(settings){
     finalOutput.push(...output);
     return finalOutput.join("\n");
 }
+
+
 export function downloadOutput(text,settings){
     const blob = new Blob([text],{
         type:
@@ -43,4 +74,7 @@ export function downloadOutput(text,settings){
     link.click();
     URL.revokeObjectURL(link.href);
 }
+
+
 console.log("output end")
+{}
