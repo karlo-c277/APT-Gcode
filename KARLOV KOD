@@ -1,0 +1,157 @@
+eng. - Karlos Code
+-this an universal language created to translate different types of APT into G-Code and the other way around
+
+-original use in Karlo Ugrins APT - Gcode project transfer of data between APT reader and G-code writer in JSON format
+-all of the comands are single meaning making it very easy to both write in KC and read from KC
+-every command written is saved as an independed string in the JSON
+--So let's begin with defining the commands--
+
+["COMMENT: string comment","KEY: VALUE","KEY2: VALUE2",etc]
+-KC keeps a single array line
+-the string contains a KEY and VALUE divided by ":"
+-KEY describes what command type is being transmitted
+-VALUE desribes EVERYTHING that there is to be known about that command with some exeptions
+-all commands in KC shall be written in single line, there shall not be any elements designating breaking line because why would you
+-all keys shall begin exactly 0 spaces from opening " sign
+-all values shall end exactly 0 spaces before closing " sign unless space is the part of the value
+-all sub keys or information keys shall begin 1 space after the main key unless stated otherwise
+-all numerical values shall be saved as strings but only be defined as digits
+-sub keys or information keys defined under key_info shall be separated with "/+/"
+
+
+
+"COMMENT:This is a comment"
+    -COMMENT is defining that this string is a comment (evidently)
+    - ":" marks that this the end of command that was prevoiuslty stated
+    - now begins the actual comment
+    -THE COMMENT BEGINS IMMEDIATELY AFTER ":"
+        -that way translating the comment is way easier and logic goes:
+            -> if line contains "COMMENT" -> line replace "COMMENT:" with symbol for the comment (for example $, then we would have $This is a comment)
+    -before ending the line with " there shall not any spaces or sings unless it is a part of the comment itself
+    -There are NO other elements for this command
+"COMMENT:This is an example for a comment " with comment sing in the output comment being "$" output will be "$This is an example for a comment " <- notice the space before " as that is the way Comand line ended
+
+"UNIT: unit_type"
+    -UNIT command shall define what measuremnt unit type is used
+    -default units are milimeters
+    -unit_type can be:
+        MM - milimeters
+        INCH - inches
+        FT - feet
+        M - meter
+        YARD - yards
+        CB - cable (1/10 of NM - 185.2 M)
+        KM - kilometer
+        LM - land mile
+        NM - nautical mile - 1852 M
+        LY - light year (I mean just to be sure we cover everything)
+    -unit_type shall be distanced from ":" exactly 1 space
+    -before ending the line with " there shall not be any spaces or 
+    -There are NO other elements for this command
+
+"TOOL: tool_info"
+    -TOOL defines what tool is being used
+    -tool_info shall begin exactly one space after ":"
+    -tool_info shall be consisted of the following information:
+        NAME:tool_name
+        MAGAZINE:slot_number
+        COMPENSATION:tool_compensation
+    -"NAME:" is a non variable meaning it is a fixed value
+    -"MAGAZINE:" is a non variable meaning it is a fixed value
+    -"COMPENSATION:" is a non variable meaning it is a fixed value
+    "NAME:tool_name"
+        -tool_name may be a variable for example "Threading+tool+d15+b7" where the spaces are defined with "+"
+        -if there is NO tool name defined tool_name shall be valued as "++" -> " NAME:++ "        
+        -tool_name shall be spaced exactly 0 spaces from "NAME:"
+    "MAGAZINE:slot_number"
+        -slot_number may be a variable but shall only be a number
+        -if there is NO slot number defined slot_number shall be valued as "++"
+        -slot_number shall be represented as a 3 digit number beginning from 000, 001 untill 999
+        -slot_number shall be spaced exactly 0 spaces from "MAGAZINE:"
+    "COMPENSATION:tool_compensation"
+        -tool_compensation may be a variable but shall only be a number
+        -if there is NO tool compensation number defined tool_compensation shall be valued as "++"
+        -tool_compensation shall be represented as a 3 digit number beginning from 000, 001 untill 999
+        -tool_compensation shall be spaced exactly 0 spaces from "COMPENSAION:"
+
+"SPINDLE: spindle_info"
+    -this defines a change in spindle information
+    -spindle_info shall consist of the following information:
+        -"STATE:value" where value is a variable starting 0 spaces from "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of spindle_info may be undefined
+        -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers
+        -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and it must be valued only as "surface" as for surface speed or "fix" as for fixed RPM speed
+        -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" and it must only be valued as "CW" for clockwise or as "CCW" for counter-clockwise
+
+"FEEDRATE: feedrate_info"
+    -this defines the speed of changing tool position during "CUT"
+    -feedrate_info shall consist of the following information:
+        -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and is valued eiter as "time" for -per minute- feedrate or "rev" for -per revolution- feedrate
+        -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers
+
+"COOLANT: coolant_info"
+    -defines what type of coolant is used
+    -coolant_info shall consist of the following information:
+        -"STATE:value" where value is a variable starting 0 spaces after "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of coolant_info may be undefined
+        -"TYPE:value" where value is a variable starting 0 spaces after "TYPE:" and it shall be valued either as "air" for usage of compressed air, "mist" for light fluid or "floof" for heavy fluid usage
+
+"MOVEMENT: movement_type"
+    -MOVEMENT defines that there is a change in the way next point is defined wether it is incremental movement or absolute movement
+    -movement_type shall be spaced exactly 1 space from the "MOVEMENT:"
+    -for Incremental, movement_type will be defined as "incremental"
+    -for Absolute, movement_type will be defined as "absolute"
+
+"AIR"
+    -defines that next lines are executed in rapid movement meaning that the workpiece is not being cut
+
+"CUT"
+    -defines that next lines are executed in cutting movement meaning that the workpiece is being cut
+
+"END"
+    -defines that this is it. there is nothing more to be done, the program is finished
+
+"LINE: X Y Z A B C"
+    -LINE: means that there is a linear movement
+    X
+        -X shall contain "X" followed by a numerical value with undefined decimals both of positive and negative value
+        -"X" shall be spaced exactly 1 space from the previous element
+        -numerical value must have at least 1 whole number and 1 decimal number divided with a "."
+        -if the numerical value is negative "-" sign must be present after "X" but before numerical value
+        -in case of the x coordinate not changing the numerical value, it may be presentet as "++"
+        -inside the whole X there shall be no spaces
+    Same aplies for all of the remeining elements but they must be ordered in the following array X Y Z A B C
+    In case of not using multi axial machining process the ABC element may be left out
+
+"DWELL: dwell_info"
+    -defines how long the tool is dwelling/stopped whilst the spindle is spinning
+    -dwell_info must consist of the following information:
+        -"TYPE:value" where value is a variable starting 0 spaces from the "TYPE:" and is valued either as "rev" meaning how many revolutions until next command or "time" for amount of time until next command
+        -"NUMBER:value" where value is a numerical variable starting 0 spaces from the "NUMBER:" and it shall only contain positive and both whole or decimal numbers
+
+"ARCH: arch_info"
+    -defines a partial cicular movement
+    -arch_info must consist of the followinf information:
+        -"RADIUS:value" where value is a numerical variable starting 0 spaces from "RADIUS:" and it shall only contain positive and both whole or decimal numbers
+            -meaning the radius or the movement
+        -"BEGIN:value" where value is a numerical variable starting 0 spaces from "BEGIN:"
+            -meaning the complete XYZ coordinates of the beginning of teh center of the arch, stated as following example: "BEGIN:X20 Y12.5897 Z-30.87" !!must match last tool coordinates
+        -"CENTER:value" where value is a numerical variable starting 0 spaces from "CENTER:"
+            -meaning the complete XYZ coordinates of the center of the arch, stated as following example: "CENTER:X20 Y12.5897 Z-30.87"
+        -"END:value" where value is a numerical variable starting 0 spaces from "END:"
+            -meaning the complete XYZ coordinates of the end of the arch, stated as following example: "END:X20 Y12.5897 Z-30.87"
+        -"VECTOR:value" where value is a numerical variable starting 0 spaces from "VECTOR:"
+            -meaning the compete IJK vector set of the directional vector (total lenght of 1) that is tanget to the arch'es circle in the beginning point like this example "VECTOR:I0.707 J-0.707 Z0"
+        -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" valued either as "cw" for clockwise or "ccw" for counter clockwise arch direcion
+        -NOTE there may be aditional info added AFTER the previously stated ones by any format of choice
+
+"CYCLE: cycle_info"
+    -defines a canned cycle
+    -cycle_info shall consist of the following information:
+        -"LOCATION: value" where value begins with 1 space after "LOCATION:" and defines point/s of beggining of each cycle
+            -value: (X Y Z)(X Y Z) XYZ in the fisrt () brackets are coordinates for the first CYCLE in the second () brackets for the second one
+            -the () brackets shall be distanced 0 spaces from each other
+            -X value shall begin 0 spaces after "(" and have structure as in "LINE:" - exept for the second statement
+            -Y shall have structure as in "LINE:"
+            -Z shall have structure as in "LINE:"
+            -the ")" closing bracket shall be 0 spaces after Z value
+        -"TYPE:value" where value begins 0 spaces after "TYPE:" and is named as the cycle that is being define
+        !!!The cycle syntacs is still in develpement still not entierly defined plese reach out to karlo.ugrin@mail.com for info

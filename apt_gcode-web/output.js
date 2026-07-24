@@ -24,7 +24,6 @@ export function clearJSON(){
 }
 
 
-
 export function clearOutput(){
     output = [];
     const terminal = document.getElementById("terminalOutput");
@@ -75,16 +74,5 @@ export function downloadOutput(text,settings){
     URL.revokeObjectURL(link.href);
 }
 
-export function saveJSON(){
-
-    fetch("/save-json", {
-        method: "POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body: getJSON()
-    });
-
-}
 console.log("output end")
 {}

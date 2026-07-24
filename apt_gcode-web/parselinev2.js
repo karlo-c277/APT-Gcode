@@ -1,7 +1,6 @@
 import {write} from "./output.js";
 
 console.log("parser")
-console.log(typeof parser);
 
 export class catiav5_1_0{
     constructor(settings){
@@ -32,11 +31,11 @@ export class catiav5_1_0{
             this.ls_ls_y = 0.0;
             this.ls_ls_z = 0.0;
             this.rapto=0;
-            if (this.lsunits === "G21"){
+            if (this.lsunits === "UNIT: MM"){
                 this.ls_units_word = "MM";
                 this.rnd_num=3;
             }
-            else if (this.lsunits === "G20"){
+            else if (this.lsunits === "UNIT: INCH"){
                 this.ls_units_word = "INCH";
                 this.rnd_num=4;
             }
@@ -92,20 +91,20 @@ export class catiav5_1_0{
             let numf;
             let dwell;
             let revs;
-
+            
         console.log(line);
         if (!line || !line.trim()) return;
 
         if (line.startsWith("UNITS")){
             if (line.includes("MM")){
-                if (this.lsunits !== "G21"){
-                    write("G21");
-                    this.lsunits = "G21";
+                if (this.lsunits !== "UNIT: MM"){
+                    write("UNIT: MM");
+                    this.lsunits = "UNIT: MM";
                 }
             } else if (line.includes("INCH")){
-                if (this.lsunits !== "G20"){
-                    write("G20");
-                    this.lsunits = "G20";
+                if (this.lsunits !== "UNIT: INCH"){
+                    write("UNIT: INCH");
+                    this.lsunits = "UNIT: INCH";
                 }
             } else {
                 write("Unknown unit type " + line);
@@ -117,48 +116,48 @@ export class catiav5_1_0{
         else if (this.comments.some(word => line.startsWith(word))){
             if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
                  tool_slot = line.split("/")[1].trim();
-                write(";Magazine slot number: " + tool_slot);
+                write("COMMENT:Magazine slot number: " + tool_slot);
             }
             else if (line.startsWith("CUTTER/")){
-                let unit = (this.lsunits === "G21" || line.includes("MM")) ? "MM" : "INCH";
+                let unit = (this.lsunits === "UNIT: MM" || line.includes("MM")) ? "MM" : "INCH";
                 if (line.split(/[,\/()]+/).length < 3){
                      cutter = line.split("/")[1].trim();
-                    write(";Tool cutter radius: " + cutter + " " + unit);
+                    write("COMMENT:Tool cutter radius: " + cutter + " " + unit);
                 }
                 else if (line.split(/[,\/()]+/).length >=3){
                      cutter = line.split("/")[1].trim();
-                    write(";Tool cutter radius: " + cutter + " " + unit);
+                    write("COMMENT:Tool cutter radius: " + cutter + " " + unit);
                 }
             }
             else if (line.startsWith("INTOL/")){
                  intol = line.split("/")[1].trim();
-                write(";Inside tolerance from the path: " + intol + this.ls_units_word);
+                write("COMMENT:Inside tolerance from the path: " + intol + this.ls_units_word);
             }
             else if (line.startsWith("OUTOL/")){
                  outtol = line.split("/")[1].trim();
-                write(";Outside tolerance from the path: "+ outtol + this.ls_units_word);
+                write("COMMENT:Outside tolerance from the path: "+ outtol + this.ls_units_word);
             }
             else if (line.startsWith("TOLER/")){
                  toler = line.split("/")[1].trim();
-                write(";Tolerance from the path: " + toler + this.ls_units_word);
+                write("COMMENT:Tolerance from the path: " + toler + this.ls_units_word);
             }
             else if (line.startsWith("FINI") || line.startsWith("END")){
-                write(";End of program")
+                write("COMMENT:End of program")
             }
             else if (line.startsWith("PARTNO")){
-                 line = line.replace(/^PARTNO/, ";Part number: ");
+                 line = line.replace(/^PARTNO/, "COMMENT:Part number: ");
                 write(line);
             }
             else if (line.startsWith("OPERATION NAME")){
-                 line = line.replace(/^OPERATION NAME/, ";").replace(/^:/, "");
+                 line = line.replace(/^OPERATION NAME/, "COMMENT:").replace(/^:/, "");
                 write(line);
             }
             else if (line.startsWith("TLAXIS")){
                  elements = line.split(" ");
-                write(";Tool axies are I" + elements[1].trim() + " J" + elements[2].trim() + " K" + elements[3].trim());
+                write("COMMENT:Tool axies are I" + elements[1].trim() + " J" + elements[2].trim() + " K" + elements[3].trim());
             }
             else {
-                write(";" + line);
+                write("COMMENT:" + line);
             }
         }
         else if (line.startsWith("AUTOPS")){
@@ -317,12 +316,13 @@ export class catiav5_1_0{
                  koord__y = koord_y-rdty;
                  koord__z = koord_z-rdtz;
 
-                write("G0 X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nG1");
+                write("AIR")
+                 write("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
 
                 this.rapto = 0;
             }
 
-            write(koord_x, koord_y, koord_z);
+            write("LINE:",koord_x, koord_y, koord_z);
 
         }
         else if (line.startsWith("GOTO")){
@@ -330,9 +330,9 @@ export class catiav5_1_0{
              koord_y="";
              koord_z="";
 
-            if (this.ls_dim_typ !== "G90"){
-                write("G90");
-                this.ls_dim_typ = "G90";
+            if (this.ls_dim_typ !== "MOVEMENT: absolute"){
+                write("MOVEMENT: absolute");
+                this.ls_dim_typ = "MOVEMENT: absolute";
             }
              koord = line.split(/[,/]+/);
              x = +koord[1];
@@ -361,12 +361,12 @@ export class catiav5_1_0{
                  koord__x = koord_x-rdtx;
                  koord__y = koord_y-rdty;
                  koord__z = koord_z-rdtz;
-
-                write("G0 X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nG1");
+                write("AIR")
+                write("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
 
                 this.rapto = 0;
             }
-            write(koord_x + koord_y + koord_z);
+            write("LINE:",koord_x + koord_y + koord_z);
             
             this.ls_x=x;
             this.ls_y=y;
@@ -374,8 +374,8 @@ export class catiav5_1_0{
         }
         else if (line.startsWith("SPINDL")){
             if (line.includes("OFF")){
-                this.lsroation = "M5";
-                write("M5");
+                this.lsroation = "SPINDLE: STATE:OFF";
+                write("SPINDLE: STATE:off");
             }
             else if (!line.includes("ON")){
                  spindlDT = line.split(/[,/]+/)
@@ -387,10 +387,10 @@ export class catiav5_1_0{
                     this.ls_spindle_speed = parseFloat(num).toFixed(this.rnd_num)
 
                     if (line.includes("SFM")||line.includes("SMM")) {
-                        rotation_typ = "G96";
+                        rotation_typ = "TYPE:surface";
                     }
                     else if (line.includes("RPM")){
-                        rotation_typ = "G97";
+                        rotation_typ = "TYPE:fix";
                     }
                     else {
                         write("ERROR SPINDLE SPEED IS NOT DEFINED CORECTLY (SFM OR RPM) "+line);
@@ -399,15 +399,15 @@ export class catiav5_1_0{
                         this.ls_tip_rev = rotation_typ;
                     }
                     if (line.includes("CLW")){
-                        this.lsrotation = "M3";
+                        this.lsrotation = "DIRECTION:cw";
                     }
                     else if (line.includes("CCLW")){
-                        this.lsrotation = "M4";
+                        this.lsrotation = "DIRECTION:ccw";
                     }
                     else {
                         write("ERROR SPINDLE DIRECTION NOT DEFINED " +line);
                     }
-                    this.ls_on_rotation = ("S" + this.ls_spindle_speed + " " + this.ls_tip_rev + " " + this.lsrotation);
+                    this.ls_on_rotation = ("SPINDLE: STATE:on" + "SPEED:" + this.ls_spindle_speed + " " + this.ls_tip_rev + " " + this.lsrotation);
                     write(this.ls_on_rotation);
                 }
                 else {
@@ -423,12 +423,12 @@ export class catiav5_1_0{
             numf = feed[1].trim();
 
             if (line.includes("MMPR")||line.includes("IPR")||line.includes("REV")){
-                this.ls_tip_posmak = "G95";
+                this.ls_tip_posmak = "TYPE:rev";
             }
             else if (line.includes("MMPM")||line.includes("IPM")||line.includes("MIN")){
-                this.ls_tip_posmak = "G96";
+                this.ls_tip_posmak = "TYPE:time";
             }
-             movement = "G1";
+             movement = "CUT";
             if (this.lsmovement!==movement){
                 write(movement);
                 this.lsmovement = movement;
@@ -437,11 +437,11 @@ export class catiav5_1_0{
                 this.rapto=1;
                 this.rapto_num = +feed[4]
             }
-            write(this.ls_tip_posmak + " F" + numf);
+            write("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + numf);
         }
         else if (line.startsWith("RAPID")){
-            write("G0");
-            this.lsmovement = "G0";
+            write("AIR");
+            this.lsmovement = "AIR";
             if (line.includes("GOTO")){
                  koord_x="";
                  koord_y="";
@@ -549,22 +549,22 @@ export class catiav5_1_0{
         }
         else if (line.startsWith("COOLNT")){
             if (line.includes("FLOOD")){
-                this.ls_clnt_typ = "M8";
-                write("M8");
+                this.ls_clnt_typ = "COOLANT: STATE:on TYPE:flood";
+                write("COOLANT: STATE:on TYPE:flood");
             }
             else if (line.includes("MIST")){
-                this.ls_clnt_typ = "M7";
-                write("M7");
+                this.ls_clnt_typ = "COOLANT: STATE:on TYPE:mist";
+                write("COOLANT: STATE:on TYPE:mist");
             }
             else if (line.includes("OFF")){
-                write("M9");
+                write("COOLANT: STATE:off");
             }
             else if (line.includes("ON")){
                 if (this.ls_clnt_typ !== ""){
                     write(this.ls_clnt_typ);
                 }
                 else {
-                    write("ERROR THERE IS NO PREDEFINED COOLANT TYPE, FUNCTION ON CANNOT WORK");
+                    write("ERROR THERE IS NO PREDEFINED COOLANT TYPE, FUNTION ON CANNOT WORK");
                 }
             }
         }
@@ -572,18 +572,18 @@ export class catiav5_1_0{
             dwell=line.split("/");
             if (line.includes("REV")){
                 revs=dwell.split(",").trim();
-                write("G4 R" + revs);
+                write("DWELL: TYPE:rev NUMBER:" + revs);
             }
             else{
-                write("G4 S" + +dwell.toFixed(3));
+                write("DWELL: TYPE:time NUBER:" + +dwell.toFixed(3));
             }
         }
         else if (line.startsWith("CYCLE")){
-            write(line);
+            write("CYCLE: ",line);
         }
         else if (line.startsWith("$$")){
             line = line.split("$$")[1];
-            write(";" + line);
+            write("COMMENT:" + line);
         }
     }
 }
@@ -592,4 +592,4 @@ export class catiav5_1_0{
 []
 \
 ^*/
-console.log("parser end")
+console.log("parser end")        

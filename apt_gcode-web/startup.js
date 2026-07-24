@@ -1,10 +1,10 @@
 console.log("startup")
 import {getSettings, validateSettings} from "./settings.js";
-console.log("1");
 //import {MyParseline} from "./parseline.js";
-console.log("2");
 import {clearOutput, buildOutput, downloadOutput} from "./output.js";
-import {catiav5_1_0} from "./parseline.js";
+import {catiav5_1_0} from "./parselinev2.js";
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("translateButton");
@@ -13,11 +13,28 @@ document.addEventListener("DOMContentLoaded", () => {
 async function translateAPT(){
     clearOutput();
     try {
+        
         const settings = getSettings();
         validateSettings(settings);
         const aptText = await loadAPT(settings);
         const commands =splitAPT(aptText);
-        const parser = document.getElementById("apt-code-version").value;
+        const parserType =
+        document.getElementById("apt-code-version").value;
+
+        let parser;
+
+        switch (parserType) {
+            case "catiav5_1_0":
+                parser = new catiav5_1_0(settings);
+                break;
+            default:
+                throw new Error("APT parser not selected");
+        }
+
+        for (const command of commands) {
+            parser.parseline(command);
+        }
+        console.log(typeof parser)
         for (const command of commands) {
             parser.parseline(command);
         }
