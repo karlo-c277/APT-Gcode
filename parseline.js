@@ -1,4 +1,4 @@
-import {write} from "./output.js";
+import {write} from "./apt_gcode-web/output.js";
 
 console.log("parser")
 console.log(typeof parser);

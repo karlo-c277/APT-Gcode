@@ -362,11 +362,11 @@ export class catiav5_1_0{
                  koord__y = koord_y-rdty;
                  koord__z = koord_z-rdtz;
                 write("AIR")
-                write("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
+                write("LINE: X", koord__x , " Y" , koord__y , " Z" , koord__z , "\nCUT");
 
                 this.rapto = 0;
             }
-            write("LINE:",koord_x + koord_y + koord_z);
+            write("LINE:",koord_x , koord_y , koord_z);
             
             this.ls_x=x;
             this.ls_y=y;
