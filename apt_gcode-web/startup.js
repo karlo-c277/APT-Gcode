@@ -1,8 +1,9 @@
 console.log("startup")
 import {getSettings, validateSettings} from "./settings.js";
 //import {MyParseline} from "./parseline.js";
-import {clearOutput, buildOutput, downloadOutput} from "./output.js";
+import {clearOutput, buildOutput, downloadOutput, getJSON} from "./output.js";
 import {catiav5_1_0} from "./parselinev2.js";
+import {WinNC_sinumerik} from "./g-coder.js";
 
 
 
@@ -17,9 +18,8 @@ async function translateAPT(){
         const settings = getSettings();
         validateSettings(settings);
         const aptText = await loadAPT(settings);
-        const commands =splitAPT(aptText);
-        const parserType =
-        document.getElementById("apt-code-version").value;
+        const commands = splitAPT(aptText);
+        const parserType = document.getElementById("apt-code-version").value;
 
         let parser;
 
@@ -38,16 +38,50 @@ async function translateAPT(){
         for (const command of commands) {
             parser.parseline(command);
         }
-        const result = buildOutput(settings);
-        document.getElementById("terminalOutput").textContent = result;
+        
         if (settings.downloadOutput) {
             downloadOutput(result, settings);
         }
+        for (const command of commands) {
+            parser.parseline(command);
+        }
     }
+    
     catch (error) {
         document.getElementById("terminalOutput").textContent=
             error.message;
         console.error(error);
+    }
+    try{
+        const settings = getSettings();
+        validateSettings(settings);
+        const aptText = await loadAPT(settings);
+        const g_code_type = document.getElementById("preset").value;
+        let gcoder;
+
+        switch (g_code_type) {
+            case "WinNC_sinumerik":
+                gcoder = new WinNC_sinumerik(settings);
+            break;
+
+        default:
+            throw new Error("G-code generator not selected");
+        }
+
+        const jsonLines = JSON.parse(getJSON());
+
+        for (const line of jsonLines) {
+            gcoder.gcoder(line);
+        }
+        const result = buildOutput(settings);
+        document.getElementById("terminalOutput").textContent = result;
+    }
+    
+    catch (error) {
+        document.getElementById("terminalOutput").textContent=
+            error.message;
+        console.error(error);
+    
     }
 }
 async function loadAPT(settings) {

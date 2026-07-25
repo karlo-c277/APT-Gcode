@@ -109,6 +109,10 @@ eng. - Karlos Code
 "END"
     -defines that this is it. there is nothing more to be done, the program is finished
 
+"ERROR"
+    -defines that an error has occured
+    -the form for this command may be flexible
+
 "LINE: X Y Z A B C"
     -LINE: means that there is a linear movement
     X

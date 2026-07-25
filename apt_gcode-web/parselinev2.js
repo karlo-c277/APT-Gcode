@@ -1,4 +1,4 @@
-import {write} from "./output.js";
+import {kk} from "./output.js";
 
 console.log("parser")
 
@@ -11,12 +11,12 @@ export class catiav5_1_0{
             this.ls_tip_rev = "";
             this.ls_tip_posmak = "";
             this.lssklop = "";
-            this.ls_x = 0.0;
-            this.ls_y = 0.0;
-            this.ls_z = 0.0;
-            this.ls_i = 0.0;
-            this.ls_j = 0.0;
-            this.ls_k = 0.0;
+            this.ls_x = "";
+            this.ls_y = "";
+            this.ls_z = "";
+            this.ls_i = "";
+            this.ls_j = "";
+            this.ls_k = "";
             this.ls_spindle_speed = 0.0;
             this.ls_on_rotation = "";
             this.ls_dim_typ = "";
@@ -33,14 +33,12 @@ export class catiav5_1_0{
             this.rapto=0;
             if (this.lsunits === "UNIT: MM"){
                 this.ls_units_word = "MM";
-                this.rnd_num=3;
             }
             else if (this.lsunits === "UNIT: INCH"){
                 this.ls_units_word = "INCH";
-                this.rnd_num=4;
             }
             else {
-                write("Unit value not determined")
+                kk("ERROR: Unit value not determined")
             }
         }
     parseline(line){
@@ -98,66 +96,70 @@ export class catiav5_1_0{
         if (line.startsWith("UNITS")){
             if (line.includes("MM")){
                 if (this.lsunits !== "UNIT: MM"){
-                    write("UNIT: MM");
+                    kk("UNIT: MM");
                     this.lsunits = "UNIT: MM";
                 }
             } else if (line.includes("INCH")){
                 if (this.lsunits !== "UNIT: INCH"){
-                    write("UNIT: INCH");
+                    kk("UNIT: INCH");
                     this.lsunits = "UNIT: INCH";
                 }
             } else {
-                write("Unknown unit type " + line);
+                kk("Unknown unit type " + line);
             }
         }                          
         else if (this.non_def.some(word => line.startsWith(word))){
-            write("not defined:" + line);
+            kk("not defined:" + line);
         }
         else if (this.comments.some(word => line.startsWith(word))){
             if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
                  tool_slot = line.split("/")[1].trim();
-                write("COMMENT:Magazine slot number: " + tool_slot);
+                kk("COMMENT:Magazine slot number: " + tool_slot);
             }
             else if (line.startsWith("CUTTER/")){
                 let unit = (this.lsunits === "UNIT: MM" || line.includes("MM")) ? "MM" : "INCH";
                 if (line.split(/[,\/()]+/).length < 3){
                      cutter = line.split("/")[1].trim();
-                    write("COMMENT:Tool cutter radius: " + cutter + " " + unit);
+                    kk("COMMENT:Tool cutter radius: " + cutter + " " + unit);
                 }
                 else if (line.split(/[,\/()]+/).length >=3){
                      cutter = line.split("/")[1].trim();
-                    write("COMMENT:Tool cutter radius: " + cutter + " " + unit);
+                    kk("COMMENT:Tool cutter radius: " + cutter + " " + unit);
                 }
             }
             else if (line.startsWith("INTOL/")){
                  intol = line.split("/")[1].trim();
-                write("COMMENT:Inside tolerance from the path: " + intol + this.ls_units_word);
+                kk("COMMENT:Inside tolerance from the path: " + intol + this.ls_units_word);
             }
             else if (line.startsWith("OUTOL/")){
                  outtol = line.split("/")[1].trim();
-                write("COMMENT:Outside tolerance from the path: "+ outtol + this.ls_units_word);
+                kk("COMMENT:Outside tolerance from the path: "+ outtol + this.ls_units_word);
             }
             else if (line.startsWith("TOLER/")){
                  toler = line.split("/")[1].trim();
-                write("COMMENT:Tolerance from the path: " + toler + this.ls_units_word);
+                kk("COMMENT:Tolerance from the path: " + toler + this.ls_units_word);
             }
             else if (line.startsWith("FINI") || line.startsWith("END")){
-                write("COMMENT:End of program")
+                kk("COMMENT:End of program")
             }
             else if (line.startsWith("PARTNO")){
                  line = line.replace(/^PARTNO/, "COMMENT:Part number: ");
-                write(line);
+                kk(line);
             }
             else if (line.startsWith("OPERATION NAME")){
                  line = line.replace(/^OPERATION NAME/, "COMMENT:").replace(/^:/, "");
-                write(line);
+                kk(line);
             }
             else if (line.startsWith("TLAXIS")){
                  elements = line.split(" ");
-                write("COMMENT:Tool axies are I" + elements[1].trim() + " J" + elements[2].trim() + " K" + elements[3].trim());
+                kk("COMMENT:Tool axies are I" + elements[1].trim() + " J" + elements[2].trim() + " K" + elements[3].trim());
+            }
+            else if (line.startsWith("PPRINT")|| line.startsWith("TPRINT") ){
+                line=line.split("/")[1]
+                kk("COMMENT: ")
             }
             else {
-                write("COMMENT:" + line);
+                kk("COMMENT: " + line);
             }
         }
         else if (line.startsWith("AUTOPS")){
@@ -186,25 +188,19 @@ export class catiav5_1_0{
                     this.lsplane = "G17";
                 }
                 else {
-                    write("ERROR CHANGE OF ALL 3 COORDINATES RE-DO THE APT OUTPUT " + line);
+                    kk("ERROR CHANGE OF ALL 3 COORDINATES RE-DO THE APT OUTPUT " + line);
                 }
-                write(this.lsplane);
+                kk(this.lsplane);
             }
-            kraj_x = +kraj_x.toFixed(this.rnd_num);
-            kraj_y = +kraj_y.toFixed(this.rnd_num);
-            kraj_z = +kraj_z.toFixed(this.rnd_num);
 
             if (Math.abs(centar_x - centar2_x) <= this.tolr_coord || Math.abs(centar_y - centar2_y) <= this.tolr_coord || Math.abs(centar_z - centar2_z) <= this.tolr_coord){
-                write("; ERROR Circle centers are not matching");
+                kk("; ERROR Circle centers are not matching");
             }
 
             if (this.lsplane == "G18"){
                  vektor2_x = +this.ls_x - +centar_x;
                  vektor2_z = +this.ls_z - +centar_z;
                  D = +this.ls_i * vektor2_z - vektor2_x * +this.ls_k;
-                
-                vektor2_x = +vektor2_x.toFixed(this.rnd_num)
-                vektor2_z = +vektor2_z.toFixed(this.rnd_num)
 
 
                 if (D<0){
@@ -214,7 +210,7 @@ export class catiav5_1_0{
                      movement = "G3"
                 }
                 else {
-                    write("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
+                    kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
                 }
 
                  koord=(" X" + kraj_x + " Z" + kraj_z + " I" + vektor2_x + " K" + vektor2_z);
@@ -223,9 +219,6 @@ export class catiav5_1_0{
                  vektor2_x = +this.ls_x - +centar_x;
                  vektor2_y = +this.ls_y - +centar_y;
                  D = +this.ls_i * vektor2_y - vektor2_x * +this.ls_j;
-                
-                vektor2_x = +vektor2_x.toFixed(this.rnd_num)
-                vektor2_y = +vektor2_y.toFixed(this.rnd_num)
 
 
                 if (D<0){
@@ -235,7 +228,7 @@ export class catiav5_1_0{
                      movement = "G3"
                 }
                 else {
-                    write("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
+                    kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
                 }
 
                  koord=(" X" + kraj_x + " Y" + kraj_y + " I" + vektor2_x + " J" + vektor2_y);
@@ -244,10 +237,6 @@ export class catiav5_1_0{
                  vektor2_y = +this.ls_y - +centar_y;
                  vektor2_z = +this.ls_z - +centar_z;
                  D = +this.ls_j * vektor2_z - vektor2_y * +this.ls_k;
-                
-                vektor2_y = +vektor2_y.toFixed(this.rnd_num)
-                vektor2_z = +vektor2_z.toFixed(this.rnd_num)
-
 
                 if (D<0){
                      movement = "G2";
@@ -256,12 +245,12 @@ export class catiav5_1_0{
                      movement = "G3"
                 }
                 else {
-                    write("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
+                    kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
                 }
 
                  koord=(" Y" + kraj_Y + " Z" + kraj_z + " J" + vektor2_Y + " K" + vektor2_z);
             }
-            write(movement, koord, this.ls_feed_speed, this.ls_tip_posmak);
+            kk(movement, koord, this.ls_feed_speed, this.ls_tip_posmak);
 
             this.ls_x = kraj_x;
             this.ls_y = kraj_y;
@@ -274,9 +263,9 @@ export class catiav5_1_0{
              koord_y="";
              koord_z="";
 
-            if (this.ls_dim_typ !== "G91"){
-                write("G91");
-                this.ls_dim_typ = "G91";
+            if (this.ls_dim_typ !== "MOVEMENT: incremental"){
+                kk("MOVEMENT: incremental");
+                this.ls_dim_typ = "MOVEMENT: incremental";
             }
              koord = line.split(/[,/]+/)
             if (koord.length === 4){
@@ -285,24 +274,24 @@ export class catiav5_1_0{
                  z = +koord[3];
             }
             else if (koord.length === 2){
-                 x = 0;
-                 y = 0;
+                 x = "++";
+                 y = "++";
                  z = +koord[1];
             }
             else {
-                write("ERROR GODLTA ");
+                kk("ERROR: GODLTA " + line);
             }
-            this.ls_x = (this.ls_x + x).toFixed(this.rnd_num);
-            this.ls_y = (this.ls_y + y).toFixed(this.rnd_num);
-            this.ls_z = (this.ls_z + z).toFixed(this.rnd_num);
+            this.ls_x = (this.ls_x + x);
+            this.ls_y = (this.ls_y + y);
+            this.ls_z = (this.ls_z + z);
             
-            if (x !== 0){
+            if (x !== "++"){
                 koord_x = " X" + x;
             }
-            if (y !== 0){
+            if (y !== "++"){
                 koord_y = " Y" + y;
             }
-            if (z !== 0){
+            if (z !== "++"){
                 koord_z = " Z" + z;
             }
 
@@ -316,22 +305,22 @@ export class catiav5_1_0{
                  koord__y = koord_y-rdty;
                  koord__z = koord_z-rdtz;
 
-                write("AIR")
-                 write("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
+                kk("AIR")
+                 kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
 
                 this.rapto = 0;
             }
 
-            write("LINE:",koord_x, koord_y, koord_z);
+            kk("LINE:" + koord_x + koord_y + koord_z);
 
         }
         else if (line.startsWith("GOTO")){
-             koord_x="";
-             koord_y="";
-             koord_z="";
+             koord_x=" X++";
+             koord_y=" Y++";
+             koord_z=" Z++";
 
             if (this.ls_dim_typ !== "MOVEMENT: absolute"){
-                write("MOVEMENT: absolute");
+                kk("MOVEMENT: absolute");
                 this.ls_dim_typ = "MOVEMENT: absolute";
             }
              koord = line.split(/[,/]+/);
@@ -361,12 +350,12 @@ export class catiav5_1_0{
                  koord__x = koord_x-rdtx;
                  koord__y = koord_y-rdty;
                  koord__z = koord_z-rdtz;
-                write("AIR")
-                write("LINE: X", koord__x , " Y" , koord__y , " Z" , koord__z , "\nCUT");
+                kk("AIR")
+                kk("LINE: X"+ koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
 
                 this.rapto = 0;
             }
-            write("LINE:",koord_x , koord_y , koord_z);
+            kk("LINE:"+koord_x + koord_y + koord_z);
             
             this.ls_x=x;
             this.ls_y=y;
@@ -375,7 +364,7 @@ export class catiav5_1_0{
         else if (line.startsWith("SPINDL")){
             if (line.includes("OFF")){
                 this.lsroation = "SPINDLE: STATE:OFF";
-                write("SPINDLE: STATE:off");
+                kk("SPINDLE: STATE:off");
             }
             else if (!line.includes("ON")){
                  spindlDT = line.split(/[,/]+/)
@@ -384,7 +373,7 @@ export class catiav5_1_0{
                      rotation = spindlDT[3].trim();
                      rotation_typ = ""
 
-                    this.ls_spindle_speed = parseFloat(num).toFixed(this.rnd_num)
+                    this.ls_spindle_speed = parseFloat(num)
 
                     if (line.includes("SFM")||line.includes("SMM")) {
                         rotation_typ = "TYPE:surface";
@@ -393,7 +382,7 @@ export class catiav5_1_0{
                         rotation_typ = "TYPE:fix";
                     }
                     else {
-                        write("ERROR SPINDLE SPEED IS NOT DEFINED CORECTLY (SFM OR RPM) "+line);
+                        kk("ERROR SPINDLE SPEED IS NOT DEFINED CORECTLY (SFM OR RPM) "+line);
                     }
                     if (this.ls_tip_rev !== rotation_typ){
                         this.ls_tip_rev = rotation_typ;
@@ -405,17 +394,17 @@ export class catiav5_1_0{
                         this.lsrotation = "DIRECTION:ccw";
                     }
                     else {
-                        write("ERROR SPINDLE DIRECTION NOT DEFINED " +line);
+                        kk("ERROR SPINDLE DIRECTION NOT DEFINED " +line);
                     }
-                    this.ls_on_rotation = ("SPINDLE: STATE:on" + "SPEED:" + this.ls_spindle_speed + " " + this.ls_tip_rev + " " + this.lsrotation);
-                    write(this.ls_on_rotation);
+                    this.ls_on_rotation = ("SPINDLE: STATE:on " + "SPEED:" + this.ls_spindle_speed + " " + this.ls_tip_rev + " " + this.lsrotation);
+                    kk(this.ls_on_rotation);
                 }
                 else {
-                    write("ERROR SPINDLE DATA NOT VALID REQUIRES NUM VALUE SFM/SMM/RPM AND DIRECTION "+ line);
+                    kk("ERROR SPINDLE DATA NOT VALID REQUIRES NUM VALUE SFM/SMM/RPM AND DIRECTION "+ line);
                 }
             }
             else {
-                write(this.ls_on_rotation);
+                kk(this.ls_on_rotation);
             }
         }
         else if (line.startsWith("FEDRAT")){
@@ -430,26 +419,26 @@ export class catiav5_1_0{
             }
              movement = "CUT";
             if (this.lsmovement!==movement){
-                write(movement);
+                kk(movement);
                 this.lsmovement = movement;
             }
             if (line.includes("RAPTO")){
                 this.rapto=1;
                 this.rapto_num = +feed[4]
             }
-            write("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + numf);
+            kk("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + numf);
         }
         else if (line.startsWith("RAPID")){
-            write("AIR");
+            kk("AIR");
             this.lsmovement = "AIR";
             if (line.includes("GOTO")){
-                 koord_x="";
-                 koord_y="";
-                 koord_z="";
+                 koord_x=" X++";
+                 koord_y=" Y++";
+                 koord_z=" Z++";
 
-                if (this.ls_dim_typ !== "G90"){
-                    write("G90");
-                    this.ls_dim_typ = "G90";
+                if (this.ls_dim_typ !== "MOVEMENT: absolute"){
+                    kk("MOVEMENT: absolute");
+                    this.ls_dim_typ = "MOVEMENT: absolute";
                 }
                  koord = line.split(/[,/]+/);
                  x = +koord[1];
@@ -478,12 +467,12 @@ export class catiav5_1_0{
                      koord__x = koord_x-rdtx;
                      koord__y = koord_y-rdty;
                      koord__z = koord_z-rdtz;
-
-                    write("G0 X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nG1");
+                    kk("AIR")
+                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
 
                     this.rapto = 0;
                 }
-                write(koord_x, koord_y, koord_z);
+                kk("LINE: " + koord_x + koord_y + koord_z);
             
                 this.ls_x=x;
                 this.ls_y=y;
@@ -495,9 +484,9 @@ export class catiav5_1_0{
                  koord_y="";
                  koord_z="";
 
-                if (this.ls_dim_typ !== "G91"){
-                    write("G91");
-                    this.ls_dim_typ = "G91";
+                if (this.ls_dim_typ !== "MOVEMENT: incremental"){
+                    kk("MOVEMENT: incremental");
+                    this.ls_dim_typ = "MOVEMENT: incremental";
                 }
                 koord = line.split(/[,/]+/)
                 if (koord.length === 4){
@@ -506,16 +495,16 @@ export class catiav5_1_0{
                      z = +koord[3];
                 }
                 else if (koord.length === 2){
-                     x = 0;
-                     y = 0;
+                     x = "++";
+                     y = "++";
                      z = +koord[1];
                 }
                 else {
-                    write("ERROR GODLTA ");
+                    kk("ERROR: GODLTA " + line);
                 }
-                this.ls_x = (this.ls_x + x).toFixed(this.rnd_num);
-                this.ls_y = (this.ls_y + y).toFixed(this.rnd_num);
-                this.ls_z = (this.ls_z + z).toFixed(this.rnd_num);
+                this.ls_x = (this.ls_x + x);
+                this.ls_y = (this.ls_y + y);
+                this.ls_z = (this.ls_z + z);
                 
                 if (x !== 0){
                     koord_x = " X" + x;
@@ -537,12 +526,13 @@ export class catiav5_1_0{
                      koord__y = koord_y-rdty;
                      koord__z = koord_z-rdtz;
 
-                    write("G0 X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nG1");
+                    kk("AIR")
+                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
 
                     this.rapto = 0;
                 }
 
-                write(koord_x, koord_y, koord_z);
+                kk("LINE: " + koord_x + koord_y + koord_z);
 
             }
 
@@ -550,21 +540,21 @@ export class catiav5_1_0{
         else if (line.startsWith("COOLNT")){
             if (line.includes("FLOOD")){
                 this.ls_clnt_typ = "COOLANT: STATE:on TYPE:flood";
-                write("COOLANT: STATE:on TYPE:flood");
+                kk("COOLANT: STATE:on TYPE:flood");
             }
             else if (line.includes("MIST")){
                 this.ls_clnt_typ = "COOLANT: STATE:on TYPE:mist";
-                write("COOLANT: STATE:on TYPE:mist");
+                kk("COOLANT: STATE:on TYPE:mist");
             }
             else if (line.includes("OFF")){
-                write("COOLANT: STATE:off");
+                kk("COOLANT: STATE:off");
             }
             else if (line.includes("ON")){
                 if (this.ls_clnt_typ !== ""){
-                    write(this.ls_clnt_typ);
+                    kk(this.ls_clnt_typ);
                 }
                 else {
-                    write("ERROR THERE IS NO PREDEFINED COOLANT TYPE, FUNTION ON CANNOT WORK");
+                    kk("ERROR: THERE IS NO PREDEFINED COOLANT TYPE, FUNTION ON CANNOT WORK");
                 }
             }
         }
@@ -572,18 +562,21 @@ export class catiav5_1_0{
             dwell=line.split("/");
             if (line.includes("REV")){
                 revs=dwell.split(",").trim();
-                write("DWELL: TYPE:rev NUMBER:" + revs);
+                kk("DWELL: TYPE:rev NUMBER:" + revs);
             }
             else{
-                write("DWELL: TYPE:time NUBER:" + +dwell.toFixed(3));
+                kk("DWELL: TYPE:time NUMBER:" + dwell);
             }
         }
         else if (line.startsWith("CYCLE")){
-            write("CYCLE: ",line);
+            kk("CYCLE: ",line);
         }
         else if (line.startsWith("$$")){
             line = line.split("$$")[1];
-            write("COMMENT:" + line);
+            kk("COMMENT:" + line);
+        }
+        else{
+            kk("ERROR: " + line);
         }
     }
 }

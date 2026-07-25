@@ -26,6 +26,7 @@ export function clearJSON(){
 
 export function clearOutput(){
     output = [];
+    jsonOutput = [];
     const terminal = document.getElementById("terminalOutput");
     if (terminal) {
         terminal.textContent = "Translating... Please wait."; 
