@@ -105,7 +105,7 @@ export class catiav5_1_0{
                     this.lsunits = "UNIT: INCH";
                 }
             } else {
-                kk("Unknown unit type " + line);
+                kk("ERROE: Unknown unit type " + line);
             }
         }                          
         else if (this.non_def.some(word => line.startsWith(word))){
@@ -170,6 +170,7 @@ export class catiav5_1_0{
              centar_x = +elements[3];
              centar_y = +elements[4];
              centar_z = +elements[5];
+             let radius = +elements[6];
              centar2_x = +elements[9];
              centar2_y = +elements[10];
              centar2_z = +elements[11];
@@ -179,13 +180,13 @@ export class catiav5_1_0{
 
             if (this.lsplane === "0"){
                 if (Math.abs(centar_x - kraj_x) <= this.tolr_coord && Math.abs(centar_x - this.ls_x) <= this.tolr_coord){
-                    this.lsplane = "G19";
+                    this.lsplane = "zy";
                 }
                 else if (Math.abs(centar_y - kraj_y) <= this.tolr_coord && Math.abs(centar_y - this.ls_y) <= this.tolr_coord){
-                    this.lsplane = "G18";
+                    this.lsplane = "xz";
                 }
                 else if (Math.abs(centar_z - kraj_z) <= this.tolr_coord && Math.abs(centar_z - this.ls_z) <= this.tolr_coord){
-                    this.lsplane = "G17";
+                    this.lsplane = "xy";
                 }
                 else {
                     kk("ERROR CHANGE OF ALL 3 COORDINATES RE-DO THE APT OUTPUT " + line);
@@ -197,60 +198,57 @@ export class catiav5_1_0{
                 kk("; ERROR Circle centers are not matching");
             }
 
-            if (this.lsplane == "G18"){
+            if (this.lsplane == "xz"){
                  vektor2_x = +this.ls_x - +centar_x;
                  vektor2_z = +this.ls_z - +centar_z;
                  D = +this.ls_i * vektor2_z - vektor2_x * +this.ls_k;
 
 
                 if (D<0){
-                     movement = "G2";
+                     movement = "cw";
                 }
                 else if (D>0){
-                     movement = "G3"
+                     movement = "ccw"
                 }
                 else {
                     kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
                 }
 
-                 koord=(" X" + kraj_x + " Z" + kraj_z + " I" + vektor2_x + " K" + vektor2_z);
             }
-            else if (this.lsplane == "G17"){
+            else if (this.lsplane == "xy"){
                  vektor2_x = +this.ls_x - +centar_x;
                  vektor2_y = +this.ls_y - +centar_y;
                  D = +this.ls_i * vektor2_y - vektor2_x * +this.ls_j;
 
 
                 if (D<0){
-                     movement = "G2";
+                     movement = "cw";
                 }
                 else if (D>0){
-                     movement = "G3"
+                     movement = "ccw"
                 }
                 else {
                     kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
                 }
 
-                 koord=(" X" + kraj_x + " Y" + kraj_y + " I" + vektor2_x + " J" + vektor2_y);
             }
-            else if (this.lsplane == "G19"){
+            else if (this.lsplane == "zy"){
                  vektor2_y = +this.ls_y - +centar_y;
                  vektor2_z = +this.ls_z - +centar_z;
                  D = +this.ls_j * vektor2_z - vektor2_y * +this.ls_k;
 
                 if (D<0){
-                     movement = "G2";
+                     movement = "cw";
                 }
                 else if (D>0){
-                     movement = "G3"
+                     movement = "ccw"
                 }
                 else {
                     kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
                 }
 
-                 koord=(" Y" + kraj_Y + " Z" + kraj_z + " J" + vektor2_Y + " K" + vektor2_z);
             }
-            kk(movement, koord, this.ls_feed_speed, this.ls_tip_posmak);
+            kk("ARCH: RADIUS:"+radius+" BEGIN: X"+this.ls_x+" Y"+this.ls_y+" Z"+this.ls_z+" CENTER: X"+centar_x+" Y"+centar_y+" Z"+centar_z+" END: X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" VECTOR: I"+this.ls_i+" J"+this.ls_j+" K"+this.ls_k+" DIRECTION: "+movement);
 
             this.ls_x = kraj_x;
             this.ls_y = kraj_y;
@@ -574,6 +572,12 @@ export class catiav5_1_0{
         else if (line.startsWith("$$")){
             line = line.split("$$")[1];
             kk("COMMENT:" + line);
+        }
+        else if (line.startsWith("INDIRV")){
+            elements = line.split(" ");
+            this.ls_i = elements[1];
+            this.ls_j = elements[2];
+            this.ls_k = elements[3];
         }
         else{
             kk("ERROR: " + line);

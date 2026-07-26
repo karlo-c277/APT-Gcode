@@ -48,6 +48,15 @@ eng. - Karlos Code
     -unit_type shall be distanced from ":" exactly 1 space
     -before ending the line with " there shall not be any spaces or 
     -There are NO other elements for this command
+"UNIT: MM"
+    0   1
+
+"PLANE: plane"
+    -defines the working plane
+    -"plane" shall be defined as represented:
+        -"xy" - for xy plane
+        -"xz" - for xz plane
+        -"zy" - for zy plane
 
 "TOOL: tool_info"
     -TOOL defines what tool is being used
@@ -73,26 +82,40 @@ eng. - Karlos Code
         -if there is NO tool compensation number defined tool_compensation shall be valued as "++"
         -tool_compensation shall be represented as a 3 digit number beginning from 000, 001 untill 999
         -tool_compensation shall be spaced exactly 0 spaces from "COMPENSAION:"
+"TOOL: NAME:bean_cutter MAGAZINE:004 COMPENSATION:067"
+    0           1               2           3
 
 "SPINDLE: spindle_info"
     -this defines a change in spindle information
     -spindle_info shall consist of the following information:
         -"STATE:value" where value is a variable starting 0 spaces from "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of spindle_info may be undefined
-        -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers
         -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and it must be valued only as "surface" as for surface speed or "fix" as for fixed RPM speed
+        -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers       
         -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" and it must only be valued as "CW" for clockwise or as "CCW" for counter-clockwise
+"SPINDLE: STATE:on TYPE:fix SPEED:1500 DIRECTION:CW"
+"SPINDLE: STATE:off"
+    0       1           2       3           4
 
 "FEEDRATE: feedrate_info"
     -this defines the speed of changing tool position during "CUT"
     -feedrate_info shall consist of the following information:
-        -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and is valued eiter as "time" for -per minute- feedrate or "rev" for -per revolution- feedrate
+        -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and is valued eiter as "time" for -distance per minute- or "rev" for -distance per revolution- or "inver" for inverse feed type -> 1/"time"
         -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers
+"FEEDRATE: TYPE:rev SPEED:0.05"
+    0           1          2
 
 "COOLANT: coolant_info"
     -defines what type of coolant is used
     -coolant_info shall consist of the following information:
         -"STATE:value" where value is a variable starting 0 spaces after "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of coolant_info may be undefined
-        -"TYPE:value" where value is a variable starting 0 spaces after "TYPE:" and it shall be valued either as "air" for usage of compressed air, "mist" for light fluid or "floof" for heavy fluid usage
+        -"TYPE:value" where value is a variable starting 0 spaces after "TYPE:" and it shall be valued either as "mist" for light fluid or "flood" for heavy fluid usage
+"COOLANT: STATE:on TYPE:flood"
+"COOLANT: STATE:off"
+    0           1       2
+
+"AIR_PURGE: state"
+    -defines usage of compressed air for clearing chips and simmilar usages
+    -"state" is a variable defined either as "on" or "off"
 
 "MOVEMENT: movement_type"
     -MOVEMENT defines that there is a change in the way next point is defined wether it is incremental movement or absolute movement
@@ -120,32 +143,40 @@ eng. - Karlos Code
         -"X" shall be spaced exactly 1 space from the previous element
         -numerical value must have at least 1 whole number and 1 decimal number divided with a "."
         -if the numerical value is negative "-" sign must be present after "X" but before numerical value
-        -in case of the x coordinate not changing the numerical value, it may be presentet as "++"
+        -in case of the x coordinate not changing the numerical value, it may be presented as "++"
         -inside the whole X there shall be no spaces
     Same aplies for all of the remeining elements but they must be ordered in the following array X Y Z A B C
     In case of not using multi axial machining process the ABC element may be left out
+"LINE: X10 Y++ Z30 A24 B35 C++"
+"LINE: X10 Y34 Z++"
+    0   1   2   3   4   5   6
 
 "DWELL: dwell_info"
     -defines how long the tool is dwelling/stopped whilst the spindle is spinning
     -dwell_info must consist of the following information:
         -"TYPE:value" where value is a variable starting 0 spaces from the "TYPE:" and is valued either as "rev" meaning how many revolutions until next command or "time" for amount of time until next command
         -"NUMBER:value" where value is a numerical variable starting 0 spaces from the "NUMBER:" and it shall only contain positive and both whole or decimal numbers
+"DWELL: TYPE:time NUMBER:12"
+    0       1       2
 
 "ARCH: arch_info"
     -defines a partial cicular movement
     -arch_info must consist of the followinf information:
-        -"RADIUS:value" where value is a numerical variable starting 0 spaces from "RADIUS:" and it shall only contain positive and both whole or decimal numbers
+        -"RADIUS: value" where value is a numerical variable starting 1 spaces from "RADIUS:" and it shall only contain positive and both whole or decimal numbers
             -meaning the radius or the movement
-        -"BEGIN:value" where value is a numerical variable starting 0 spaces from "BEGIN:"
-            -meaning the complete XYZ coordinates of the beginning of teh center of the arch, stated as following example: "BEGIN:X20 Y12.5897 Z-30.87" !!must match last tool coordinates
-        -"CENTER:value" where value is a numerical variable starting 0 spaces from "CENTER:"
-            -meaning the complete XYZ coordinates of the center of the arch, stated as following example: "CENTER:X20 Y12.5897 Z-30.87"
-        -"END:value" where value is a numerical variable starting 0 spaces from "END:"
-            -meaning the complete XYZ coordinates of the end of the arch, stated as following example: "END:X20 Y12.5897 Z-30.87"
-        -"VECTOR:value" where value is a numerical variable starting 0 spaces from "VECTOR:"
-            -meaning the compete IJK vector set of the directional vector (total lenght of 1) that is tanget to the arch'es circle in the beginning point like this example "VECTOR:I0.707 J-0.707 Z0"
-        -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" valued either as "cw" for clockwise or "ccw" for counter clockwise arch direcion
+        -"BEGIN: value" where value is a numerical variable starting 1 spaces from "BEGIN:"
+            -meaning the complete XYZ coordinates of the beginning of teh center of the arch, stated as following example: "BEGIN: X20 Y12.5897 Z-30.87" !!must match last tool coordinates
+        -"CENTER:value" where value is a numerical variable starting 1 spaces from "CENTER:"
+            -meaning the complete XYZ coordinates of the center of the arch, stated as following example: "CENTER: X20 Y12.5897 Z-30.87"
+        -"END: value" where value is a numerical variable starting 1 spaces from "END:"
+            -meaning the complete XYZ coordinates of the end of the arch, stated as following example: "END: X20 Y12.5897 Z-30.87"
+        -"VECTOR: value" where value is a numerical variable starting 1 spaces from "VECTOR:"
+            -meaning the compete IJK vector set of the directional vector (total lenght of 1) that is tanget to the arch'es circle in the beginning point like this example "VECTOR: I0.707 J-0.707 K0"
+        -"DIRECTION: value" where value is a variable starting 1 spaces from "DIRECTION:" valued either as "cw" for clockwise or "ccw" for counter clockwise arch direcion
+        -"ANGLE: vlaue" where value is a numerical value starting 1 space from "ANGLE:" valued as the angle between 2 radiuses drawn from ending and beginning of the cicle, the angle is the one facing the tool path
         -NOTE there may be aditional info added AFTER the previously stated ones by any format of choice
+"ARCH: RADIUS: 12 BEGIN: X10 Y20 Z30 CENTER: X10 Y20 Z30 END: X10 Y20 Z30 VECTOR: I0.707 J-0.707 K0 DIRECTION: cw ANGLE: 135"
+    0     1     2   3     4   5   6     7     8   9   10  11  12  13  14    15      16      17   18     19     20   21   22
 
 "CYCLE: cycle_info"
     -defines a canned cycle

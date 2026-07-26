@@ -52,6 +52,11 @@ export function buildOutput(settings){
     if (settings.output.isoCommand && settings.output.isoCommand.trim() !==""){
         finalOutput.push(settings.output.isoCommand);
     }
+    if (settings.output.default_units && settings.output.default_unit.trim() !== ""){
+        finalOutput.push(settings.output.default_units)
+    }
+
+
     finalOutput.push(settings.output.default_units);
     finalOutput.push("#DEFINE THE WORKPIECE");
     if (finalOutput.length > 0){

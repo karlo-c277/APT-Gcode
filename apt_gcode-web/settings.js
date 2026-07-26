@@ -27,7 +27,7 @@ export function getSettings(){
         settings.output.encoding = "utf-8";
         settings.output.extension = ".mpf";
         settings.output.header = "%_N_{filename}_MPF";
-        settings.output.isoCommand = "G291";
+        settings.output.isoCommand = "";
         settings.output.default_units = document.getElementById("default_units").value;
     }
     else if (preset === "ISO6983"){
