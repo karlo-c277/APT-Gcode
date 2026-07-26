@@ -4,19 +4,27 @@ export class WinNC_sinumerik {
     constructor(settings){
     }
     gcoder(line){
-        let elements = "";
-        let type = "";
-        let speed = "";
-        let direction ="";
-        let name = "";
-        let magazine = "";
-        let compensation = "";
-        let x = "";
-        let y = "";
-        let z = "";
-        let i = "";
-        let j = "";
-        let k = "";
+        let elements;
+        let type;
+        let speed;
+        let direction;
+        let name;
+        let magazine;
+        let compensation;
+        let x;
+        let y;
+        let z;
+        let i;
+        let j;
+        let k;
+        let centar_x;
+        let centar_y;
+        let centar_z;
+        let kraj_x;
+        let kraj_y;
+        let kraj_z;
+        let radius;
+        let angle;
 
     if (line.startsWith("COMMENT")){
         line = line.replace("COMMENT:", ";");
@@ -114,7 +122,7 @@ export class WinNC_sinumerik {
         write("M30");
     }
     else if (line.startsWith("ERROR")){
-        write("ERROR"+line);
+        write(line);
     }
     else if (line.startsWith("LINE")){
         elements = line.split(" ");
@@ -175,9 +183,26 @@ export class WinNC_sinumerik {
         }            
     }
     else if (line.startsWith("ARCH")){
-        elemets = line.split(" ");
+        write("**************"+line);
+        elements = line.split(" ");
         direction = elements[20];
-        radius = elements[2]
+        radius = +elements[2];
+        x = +elements[12];
+        y = +elements[13];
+        z = +elements[14];
+        angle = +elements[22];
+
+        if (direction === "cw"){
+            direction = "G2";
+        }
+        else if (direction === "ccw"){
+            direction = "G3";
+        }
+        if (angle > 180){
+            radius = (-1)*radius;
+        }
+        write(direction + " X" + x + " Y" +  y + " Z" +  z + " R" +  radius);
+
     }
     else {
         write(line);

@@ -7,7 +7,7 @@ export class catiav5_1_0{
             this.tolr_coord = 1e-3;
             this.lsmovement = "";
             this.lsplane = "";
-            this.lsroation = "";
+            this.lsrotation = "";
             this.ls_tip_rev = "";
             this.ls_tip_posmak = "";
             this.lssklop = "";
@@ -23,8 +23,8 @@ export class catiav5_1_0{
             this.ls_clnt_typ = "";
             this.ls_cycle = "";
             this.lsunits = settings.output.default_units;
-            this.comments = ["TPRINT", "PPRINT", "LOADTL/", "TOOLNO/", "REWIND/", "SELECTL/", "CUTTER/", "INTOL/", "OUTOL/", "TOLER/", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS", "CUTCOM"];
-            this.non_def = ["SWITCH/", "PPFUN", "GO/", "INDIRP/"];
+            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS", "CUTCOM"];
+            this.non_def = ["SWITCH", "PPFUN", "GO", "INDIRP"];
             this.lsautops = 0;
             this.ls_feed_speed = 0.0;
             this.ls_ls_x = 0.0;
@@ -89,7 +89,12 @@ export class catiav5_1_0{
             let numf;
             let dwell;
             let revs;
-            
+            let radius;
+            let start;
+            let end;
+            let angle;
+            let direction;
+
         console.log(line);
         if (!line || !line.trim()) return;
 
@@ -108,9 +113,6 @@ export class catiav5_1_0{
                 kk("ERROE: Unknown unit type " + line);
             }
         }                          
-        else if (this.non_def.some(word => line.startsWith(word))){
-            kk("not defined:" + line);
-        }
         else if (this.comments.some(word => line.startsWith(word))){
             if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
                  tool_slot = line.split("/")[1].trim();
@@ -165,20 +167,17 @@ export class catiav5_1_0{
         else if (line.startsWith("AUTOPS")){
             this.autops = 1;
         }
-        else if (line.includes("CIRCLE") && this.lsautops === 1){
-             elements = line.split(/[,\/()]+/).filter(Boolean);
+        else if (line.includes("CIRCLE") ){
+             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
+             console.log(elements);
              centar_x = +elements[3];
              centar_y = +elements[4];
              centar_z = +elements[5];
-             let radius = +elements[6];
-             centar2_x = +elements[9];
-             centar2_y = +elements[10];
-             centar2_z = +elements[11];
+             radius = +elements[6];
              kraj_x = +elements[12];
              kraj_y = +elements[13];
              kraj_z = +elements[14];
 
-            if (this.lsplane === "0"){
                 if (Math.abs(centar_x - kraj_x) <= this.tolr_coord && Math.abs(centar_x - this.ls_x) <= this.tolr_coord){
                     this.lsplane = "zy";
                 }
@@ -191,29 +190,39 @@ export class catiav5_1_0{
                 else {
                     kk("ERROR CHANGE OF ALL 3 COORDINATES RE-DO THE APT OUTPUT " + line);
                 }
-                kk(this.lsplane);
-            }
-
-            if (Math.abs(centar_x - centar2_x) <= this.tolr_coord || Math.abs(centar_y - centar2_y) <= this.tolr_coord || Math.abs(centar_z - centar2_z) <= this.tolr_coord){
-                kk("; ERROR Circle centers are not matching");
-            }
+                kk("PLANE: "+this.lsplane);
 
             if (this.lsplane == "xz"){
-                 vektor2_x = +this.ls_x - +centar_x;
-                 vektor2_z = +this.ls_z - +centar_z;
-                 D = +this.ls_i * vektor2_z - vektor2_x * +this.ls_k;
+                 vektor2_x = this.ls_x - centar_x;
+                 vektor2_z = this.ls_z - centar_z;
+                 D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
 
 
                 if (D<0){
                      movement = "cw";
                 }
                 else if (D>0){
-                     movement = "ccw"
+                     movement = "ccw";
                 }
                 else {
-                    kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
+                    kk("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
                 }
 
+                start = Math.atan2(this.ls_x-centar_x, this.ls_z-centar_z);
+                end = Math.atan2(kraj_x-centar_x, kraj_z-centar_z);
+
+                if (movement === "ccw") {
+                    angle = end - start;
+                    if (angle < 0){
+                        angle += 2*Math.PI;
+                    }
+                    }
+                else if (movement === "cw") {
+                    angle = start - end;
+                    if (angle < 0){
+                        angle += 2*Math.PI;
+                    }
+                    }  
             }
             else if (this.lsplane == "xy"){
                  vektor2_x = +this.ls_x - +centar_x;
@@ -225,11 +234,26 @@ export class catiav5_1_0{
                      movement = "cw";
                 }
                 else if (D>0){
-                     movement = "ccw"
+                     movement = "ccw";
                 }
                 else {
-                    kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
+                    kk("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
                 }
+                start = Math.atan2(this.ls_x-centar_x, this.ls_y-centar_y);
+                end = Math.atan2(kraj_x-centar_x, kraj_y-centar_y);
+
+                if (movement === "ccw") {
+                    angle = end - start;
+                    if (angle < 0){
+                        angle += 2*Math.PI;
+                    }
+                    }
+                else if (movement === "cw") {
+                    angle = start - end;
+                    if (angle < 0){
+                        angle += 2*Math.PI;
+                    }
+                    }  
 
             }
             else if (this.lsplane == "zy"){
@@ -241,14 +265,28 @@ export class catiav5_1_0{
                      movement = "cw";
                 }
                 else if (D>0){
-                     movement = "ccw"
+                     movement = "ccw";
                 }
                 else {
-                    kk("ERROR CIRCLE CENTER IS ON THE CIRCLE TANGENT " + line)
+                    kk("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
                 }
+                start = Math.atan2(this.ls_z-centar_z, this.ls_y-centar_y);
+                end = Math.atan2(kraj_z-centar_z, kraj_y-centar_y);
 
+                if (movement === "ccw") {
+                    angle = end - start;
+                    if (angle < 0){
+                        angle += 2*Math.PI;
+                    }
+                    }
+                else if (movement === "cw") {
+                    angle = start - end;
+                    if (angle < 0){
+                        angle += 2*Math.PI;
+                    }
+                    }  
             }
-            kk("ARCH: RADIUS:"+radius+" BEGIN: X"+this.ls_x+" Y"+this.ls_y+" Z"+this.ls_z+" CENTER: X"+centar_x+" Y"+centar_y+" Z"+centar_z+" END: X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" VECTOR: I"+this.ls_i+" J"+this.ls_j+" K"+this.ls_k+" DIRECTION: "+movement);
+            kk("ARCH: RADIUS: "+radius+" BEGIN: "+this.ls_x+" "+this.ls_y+" "+this.ls_z+" CENTER: "+centar_x+" "+centar_y+" "+centar_z+" END: "+kraj_x+" "+kraj_y+" "+kraj_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRECTION: "+movement+" ANGLE: "+angle);
 
             this.ls_x = kraj_x;
             this.ls_y = kraj_y;
@@ -361,7 +399,7 @@ export class catiav5_1_0{
         }
         else if (line.startsWith("SPINDL")){
             if (line.includes("OFF")){
-                this.lsroation = "SPINDLE: STATE:OFF";
+                this.lsrotation = "SPINDLE: STATE:OFF";
                 kk("SPINDLE: STATE:off");
             }
             else if (!line.includes("ON")){
@@ -574,13 +612,16 @@ export class catiav5_1_0{
             kk("COMMENT:" + line);
         }
         else if (line.startsWith("INDIRV")){
-            elements = line.split(" ");
-            this.ls_i = elements[1];
-            this.ls_j = elements[2];
-            this.ls_k = elements[3];
+            elements=line.split(/[,\/\s]+/).filter(Boolean);
+            this.ls_i = +elements[1];
+            this.ls_j = +elements[2];
+            this.ls_k = +elements[3];
+        }
+        else if (this.non_def.some(word => line.startsWith(word))){
+            kk("not defined:" + line);
         }
         else{
-            kk("ERROR: " + line);
+            kk("ERROR: beans" + line);
         }
     }
 }

@@ -162,6 +162,7 @@ eng. - Karlos Code
 "ARCH: arch_info"
     -defines a partial cicular movement
     -arch_info must consist of the followinf information:
+        NOTE XYZ IJK letters must not be displayed in the final code current displayment is for easier understanings
         -"RADIUS: value" where value is a numerical variable starting 1 spaces from "RADIUS:" and it shall only contain positive and both whole or decimal numbers
             -meaning the radius or the movement
         -"BEGIN: value" where value is a numerical variable starting 1 spaces from "BEGIN:"
@@ -173,10 +174,10 @@ eng. - Karlos Code
         -"VECTOR: value" where value is a numerical variable starting 1 spaces from "VECTOR:"
             -meaning the compete IJK vector set of the directional vector (total lenght of 1) that is tanget to the arch'es circle in the beginning point like this example "VECTOR: I0.707 J-0.707 K0"
         -"DIRECTION: value" where value is a variable starting 1 spaces from "DIRECTION:" valued either as "cw" for clockwise or "ccw" for counter clockwise arch direcion
-        -"ANGLE: vlaue" where value is a numerical value starting 1 space from "ANGLE:" valued as the angle between 2 radiuses drawn from ending and beginning of the cicle, the angle is the one facing the tool path
+        -"ANGLE: vlaue" where value is a variable starting 1 space from "ANGLE:" it may be valued as either an angle in decimal radians, degrees or more or less than 180deg or 1Pi (Radians)(Degrees)(1/-1)
         -NOTE there may be aditional info added AFTER the previously stated ones by any format of choice
-"ARCH: RADIUS: 12 BEGIN: X10 Y20 Z30 CENTER: X10 Y20 Z30 END: X10 Y20 Z30 VECTOR: I0.707 J-0.707 K0 DIRECTION: cw ANGLE: 135"
-    0     1     2   3     4   5   6     7     8   9   10  11  12  13  14    15      16      17   18     19     20   21   22
+"ARCH: RADIUS: 12 BEGIN: (X)10 (Y)20 (Z)30 CENTER: (X)10 (Y)20 (Z)30 END: (X)10 (Y)20 (Z)30 VECTOR: (I)0.707 (J)-0.707 (K)0 DIRECTION: cw ANGLE: value"
+    0     1     2   3       4     5     6     7       8     9     10  11    12    13    14    15       16        17      18     19     20   21    22
 
 "CYCLE: cycle_info"
     -defines a canned cycle
