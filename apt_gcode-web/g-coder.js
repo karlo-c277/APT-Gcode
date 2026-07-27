@@ -122,9 +122,11 @@ export class WinNC_sinumerik {
         }
     }
     else if (line.startsWith("AIR")){
+        console.log("***"+line);
         write("G0");
     }
     else if (line.startsWith("CUT")){
+        console.log("***"+line);
         write("G1");
     }
     else if (line.startsWith("END")){
@@ -135,7 +137,7 @@ export class WinNC_sinumerik {
     }
     else if (line.startsWith("LINE")){
         elements = line.split(" ");
-        if (elements.length === 3 ){
+        if (elements.length === 4 ){
             x = elements[1];
             y = elements[2];
             z = elements[3];
@@ -143,16 +145,15 @@ export class WinNC_sinumerik {
             if (x === "X++"){
                 x = "";
             }
-            else if (y === "Y++"){
+            if (y === "Y++"){
                 y = "";
             }
-            else if (z === "Z++"){
+            if (z === "Z++"){
                 z = "";
             }
-
             write(x+" "+y+" "+z);
         }
-        else if (elements.length === 6){
+        else if (elements.length === 7){
             x = elements[1];
             y = elements[2];
             z = elements[3];

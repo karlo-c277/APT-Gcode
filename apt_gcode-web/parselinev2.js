@@ -5,7 +5,6 @@ console.log("parser")
 export class catiav5_1_0{
     constructor(settings){
             this.tolr_coord = 1e-3;
-            this.lsmovement = "";
             this.lsplane = "";
             this.lsrotation = "";
             this.ls_tip_rev = "";
@@ -27,9 +26,7 @@ export class catiav5_1_0{
             this.non_def = ["SWITCH", "PPFUN", "GO", "INDIRP"];
             this.lsautops = 0;
             this.ls_feed_speed = 0.0;
-            this.ls_ls_x = 0.0;
-            this.ls_ls_y = 0.0;
-            this.ls_ls_z = 0.0;
+            this.ls_ls_movement;
             this.rapto=0;
             if (this.lsunits === "UNIT: MM"){
                 this.ls_units_word = "MM";
@@ -291,7 +288,6 @@ export class catiav5_1_0{
             this.ls_x = kraj_x;
             this.ls_y = kraj_y;
             this.ls_z = kraj_z;
-            this.lsmovement = "ARCH";
             this.lsautops = 0;
         }
         else if (line.startsWith("GODLTA")){
@@ -341,8 +337,9 @@ export class catiav5_1_0{
                  koord__y = koord_y-rdty;
                  koord__z = koord_z-rdtz;
 
-                kk("AIR")
-                 kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
+                kk("AIR");
+                kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z);
+                kk("CUT");
 
                 this.rapto = 0;
             }
@@ -351,9 +348,6 @@ export class catiav5_1_0{
 
         }
         else if (line.startsWith("GOTO")){
-            if (this.lsmovement==="CUT"){
-                kk("CUT");
-            }
              koord_x=" X++";
              koord_y=" Y++";
              koord_z=" Z++";
@@ -389,15 +383,14 @@ export class catiav5_1_0{
                  koord__x = koord_x-rdtx;
                  koord__y = koord_y-rdty;
                  koord__z = koord_z-rdtz;
-                kk("AIR")
-                kk("LINE: X"+ koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
+                kk("AIR");
+                kk("LINE: X"+ koord__x + " Y" + koord__y + " Z" + koord__z);
+                kk("CUT");
 
                 this.rapto = 0;
             }
             kk("LINE:"+koord_x + koord_y + koord_z);
 
-            this.lsmovement="CUT";
-            
             this.ls_x=x;
             this.ls_y=y;
             this.ls_z=z;
@@ -458,11 +451,6 @@ export class catiav5_1_0{
             else if (line.includes("MMPM")||line.includes("IPM")||line.includes("MIN")){
                 this.ls_tip_posmak = "TYPE:time";
             }
-             movement = "CUT";
-            if (this.lsmovement!==movement){
-                kk(movement);
-                this.lsmovement = movement;
-            }
             if (line.includes("RAPTO")){
                 this.rapto=1;
                 this.rapto_num = +feed[4]
@@ -470,10 +458,7 @@ export class catiav5_1_0{
             kk("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + numf);
         }
         else if (line.startsWith("RAPID")){
-            if (this.lsmovement !== "AIR"){
-                kk("AIR");
-            }
-            this.lsmovement = "AIR";
+
             if (line.includes("GOTO")){
                  koord_x=" X++";
                  koord_y=" Y++";
@@ -511,7 +496,8 @@ export class catiav5_1_0{
                      koord__y = koord_y-rdty;
                      koord__z = koord_z-rdtz;
                     kk("AIR")
-                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
+                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z);
+                    kk("CUT");
 
                     this.rapto = 0;
                 }
@@ -569,12 +555,12 @@ export class catiav5_1_0{
                      koord__y = koord_y-rdty;
                      koord__z = koord_z-rdtz;
 
-                    kk("AIR")
-                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z + "\nCUT");
+                    kk("AIR");
+                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z);
+                    kk("CUT");
 
                     this.rapto = 0;
                 }
-
                 kk("LINE: " + koord_x + koord_y + koord_z);
 
             }
@@ -612,7 +598,8 @@ export class catiav5_1_0{
             }
         }
         else if (line.startsWith("CYCLE")){
-            kk("CYCLE: ",line);
+            line = line.replace("CYCLE/", "");
+            kk("CYCLE: " + line);
         }
         else if (line.startsWith("$$")){
             line = line.split("$$")[1];
@@ -637,4 +624,4 @@ export class catiav5_1_0{
 []
 \
 ^*/
-console.log("parser end")        
+console.log("parser end")
