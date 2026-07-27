@@ -291,7 +291,7 @@ export class catiav5_1_0{
             this.ls_x = kraj_x;
             this.ls_y = kraj_y;
             this.ls_z = kraj_z;
-            this.lsmovement = movement;
+            this.lsmovement = "ARCH";
             this.lsautops = 0;
         }
         else if (line.startsWith("GODLTA")){
@@ -351,6 +351,9 @@ export class catiav5_1_0{
 
         }
         else if (line.startsWith("GOTO")){
+            if (this.lsmovement==="CUT"){
+                kk("CUT");
+            }
              koord_x=" X++";
              koord_y=" Y++";
              koord_z=" Z++";
@@ -392,6 +395,8 @@ export class catiav5_1_0{
                 this.rapto = 0;
             }
             kk("LINE:"+koord_x + koord_y + koord_z);
+
+            this.lsmovement="CUT";
             
             this.ls_x=x;
             this.ls_y=y;
@@ -432,7 +437,7 @@ export class catiav5_1_0{
                     else {
                         kk("ERROR SPINDLE DIRECTION NOT DEFINED " +line);
                     }
-                    this.ls_on_rotation = ("SPINDLE: STATE:on " + "SPEED:" + this.ls_spindle_speed + " " + this.ls_tip_rev + " " + this.lsrotation);
+                    this.ls_on_rotation = ("SPINDLE: STATE:on " + rotation_typ + " SPEED:" + this.ls_spindle_speed + " " + " " + this.lsrotation);
                     kk(this.ls_on_rotation);
                 }
                 else {
@@ -465,7 +470,9 @@ export class catiav5_1_0{
             kk("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + numf);
         }
         else if (line.startsWith("RAPID")){
-            kk("AIR");
+            if (this.lsmovement !== "AIR"){
+                kk("AIR");
+            }
             this.lsmovement = "AIR";
             if (line.includes("GOTO")){
                  koord_x=" X++";

@@ -91,8 +91,8 @@ eng. - Karlos Code
         -"STATE:value" where value is a variable starting 0 spaces from "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of spindle_info may be undefined
         -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and it must be valued only as "surface" as for surface speed or "fix" as for fixed RPM speed
         -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers       
-        -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" and it must only be valued as "CW" for clockwise or as "CCW" for counter-clockwise
-"SPINDLE: STATE:on TYPE:fix SPEED:1500 DIRECTION:CW"
+        -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" and it must only be valued as "cw" for clockwise or as "ccw" for counter-clockwise
+"SPINDLE: STATE:on TYPE:fix SPEED:1500 DIRECTION:cw"
 "SPINDLE: STATE:off"
     0       1           2       3           4
 

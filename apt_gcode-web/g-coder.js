@@ -38,6 +38,17 @@ export class WinNC_sinumerik {
             write("G70");
         }
     }
+    else if (line.startsWith("PLANE")){
+        if (line.includes("xy")){
+            write("G17");
+        }
+        else if (line.includes("xz")){
+            write("G18");
+        }
+        else if (line.includes("zy")){
+            write("G19");
+        }
+    }
     else if (line.startsWith("TOOL")){
         let elements = line.split(" ");
         let name = elements[1];
@@ -52,23 +63,21 @@ export class WinNC_sinumerik {
         }
         else if (line.includes("on")){
             elements = line.split(" ");
-            type = elements[2];
             speed = elements[3].split(":")[1];
-            direction = elements[4];
             
-            if(type.includes ("fix")){
+            if(line.includes ("fix")){
                 type = "G97";
             }
-            else if (type.includes("surface")){
+            else if (line.includes("surface")){
                 type = "G96";
             }
-            if (direction.includes("CCW")){
+            if (line.includes("ccw")){
                 direction = "M03";
             }
-            else if (direction.includes("CW")){
+            else if (line.includes("cw")){
                 direction="M04";
             }
-            write("S"+speed+" "+type+" "+direction);
+            write(type+" S"+speed+" "+" "+direction);
         }
     }
     else if (line.startsWith("FEEDRATE")){
@@ -183,7 +192,6 @@ export class WinNC_sinumerik {
         }            
     }
     else if (line.startsWith("ARCH")){
-        write("**************"+line);
         elements = line.split(" ");
         direction = elements[20];
         radius = +elements[2];
