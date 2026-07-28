@@ -92,7 +92,6 @@ export class catiav5_1_0{
             let angle;
             let direction;
 
-        console.log(line);
         if (!line || !line.trim()) return;
 
         if (line.startsWith("UNITS")){

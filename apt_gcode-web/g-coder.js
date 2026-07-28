@@ -26,6 +26,8 @@ export class WinNC_sinumerik {
         let radius;
         let angle;
 
+    console.log(line);
+    
     if (line.startsWith("COMMENT")){
         line = line.replace("COMMENT:", ";");
         write(line);
