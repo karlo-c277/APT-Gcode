@@ -218,7 +218,6 @@ export class WinNC_sinumerik {
     else {
         write(line);
     }
-
 }
 }
 {}

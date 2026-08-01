@@ -35,15 +35,9 @@ async function translateAPT(){
             parser.parseline(command);
         }
         console.log(typeof parser)
-        for (const command of commands) {
-            parser.parseline(command);
-        }
         
         if (settings.downloadOutput) {
             downloadOutput(result, settings);
-        }
-        for (const command of commands) {
-            parser.parseline(command);
         }
     }
     

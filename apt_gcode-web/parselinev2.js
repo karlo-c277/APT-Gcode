@@ -21,22 +21,14 @@ export class catiav5_1_0{
             this.ls_dim_typ = "";
             this.ls_clnt_typ = "";
             this.ls_cycle = "";
-            this.lsunits = settings.output.default_units;
+            this.lsunits = "";
             this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS", "CUTCOM"];
             this.non_def = ["SWITCH", "PPFUN", "GO", "INDIRP"];
             this.lsautops = 0;
             this.ls_feed_speed = 0.0;
             this.ls_ls_movement;
             this.rapto=0;
-            if (this.lsunits === "UNIT: MM"){
-                this.ls_units_word = "MM";
-            }
-            else if (this.lsunits === "UNIT: INCH"){
-                this.ls_units_word = "INCH";
-            }
-            else {
-                kk("ERROR: Unit value not determined")
-            }
+
         }
     parseline(line){
             let elements;
