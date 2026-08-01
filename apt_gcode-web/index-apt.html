@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +12,7 @@
         <div class="main-grid">
         <div class="form-group">
             <label for="costumFilename">Select a file:</label>
-            <input type="file" id="costumFilename" placeholder="beans.aptsource">
+            <input type="file" id="costumFilename">
         </div>
         <div class="form-group2">
             <label for="demoSelect">Or select a demo file:</label>
@@ -83,10 +82,9 @@
             </div>
         </div>
         </div>
-        <button id="translateButton">
+        <button id="translateButton" type="button">
             APT-Gcode translate
         </button>
-        
         <div class="terminal-container">
             <pre id="terminalOutput">-no output select a file and translate it to generate output</pre>
 
