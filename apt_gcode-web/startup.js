@@ -15,9 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function translateAPT(){
     clearOutput();
+    const settings = getSettings();
     try {
-        
-        const settings = getSettings();
+
         validateSettings(settings);
         const aptText = await loadAPT(settings);
         const commands = splitAPT(aptText);
@@ -39,8 +39,6 @@ async function translateAPT(){
         for (const command of commands) {
             parser.parseline(command);
         }
-        const text = buildOutput(settings);
-        downloadOutput(text,settings);
     }
     
     catch (error) {
@@ -50,7 +48,6 @@ async function translateAPT(){
     }
 
     try{
-        const settings = getSettings();
         validateSettings(settings);
         const aptText = await loadAPT(settings);
         const g_code_type = document.getElementById("preset").value;
@@ -82,6 +79,7 @@ async function translateAPT(){
         console.error(error);
     
     }
+    downloadOutput(buildOutput(settings),settings);
 }
 async function loadAPT(settings) {
     if (settings.file) {
@@ -116,6 +114,7 @@ function splitAPT(text) {
         current = "";
     }
     return commands;
+
 }
 {}
 []

@@ -19,7 +19,7 @@ export function getJSON(){
 
 
 export function clearJSON(){
-    jsonOutput = []
+    jsonOutput = [];
 }
 
 
@@ -51,12 +51,9 @@ export function buildOutput(settings){
     if (settings.output.isoCommand && settings.output.isoCommand.trim() !==""){
         finalOutput.push(settings.output.isoCommand);
     }
-    if (settings.output.default_units && settings.output.default_unit.trim() !== ""){
-        finalOutput.push(settings.output.default_units)
+    if (settings.output.default_unit && settings.output.default_unit.trim() !== ""){
+        finalOutput.push(settings.output.default_unit)
     }
-
-
-    finalOutput.push(settings.output.default_units);
     finalOutput.push("#DEFINE THE WORKPIECE");
     if (finalOutput.length > 0){
         finalOutput.push("");
@@ -67,9 +64,6 @@ export function buildOutput(settings){
 
 
 export function downloadOutput(text,settings){
-    console.log(settings);
-    console.log(settings.output);
-    console.log(settings.output.encoding);
 
     const blob = new Blob([text],{
         type:
