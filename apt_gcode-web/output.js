@@ -1,4 +1,3 @@
-console.log("output")
 import { generateHeader } from "./settings.js";
 
 let output = [];
@@ -68,9 +67,13 @@ export function buildOutput(settings){
 
 
 export function downloadOutput(text,settings){
+    console.log(settings);
+    console.log(settings.output);
+    console.log(settings.output.encoding);
+
     const blob = new Blob([text],{
         type:
-        "text/plain;charset=" + settings.output.encoding
+        "text/plain;charset="+settings.output.encoding
     });
     const link = document.createElement("a");
     link.href=URL.createObjectURL(blob);
@@ -80,5 +83,4 @@ export function downloadOutput(text,settings){
     URL.revokeObjectURL(link.href);
 }
 
-console.log("output end")
 {}

@@ -1,8 +1,9 @@
-console.log("startup")
+
 import {getSettings, validateSettings} from "./settings.js";
 //import {MyParseline} from "./parseline.js";
 import {clearOutput, buildOutput, downloadOutput, getJSON} from "./output.js";
 import {catiav5_1_0} from "./parselinev2.js";
+import {kkod} from "./parselinev2.js";
 import {WinNC_sinumerik} from "./g-coder.js";
 import {Karlov_kod} from "./g-coder.js";
 
@@ -28,6 +29,9 @@ async function translateAPT(){
             case "catiav5_1_0":
                 parser = new catiav5_1_0(settings);
                 break;
+            case "kkod":
+                parser = new kkod(settings);
+                break;
             default:
                 throw new Error("APT parser not selected");
         }
@@ -35,11 +39,8 @@ async function translateAPT(){
         for (const command of commands) {
             parser.parseline(command);
         }
-        console.log(typeof parser)
-        
-        if (settings.downloadOutput) {
-            downloadOutput(result, settings);
-        }
+        const text = buildOutput(settings);
+        downloadOutput(text,settings);
     }
     
     catch (error) {
@@ -116,7 +117,5 @@ function splitAPT(text) {
     }
     return commands;
 }
-
-console.log("startup end")
 {}
 []

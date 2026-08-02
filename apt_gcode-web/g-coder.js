@@ -1,5 +1,5 @@
 import {write} from "./output.js";
-console.log("GCODER")
+
 export class WinNC_sinumerik {
     constructor(settings){
     }
@@ -26,8 +26,6 @@ export class WinNC_sinumerik {
         let radius;
         let angle;
 
-    console.log(line);
-    
     if (line.startsWith("COMMENT")){
         line = line.replace("COMMENT:", ";");
         write(line);
@@ -124,11 +122,10 @@ export class WinNC_sinumerik {
         }
     }
     else if (line.startsWith("AIR")){
-        console.log("***"+line);
+
         write("G0");
     }
     else if (line.startsWith("CUT")){
-        console.log("***"+line);
         write("G1");
     }
     else if (line.startsWith("END")){
@@ -214,6 +211,9 @@ export class WinNC_sinumerik {
         }
         write(direction + " X" + x + " Y" +  y + " Z" +  z + " R" +  radius);
 
+    }
+    else if (line.startsWith("#")){
+        write(line);
     }
     else {
         write(line);

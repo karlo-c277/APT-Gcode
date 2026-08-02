@@ -1,6 +1,6 @@
 import {kk} from "./output.js";
 
-console.log("parser")
+
 
 export class catiav5_1_0{
     constructor(settings){
@@ -156,7 +156,6 @@ export class catiav5_1_0{
         }
         else if (line.includes("CIRCLE") ){
              elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
-             console.log(elements);
              centar_x = +elements[3];
              centar_y = +elements[4];
              centar_z = +elements[5];
@@ -609,9 +608,8 @@ export class catiav5_1_0{
         }
     }
 }
-/*{}
-||
-[]
-\
-^*/
-console.log("parser end")
+export class kkod{
+    parseline(line){
+        kk(line);
+    }
+}
