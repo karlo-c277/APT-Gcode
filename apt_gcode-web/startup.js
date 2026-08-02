@@ -1,13 +1,8 @@
 
 import {getSettings, validateSettings} from "./settings.js";
-//import {MyParseline} from "./parseline.js";
 import {clearOutput, buildOutput, downloadOutput, getJSON} from "./output.js";
-import {catiav5_1_0} from "./parselinev2.js";
-import {kkod} from "./parselinev2.js";
-import {WinNC_sinumerik} from "./g-coder.js";
-import {Karlov_kod} from "./g-coder.js";
-
-
+import {catiav5_1_0, kkod} from "./parselinev2.js";
+import {WinNC_sinumerik, Karlov_kod} from "./g-coder.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("translateButton");
