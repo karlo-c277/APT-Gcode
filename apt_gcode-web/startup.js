@@ -55,7 +55,16 @@ async function translateAPT(){
             case "Karlov_kod":
                 gcoder = new Karlov_kod(settings);
                 break;
-
+            case "costum":
+                if (document.getElementById("core_output").value === "WinNC_sinumerik"){
+                    gcoder = new WinNC_sinumerik(settings);
+                    break;
+                }
+                else if (document.getElementById("core_output").value === "Karlov_kod"){
+                    gcoder = new Karlov_kod(settings);
+                    break;
+                }
+                break;
         default:
             throw new Error("G-code generator not selected");
         }
@@ -74,7 +83,8 @@ async function translateAPT(){
         console.error(error);
     
     }
-    downloadOutput(buildOutput(settings),settings);
+    if (document.getElementById("downloadOutputCheck").checked){
+    downloadOutput(buildOutput(settings),settings)}
 }
 async function loadAPT(settings) {
     if (settings.file) {

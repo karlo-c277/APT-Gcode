@@ -48,12 +48,7 @@ export function buildOutput(settings){
     if (settings.output.header && settings.output.header.trim() !==""){
         finalOutput.push(generateHeader(settings));
     }
-    if (settings.output.isoCommand && settings.output.isoCommand.trim() !==""){
-        finalOutput.push(settings.output.isoCommand);
-    }
-    if (settings.output.default_unit && settings.output.default_unit.trim() !== ""){
-        finalOutput.push(settings.output.default_unit)
-    }
+    finalOutput.push(document.getElementById("add").value.replaceAll(/\\n/g, "\n"));
     finalOutput.push("#DEFINE THE WORKPIECE");
     if (finalOutput.length > 0){
         finalOutput.push("");
