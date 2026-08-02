@@ -220,5 +220,11 @@ export class WinNC_sinumerik {
     }
 }
 }
+export class Karlov_kod{
+    gcoder(line){
+        write(line);
+    }
+}
+
 {}
 []

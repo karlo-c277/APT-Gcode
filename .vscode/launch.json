@@ -1,17 +1,5 @@
 {
     "version": "0.2.0",
-    "configurations": [
-        
-        
-        
-        {
-            "name": "Parser",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${workspaceFolder}/apt_gcode_startup.py",
-            "console": "integratedTerminal"
-        }
-    ],
 
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 3000,

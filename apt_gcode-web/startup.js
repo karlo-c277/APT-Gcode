@@ -4,6 +4,7 @@ import {getSettings, validateSettings} from "./settings.js";
 import {clearOutput, buildOutput, downloadOutput, getJSON} from "./output.js";
 import {catiav5_1_0} from "./parselinev2.js";
 import {WinNC_sinumerik} from "./g-coder.js";
+import {Karlov_kod} from "./g-coder.js";
 
 
 
@@ -46,6 +47,7 @@ async function translateAPT(){
             error.message;
         console.error(error);
     }
+
     try{
         const settings = getSettings();
         validateSettings(settings);
@@ -56,14 +58,16 @@ async function translateAPT(){
         switch (g_code_type) {
             case "WinNC_sinumerik":
                 gcoder = new WinNC_sinumerik(settings);
-            break;
+                break;
+            case "Karlov_kod":
+                gcoder = new Karlov_kod(settings);
+                break;
 
         default:
             throw new Error("G-code generator not selected");
         }
 
         const jsonLines = JSON.parse(getJSON());
-
         for (const line of jsonLines) {
             gcoder.gcoder(line);
         }
@@ -112,6 +116,7 @@ function splitAPT(text) {
     }
     return commands;
 }
+
 console.log("startup end")
 {}
 []

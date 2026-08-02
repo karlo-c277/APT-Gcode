@@ -28,7 +28,6 @@ export class catiav5_1_0{
             this.ls_feed_speed = 0.0;
             this.ls_ls_movement;
             this.rapto=0;
-
         }
     parseline(line){
             let elements;
@@ -603,7 +602,7 @@ export class catiav5_1_0{
             this.ls_k = +elements[3];
         }
         else if (this.non_def.some(word => line.startsWith(word))){
-            kk("not defined:" + line);
+            kk("ERROR not defined:" + line);
         }
         else{
             kk("ERROR: beans" + line);
