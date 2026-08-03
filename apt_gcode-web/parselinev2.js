@@ -1,4 +1,5 @@
 import {kk} from "./output.js";
+import {getSettings} from "./settings.js";
 
 
 
@@ -28,6 +29,7 @@ export class catiav5_1_0{
             this.ls_feed_speed = 0.0;
             this.ls_ls_movement;
             this.rapto=0;
+            this.header="";
         }
     parseline(line){
             let elements;
@@ -83,6 +85,12 @@ export class catiav5_1_0{
             let angle;
             let direction;
 
+console.log(line);
+
+        if (this.header === ""){
+            kk(window.add_command);
+            this.header = "yes";
+        }
         if (!line || !line.trim()) return;
 
         if (line.startsWith("UNITS")){
@@ -577,13 +585,13 @@ export class catiav5_1_0{
             }
         }
         else if (line.startsWith("DELAY")||line.startsWith("DWELL")){
-            dwell=line.split("/");
+            dwell=line.split("/")[1];
             if (line.includes("REV")){
                 revs=dwell.split(",").trim();
                 kk("DWELL: TYPE:rev NUMBER:" + revs);
             }
             else{
-                kk("DWELL: TYPE:time NUMBER:" + dwell);
+                kk("DWELL: TYPE:time NUMBER:" + dwell.trim());
             }
         }
         else if (line.startsWith("CYCLE")){

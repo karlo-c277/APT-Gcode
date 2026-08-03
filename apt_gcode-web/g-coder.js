@@ -25,10 +25,22 @@ export class WinNC_sinumerik {
         let kraj_z;
         let radius;
         let angle;
+        let number_dt;
+        let number;
+
+console.log(line);
 
     if (line.startsWith("COMMENT")){
         line = line.replace("COMMENT:", ";");
         write(line);
+    }
+    else if (line.startsWith("ADD")){
+        if (line.includes("RADIUS")){
+            write("DIAMOF");
+        }
+        else if (line.includes("DIAMETER")){
+            write("DIAMON");
+        }
     }
     else if (line.startsWith("UNIT")){
         if (line.includes("MM")){
@@ -183,7 +195,8 @@ export class WinNC_sinumerik {
 
     }
     else if (line.startsWith("DWELL")){
-        number = line.split(" ")[2];
+        number_dt = line.split(" ")[2];
+        number = number_dt.split(":")[1];
         if (line.includes("time")){
             write("G4 S" + number);
         }

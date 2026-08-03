@@ -31,6 +31,11 @@ eng. - Karlos Code
     -There are NO other elements for this command
 "COMMENT:This is an example for a comment " with comment sing in the output comment being "$" output will be "$This is an example for a comment " <- notice the space before " as that is the way Comand line ended
 
+"ADD: add_info"
+    -ADD defines a header of the G-code
+    -add_info may contain RADIUS to define that the g code is written in radius values, or DIAMETER for diameter
+    -add_info may be defined in other ways but MUST be nused to define a g code command and in that case shall not contain RADIUS or DIAMETER
+
 "UNIT: unit_type"
     -UNIT command shall define what measuremnt unit type is used
     -default units are milimeters
