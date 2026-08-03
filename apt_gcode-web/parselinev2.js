@@ -395,7 +395,7 @@ console.log(line);
         else if (line.startsWith("SPINDL")){
             if (line.includes("OFF")){
                 this.lsrotation = "SPINDLE: STATE:OFF";
-                kk("SPINDLE: STATE:off");
+                kk("SPINDLE: STATE:off NUM:1");
             }
             else if (!line.includes("ON")){
                  spindlDT = line.split(/[,/]+/)
@@ -427,7 +427,7 @@ console.log(line);
                     else {
                         kk("ERROR SPINDLE DIRECTION NOT DEFINED " +line);
                     }
-                    this.ls_on_rotation = ("SPINDLE: STATE:on " + rotation_typ + " SPEED:" + this.ls_spindle_speed + " " + " " + this.lsrotation);
+                    this.ls_on_rotation = ("SPINDLE: STATE:on " + rotation_typ + " SPEED:" + this.ls_spindle_speed + " " + " " + this.lsrotation + " NUM:1");
                     kk(this.ls_on_rotation);
                 }
                 else {

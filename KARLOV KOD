@@ -97,9 +97,10 @@ eng. - Karlos Code
         -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and it must be valued only as "surface" as for surface speed or "fix" as for fixed RPM speed
         -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers       
         -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" and it must only be valued as "cw" for clockwise or as "ccw" for counter-clockwise
-"SPINDLE: STATE:on TYPE:fix SPEED:1500 DIRECTION:cw"
-"SPINDLE: STATE:off"
-    0       1           2       3           4
+        -"NUM:value" where value is a numerical variable starting 0 spaces from "NUM:" and it defines what spindle is used
+"SPINDLE: STATE:on TYPE:fix SPEED:1500 DIRECTION:cw NUM:1"
+"SPINDLE: STATE:off NUM:1"
+    0       1           2       3           4         5
 
 "FEEDRATE: feedrate_info"
     -this defines the speed of changing tool position during "CUT"
