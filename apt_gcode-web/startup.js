@@ -1,6 +1,6 @@
 
 import {getSettings, validateSettings} from "./settings.js";
-import {clearOutput, buildOutput, downloadOutput, getJSON} from "./output.js";
+import {clearOutput, buildOutput, downloadOutput, getJSON, kk} from "./output.js";
 import {catiav5_1_0, kkod} from "./parselinev2.js";
 import {WinNC_sinumerik, Karlov_kod} from "./g-coder.js";
 
@@ -48,7 +48,8 @@ async function translateAPT(){
         const g_code_type = document.getElementById("preset").value;
         window.core = g_code_type;
         let gcoder;
-
+        kk("END");
+        
         switch (g_code_type) {
             case "WinNC_sinumerik":
                 gcoder = new WinNC_sinumerik(settings);
