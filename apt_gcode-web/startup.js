@@ -46,6 +46,7 @@ async function translateAPT(){
         validateSettings(settings);
         const aptText = await loadAPT(settings);
         const g_code_type = document.getElementById("preset").value;
+        window.core = g_code_type;
         let gcoder;
 
         switch (g_code_type) {
@@ -75,6 +76,7 @@ async function translateAPT(){
         }
         const result = buildOutput(settings);
         document.getElementById("terminalOutput").textContent = result;
+
     }
     
     catch (error) {

@@ -49,7 +49,9 @@ export function buildOutput(settings){
         finalOutput.push(generateHeader(settings));
     }
     finalOutput.push(document.getElementById("add").value.replaceAll(/\\n/g, "\n"));
-    finalOutput.push("#DEFINE THE WORKPIECE");
+    if (window.core !== "Karlov_kod") {
+        finalOutput.push("#DEFINE THE WORKPIECE");
+    }
     if (finalOutput.length > 0){
         finalOutput.push("");
     }
