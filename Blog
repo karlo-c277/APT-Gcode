@@ -1,6 +1,13 @@
 Here is defined all the progress done so far.
 
-19.7.2026.  -made a web version
+12.8.2026.  -the JS version is ready to launch
+            -after more thinkering about future of the project I decided to make up my own language for transfering data from APT translator to G code formator called Karlov Kod
+            -I made an analisys of the Catia's APT output, now I think I understand it all, but some cycles just dont have enough data for me to do something with them
+            -I got a list of what cycles are usefull but yeah, still got the whole 4 & 5 axis to complete but I dont know anything about that
+            -Over all not bad but could be better
+
+19.7.2026.  -translated the Py into JS so it can run on a website
+            -what I tought about cycles was totally wrong so yeah I will focus on perfecting what I have 
 
 28.6.2026.  -can parse almost all APT commands exept fedrat & rapto combo
             -cannot parse CYCLE/ outputs
