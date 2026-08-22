@@ -597,7 +597,20 @@ console.log(line);
         else if (line.startsWith("CYCLE")){
             line = line.replace("CYCLE/", "");
             kk("CYCLE: " + line);
-            
+            elements = line.split(",");
+            if (elements.lenght === 12){
+                let cycle_typ = elements[0];
+                let total_depth = elements[1];
+                let plunge = elements[2];
+                let axial_depth = elements[3];
+                let dwell_in_time = elements[4];
+                let clearance = elements[5];
+                let cycle_feed = elements[6];
+                let cycle_spindle = elements[7];
+                let depth_decrement = elements[10];
+                let aditional_element = elements[11];
+            }
+
         }
         else if (line.startsWith("$$")){
             line = line.split("$$")[1];
