@@ -597,6 +597,7 @@ console.log(line);
         else if (line.startsWith("CYCLE")){
             line = line.replace("CYCLE/", "");
             kk("CYCLE: " + line);
+            
         }
         else if (line.startsWith("$$")){
             line = line.split("$$")[1];
