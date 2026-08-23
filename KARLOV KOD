@@ -189,11 +189,52 @@ eng. - Karlos Code
     -defines a canned cycle
     -cycle_info shall consist of the following information:
         -"LOCATION: value" where value begins with 1 space after "LOCATION:" and defines point/s of beggining of each cycle
-            -value: (X Y Z)(X Y Z) XYZ in the fisrt () brackets are coordinates for the first CYCLE in the second () brackets for the second one
+            -value: (X Y Z)(X Y Z)/      XYZ in the fisrt () brackets are coordinates for the first CYCLE in the second () brackets for the second one etc.
             -the () brackets shall be distanced 0 spaces from each other
             -X value shall begin 0 spaces after "(" and have structure as in "LINE:" - exept for the second statement
             -Y shall have structure as in "LINE:"
             -Z shall have structure as in "LINE:"
             -the ")" closing bracket shall be 0 spaces after Z value
+            -the "/" shall be 0 spaces after last coordinate bracket
         -"TYPE:value" where value begins 0 spaces after "TYPE:" and is named as the cycle that is being define
+        -cycle specific information listed below
+
+TYPE->  DRILL   it must contain the following numerical information in this order each separated by 1 space
+                total_depth plunge_offset dwell_time clearance feedrate spindle_speed
+
+            plunge_offset is an absolute distance between the set start of an operation and actual start
+            dwell_time is a number expressed in seconds of time that tool is waiting at the end of cutting motion
+            clearance is the distance from the previously defined starting points and first contact with the workpiece
+            feedrate expressed in per revolution
+            spindle_speed expressed in revolutions
+
+            -this cycle is used when the cutting motion is done in only one direction for example:
+                drilling, drilling with a dwell at the bottom, spot drilling, counter boring and sinking
+                -note that this cycles during the return motion do not cut the workpiece
+            CYCLE: LOCATION: (X1.1 Y1.1 Z1.1)(X5.5 Y5.5 Z5.5)/ TYPE:DRILL 50 0 3.5 0.8 10 500
+
+
+        DEEPHL  total_depth plunge_offset dwell_time clearance feedrate spindle_speed peck_size decrement_rate return
+
+            peck_size is an absolute number defining the size the First peck
+            decrement_rate is a percentge defining how smaller the next peck is in comparison to the peck_size (stackable)
+                Peck sizes: peck_size, (peck_size)*(100%-(1*decrement_rate)%), (peck_size)*(100%-(2*decrement_rate)%), etc.
+            return is an absolute value for rapid return after each peck, unafected byecrement_rate
+
+            -this cycle is used for deep hole drilling
+            CYCLE: LOCATION: (X1.1 Y1.1 Z1.1)(X5.5 Y5.5 Z5.5)/ TYPE:DEEPHL 50 0 3.5 0.8 10 500 10 3 4
+
+
+        REAM    total_depth plunge_offset dwell_time clearance feedrate spindle_speed retraction_feed
+
+            retraction_feed is the feerate of bacwards motion
+            CYCLE: LOCATION: (X1.1 Y1.1 Z1.1)(X5.5 Y5.5 Z5.5)/ TYPE:REAM 50 0 3.5 0.8 10 500 11
+
+
+        TAP     total_depth plunge_offset clearance feedrate spindle_speed tool_pitch
+            
+            CYCLE: LOCATION: (X1.1 Y1.1 Z1.1)(X5.5 Y5.5 Z5.5)/ TYPE:REAM 50 0 3.5 0.8 1 500 1
+
+
+
         !!!The cycle syntacs is still in development still not entierly defined plese reach out to karlo.ugrin@mail.com for info

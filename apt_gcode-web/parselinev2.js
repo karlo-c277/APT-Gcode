@@ -595,7 +595,6 @@ console.log(line);
             }
         }
         else if (line.startsWith("CYCLE")){
-            line = line.replace("CYCLE/", "");
             kk("CYCLE: " + line);
             elements = line.split(",");
             if (elements.lenght === 12){
@@ -609,6 +608,28 @@ console.log(line);
                 let cycle_spindle = elements[7];
                 let depth_decrement = elements[10];
                 let aditional_element = elements[11];
+
+                switch (true){
+                    case cycle_typ.includes("DRILL"):
+                        
+                    break;
+                    case cycle_typ.includes("DEEPHL"):
+
+                    break;
+                    case cycle_typ.includes("BRKCHP"):
+
+                    break;
+                    case cycle_typ.includes("TAP"):
+
+                    break;
+                    case cycle_typ.includes("BORE"):
+
+                    break;
+                    case cycle_typ.includes("REAM"):
+
+                    break;
+                    
+                }
             }
 
         }
