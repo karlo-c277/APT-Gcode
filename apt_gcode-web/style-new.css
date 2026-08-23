@@ -93,7 +93,8 @@ h2 {
 .form-group2,
 .inputSettings,
 .costumSettings,
-.costumOutputFile {
+.costumOutputFile,
+.outputSettings {
     padding: 22px;
     margin: 0;
     background: 
@@ -354,4 +355,8 @@ h6 {
     h1 {
         font-size: 23px;
     }
+}
+
+.outputSettings {
+    background: #111315 !important;
 }
