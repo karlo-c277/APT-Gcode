@@ -78,7 +78,7 @@ button:hover {
 button:active {
     transform: scale(0.95);
 }
-input [type="checkbox"] {
+input[type="checkbox"] {
     width: auto;
     margin-right: 10px;
     transform: scale(1.3);
