@@ -2,6 +2,18 @@
     box-sizing:border-box;
     font-family: "Segoe UI", Arial, sans-serif;
 }
+
+#gradient {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 0;
+    pointer-events: none;
+}
+
 :root{
     --bg: #090a0b;
     --panel: #111315;
@@ -28,76 +40,9 @@ body {
 
     min-height: 100vh;
 
-    background: 
-        radial-gradient(
-            circle at top,
-            #151515 0%,
-            var(--bg) 48%
-        );
+    background: #000;
     color: var(--text);
     overflow-x: hidden;
-    position: relative;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-
-    left: var(--mouse-x);
-    top: var(--mouse-y);
-
-    width: 650px;
-    height: 650px;
-
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-
-    background: radial-gradient(
-            ellipse at 35% 30%,
-            rgba(var(--mouse-color), 0.16) 0%,
-            rgba(var(--mouse-color), 0.09) 16%,
-            rgba(255, 255, 255, 0.025) 34%,
-            rgba(var(--mouse-color), 0.025) 45%,
-            transparent 68%
-        );
-
-    filter: blur(22px);
-    transition: 
-        left 0.08s ease-out,
-        top 0.08s ease-out,
-        background 0.5s ease;
-}
-
-body::after {
-    content: "";
-    position: fixed;
-
-    left: calc(var(--mouse-x) + 25px);
-    top: calc(var(--mouse-y) + 35px);
-
-    width: 600px;
-    height: 600px;
-
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-
-    background: 
-        radial-gradient(
-            ellipse at 65% 70%,
-            rgba(0, 0, 0, 0.38) 0%,
-            rgba(0, 0, 0, 0.20) 25%,
-            rgba(0, 0, 0, 0.07) 45%,
-            transparent 68%
-        );
-
-    filter: blur(28px);
-    transition:
-        left 0.12s ease-out,
-        top 0.12s ease-out;
 }
 
 .container {
