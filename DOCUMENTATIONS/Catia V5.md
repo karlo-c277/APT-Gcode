@@ -38,3 +38,6 @@ COOLNT              -Sets new value for coolant
 DELAY               -Wait this much until next line
 DWELL               -Wait this much until next line
 CYCLE               -Cycle is to be defined
+
+$$
+-basically just means to not show next lines in the final G-code
