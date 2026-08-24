@@ -48,11 +48,13 @@
             </select>
             <h4>File name (needed for header and file output)</h4>
             <input type="text" id="filename" placeholder="CNC_gcode">
-        </div>
-        <div class="file_cb">
-            <input type="checkbox" id="downloadOutputCheck">
-            <span class="slider"></span>
-            Automatically download output file
+            <div class="outputSettings download-option">
+                <label class="switch">
+                    <input type="checkbox" id="downloadOutputCheck">
+                    <span class="slider"></span>
+                </label>
+                <span>Automatically download output file</span>
+            </div>
         </div>
         <div id="costumOptions" class="hiddenPanel" style="display: none">
             <h2>Costum settings</h2>
