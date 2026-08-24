@@ -8,9 +8,12 @@ There are some .txt files those are for testing your code.
 
 
 
+what does partno define, or operation name
 Define usage for angle id bigger than 180 for g code
-
+$$ pprint in catia md explain
 Configure "TOOL:" into json and outa json
+what if the tool path elipse or other 
+see if the tlon gofwd is always for the circle
 Define what does cutter/ with a lot of elements mean, for each element and implement that
 upgrade logic on rapid, in g code it stays in rapid in  catia apt it turns off after one command
 Resolve the CYCLE/ output for CATIAV5 -NOTE!!! use g291 to get into iso standard for canned cycles like g80 g81 g83 etc. 

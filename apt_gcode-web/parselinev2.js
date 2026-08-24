@@ -23,7 +23,7 @@ export class catiav5_1_0{
             this.ls_clnt_typ = "";
             this.ls_cycle = "";
             this.lsunits = "";
-            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS", "CUTCOM"];
+            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS"];
             this.non_def = ["SWITCH", "PPFUN", "INDIRP"];
             this.lsautops = 0;
             this.ls_feed_speed = 0.0;
@@ -571,6 +571,10 @@ console.log(line);
             else if (line.includes("MIST")){
                 this.ls_clnt_typ = "COOLANT: STATE:on TYPE:mist";
                 kk("COOLANT: STATE:on TYPE:mist");
+            }
+            else if (line.includes("AIR")){
+                this.ls_clnt_typ = "COOLANT: STATE:on TYPE:air";
+                kk("COOLANT: STATE:on TYPE:air");
             }
             else if (line.includes("OFF")){
                 kk("COOLANT: STATE:off");
