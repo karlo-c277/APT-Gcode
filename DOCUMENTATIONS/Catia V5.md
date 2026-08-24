@@ -41,3 +41,9 @@ CYCLE               -Cycle is to be defined
 
 $$
 -basically just means to not show next lines in the final G-code
+TPRINT
+-next line is a comment     this has appeared in some of test filesmight have been a bug
+PPRINT
+-next line is a comment
+
+For $$/PPRINT syntacs go to Generate NC Interacively, 
