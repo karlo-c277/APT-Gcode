@@ -5,7 +5,6 @@ const costumOptions = document.getElementById("costumOptions");
 const costumOutput = document.getElementById("costumOutput");
 const downloadCheckbox = document.getElementById("downloadOutputCheck");
 const errorBox = document.getElementById("errorBox");
-const root = document.documentElement;
 
 const config = {
     colors: [
@@ -40,12 +39,12 @@ const config = {
     waveFrequencyX: 4,
     waveFrequencyY: 5,
     waveAmplitude: 4,
-    secondaryWaveEnabled: false,
+    secondaryWaveEnabled: true,
     secondaryWaveFrequencyX: 3,
     secondaryWaveFrequencyY: 3,
     secondaryWaveAmplitude: 5,
     secondaryWaveSpeed: 0.6,
-    secondaryWaveAngle: 1,
+    secondaryWaveAngle: 75,
     shadows: 4,
     highlights: 4,
     colorBrightness: 0.6,
@@ -130,7 +129,7 @@ const config = {
     cameraRotationX: 0,
     cameraRotationY: 0,
     cameraRotationZ: 0,
-    cameraZoom: 1,
+    cameraZoom: 1.3,
 };
 
 const gradient = new NeatGradient({
@@ -161,50 +160,3 @@ presetSelect.addEventListener(
 );
 downloadCheckbox.addEventListener("change", updateCostumPanels);
 updateCostumPanels();
-
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
-
-let targetX = mouseX;
-let targetY = mouseX;
-
-document.addEventListener("mousemove", (event) => {
-    targetX = event.clientX;
-    targetY = event.clientY;
-});
-
-function animateMouseEffect() {
-    mouseX += (targetX - mouseX) * 0.08;
-    mouseY += (targetY - mouseY) * 0.08;
-
-    root.style.setProperty(
-        "--mouse-x",
-        '${mouseY}px'
-    );
-    root.style.setProperty(
-        "--mouse-y",
-        '${mouseY}px'
-    );
-    requestAnimationFrame(animateMouseEffect);
-}
-animateMouseEffect();
-
-document.addEventListener("mouseover", (event) => {
-    if (event.target.closest("#translateButtton")) {
-        root.style.setProperty("--mouse-color", "0, 180, 50");
-        return;
-    }
-    if (event.target.closest("input, select")) {
-        root.style.setProperty("--mouse-color", "212, 169, 0");
-        return;
-    }
-    if (event.target.closest(".hiddenPanel")) {
-        root.style.setProperty("--mouse-color", "255, 145, 0");
-        return;
-    }
-    if (event.target.closest(".terminal-container")) {
-        root.style.setProperty("--mouse-color", "40, 150, 255");
-        return;
-    }
-    root.style.setProperty("--mouse-color", "0, 180, 50");
-});
