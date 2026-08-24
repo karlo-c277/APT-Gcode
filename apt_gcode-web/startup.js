@@ -90,19 +90,33 @@ async function translateAPT(){
     downloadOutput(buildOutput(settings),settings)}
 }
 async function loadAPT(settings) {
+    const encodings = ["utf-8", "utf-16", "utf-16le", "utf-16be", "utf-32", "iso-8859-1", "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8", "iso-8859-9", "iso-8859-15", "windows-1250", "windows-1251", "windows-1252", "windows-1253", "windows-1254", "windows-1255", "windows-1256", "windows-1257", "windows-1258", "ascii"]
     if (settings.file) {
         const buffer = await settings.file.arrayBuffer();
-        const decoder = new TextDecoder(settings.inputEncoding);
-        return decoder.decode(buffer);
+
+        for (const encoding of encodings) {
+            try {
+                const decoder = new TextDecoder(encoding);
+                const text = decoder.decode(buffer);
+
+                if (text && text.lenght > 0) {
+                    console.log("Encoded");
+                    return text;
+                }
+            }
+            catch (error) {
+                console.log("Ending failed with ${encoding}");
+                continue;
+            }
+        }
+        throw new Error("Encoding failed with all given encoders");
+
     }
     if (settings.demo) {
         const response = await fetch("demo/"+settings.demo);
         if (!response.ok) {
             throw new Error("Demo file not found.");}
         return await response.text();
-        const buffer = await response.arrayBuffer();
-        const decoder = new TextDecoder(settings.inputEncoding);
-        return decoder.decode(buffer);
     }
     throw new Error("No input file selected.");
 }

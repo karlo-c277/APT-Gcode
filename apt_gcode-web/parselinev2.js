@@ -24,7 +24,7 @@ export class catiav5_1_0{
             this.ls_cycle = "";
             this.lsunits = "";
             this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS", "CUTCOM"];
-            this.non_def = ["SWITCH", "PPFUN", "GO", "INDIRP"];
+            this.non_def = ["SWITCH", "PPFUN", "INDIRP"];
             this.lsautops = 0;
             this.ls_feed_speed = 0.0;
             this.ls_ls_movement;

@@ -8,6 +8,8 @@ There are some .txt files those are for testing your code.
 
 
 
+Define usage for angle id bigger than 180 for g code
+
 Configure "TOOL:" into json and outa json
 Define what does cutter/ with a lot of elements mean, for each element and implement that
 upgrade logic on rapid, in g code it stays in rapid in  catia apt it turns off after one command

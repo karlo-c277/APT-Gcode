@@ -40,3 +40,4 @@ NOTE: doing so will open the newest version which may include some minor issues 
 
 # More info
 For more information you can look in folder DOCUMENTATIONS or contact karlo.ugrin@gmail.com
+Make sure to read the walk-through
