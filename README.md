@@ -6,7 +6,7 @@ It features - translating ATP commands into G-code, also it has select presets f
 # Usage
 Just open up this link below, there are some DEMO files there for those who dont have APT files ready
 http://karlougrin.com/apt_gcode-web/index-apt.html
-<img width="1907" height="915" alt="2026-08-03_10-36" src="https://github.com/user-attachments/assets/ce7ee5c7-b728-498e-b0b4-ac643e6e9783" />
+![alt text](DOCUMENTATIONS/Images/2026-08-25_15-30.png)
 
 
 # Documentatuion and recources
@@ -29,11 +29,14 @@ v2.+ Support for other CNC controlers and APT codes
 
 
 # Local run
-1. Download VS Code or Codium
-2. Download Live server extension
-3. Under folder "apt_gcode-web" click on file "index-apt.html"
-4. In bottom right corner there is a button "Go Live", click it
-5. Once done so the extension will automatically open a card in a dedicated browser routed a local port where you can use it
+1. Have VS Code or VS Codium
+2. Have Latest-ih version of Node.js
+3. Download zip file or clone the repo
+4. Open in either one in editor
+5. Run: npm install
+6. Run: npm run dev
+7. o + enter
+-after 7. the website will automatically pop-up and you can use it
 
 NOTE: doing so will open the newest version which may include some minor issues or bugs but it will contain some newer features that aren't available on website version
 

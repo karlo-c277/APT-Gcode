@@ -4,9 +4,9 @@
 ## Setup
 -cycle syntacs for Taping is mandatory  
 ![alt text](<Images/Snimka zaslona 2026-08-25 092603.png>)
-![alt text](<Images/Snimka zaslona 2026-08-25 092210.png>)
--when chosing what to print in the final output, or setting the number of digits
-![alt text](<Images/Snimka zaslona 2026-08-25 092103.png>)
+![alt text](<Images/Snimka zaslona 2026-08-25 092210.png>)  
+-when chosing what to print in the final output, or setting the number of digits  
+![alt text](<Images/Snimka zaslona 2026-08-25 092103.png>)  
 -note number of digits depend on what your CNC conrtoler requires
 ## Line starters
 |Starter|Explanation|Note|
@@ -17,7 +17,7 @@
 |LOADTL|-This is a tool and it's data|Not sure|
 |SELECTL|-This is a tool and it's data|Not sure|
 |TOOLNO|-This is tools position on the machine|Not sure|
-|REWIND| |Unknown|
+|REWIND| |-unknown|
 |CUTTER|-Radius of cutting tool bit|Not sure|
 |INTOL|-Inside tolerance to the path|Not sure|
 |OUTOL|-Outside tolerance to the path|Not sure|
@@ -27,7 +27,7 @@
 |PARTNO|-Part number / name|Not sure/sure|
 |OPERATION NAME|-Operation name|Not sure/sure|
 |TLAXIS|-Tool axis|Not sure for >3 axis machining|
-|SWITCH|might be tool compensation set| |
+|SWITCH|-compensation set| |
 |AUTOPS|-Circular motion to be defined| |
 |INDIRV|-IJK for a vector tangent to the starting point of circular motion| |
 |TLON,GOFWD|-Circular motion defined|Not sure about the consistency|
@@ -117,7 +117,8 @@ TLON,GOFWD/      (CIRCLE/      0.00000,      0.00000,      2.00000,$
        5.00000),ON,(LINE/      0.00000,      0.00000,      2.00000,$  
                                0.62667,      4.96057,      2.00000)  
 -numbers are: center xzy radius center xyz end xyz  
--what is assumable is tool on path, go forward in this circle on or untill the line, then it gives 2 ponts for the lines
+-what is assumable is tool on path, go forward in this circle on or untill the line, then it gives 2 ponts for the lines  
+-used in other circular motions not only for circle
 ### GOTO
 GOTO  /    1.15552,   -4.86464,   -1.98288, 0.000000, 0.000000,-1.000000  
 -in case of specifically setting multi axial we get XYZ IJK  
