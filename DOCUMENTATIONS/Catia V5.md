@@ -1,7 +1,13 @@
 # V5R21
 -here is this CATIA vesrion APT explained  
--NOTE 4 and 5 axis motion is untested  
-  
+-NOTE 4 and 5 axis motion is untested
+## Setup
+-cycle syntacs for Taping is mandatory  
+![alt text](<Snimka zaslona 2026-08-25 092603.png>)
+![alt text](<Snimka zaslona 2026-08-25 092210.png>)
+-when chosing what to print in the final output, or setting the number of digits
+![alt text](<Snimka zaslona 2026-08-25 092103.png>)
+-note number of digits depend on what your CNC conrtoler requires
 ## Line starters
 |Starter|Explanation|Note|
 |:---|:---:|:---:|
@@ -16,12 +22,12 @@
 |INTOL|-Inside tolerance to the path|Not sure|
 |OUTOL|-Outside tolerance to the path|Not sure|
 |TOLER|-General tolerance to the path|Not sure|
-|END|-End of program|not sure|
-|FINI|-End of program|not sure|
+|END|-End of program|Not sure|
+|FINI|-End of program|Not sure|
 |PARTNO|-Part number / name|Not sure/sure|
 |OPERATION NAME|-Operation name|Not sure/sure|
 |TLAXIS|-Tool axis|Not sure for >3 axis machining|
-|SWITCH|might be tool compensation set|-unknown|
+|SWITCH|might be tool compensation set| |
 |AUTOPS|-Circular motion to be defined| |
 |INDIRV|-IJK for a vector tangent to the starting point of circular motion| |
 |TLON,GOFWD|-Circular motion defined|Not sure about the consistency|
@@ -35,11 +41,14 @@
 |DWELL|-Wait this much until next line| |
 |CYCLE|-Cycle is to be defined| |
 |MULTAX|-Means that this operation is multiaxial|Not sure|
+|CUTCOM| |-unknown|
 
 ## Other main commands
 |Command|Meaning|
 |:---|:---:|
 |$|Break line|
+|CIRCLE|The next numbers define a circle|
+|LINE|The next numbers define coordinates to 2 end points of a line|
 
 
 ### $
@@ -95,7 +104,7 @@ INTOL /    0.01000
 ### TLAXIS
 -defines tools cutting axis in IJK
 ### SWITCH
--it might be tool compenstion definition
+-tool compenstion set
 ### AUTOPS
 -come single in line before every circle definition
 ### INDIRV
@@ -149,3 +158,9 @@ DELAY/   50.000000
 CYCLE/DRILL,  126.000000,   85.000000,    1.000000,MMPR  
 GOTO  /    0.00000,    0.00000,    0.00000  
 CYCLE/OFF  
+-due to bus in CATIA V5R21 for APT output you are allowed to ONLY to use CYCLE output for following elements
+**__Drilling, drilling with dwell delay, deep hole drilling, drilling with chip break, spot dilling, counter boring, counter sinking, normal taping, reaming__**  
+And that is IT, other cycles have incomplete data making final G-code dangerous  
+For other cycles there is an active support, NOTE for Taping you **__MUST USE__** cycle syntacs
+### CUTCOM
+-Unknown

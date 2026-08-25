@@ -1,27 +1,27 @@
 # APT-Gcode
-**Karlo Ugrin** --developer
-    This is a post processor for APT code, into G-code commands.
-For now it is developing around Catia V5R21 and WinNC Sinumerik, but as time progresses there will be added support for Autodesk, LinuxCNC, WinNC Fanuc etc.
+**Karlo Ugrin** --developer  
+    This is a post processor for APT code, into G-code commands.  
+For now it is developing around Catia V5R21 and WinNC Sinumerik, but as time progresses there will be added support for Autodesk, LinuxCNC, WinNC Fanuc etc.  
 
 ## LOGIC BEHIND
-    Ok, so, you finished your machining simulation and now you have to create your part on an actual CNC machine.
-Usually you have to put it through a post processor, but those can be expensive or limitng on maximum number of lines. But here the only limit is how much RAM does your web browser give.
-So then, you download the file containing APT code, it can have various names like .APT .APTsource and such, but the extension is not important, the encoding is.
-apt_gcode-web -> startup.js --line 93 as you can see the encoding is quite thorough.
-But also, in APT code there is a limit on max characters in each line so in case of line breaks, at the end of each line thre is a $ sign, so those line will be merged before being sent to parselinev2.js, parselinev2 then creates JSON file written in Karlov Kod, and then is sent to g-coder.js that then turns Karlov Kod that is then translated into final G-code for CNC machines.
--> Karlov kod
-
+    Ok, so, you finished your machining simulation and now you have to create your part on an actual CNC machine.  
+Usually you have to put it through a post processor, but those can be expensive or limitng on maximum number of lines. But here the only limit is how much RAM does your web browser give.  
+So then, you download the file containing APT code, it can have various names like .APT .APTsource and such, but the extension is not important, the encoding is.  
+apt_gcode-web -> startup.js --line 93 as you can see the encoding is quite thorough.  
+But also, in APT code there is a limit on max characters in each line so in case of line breaks, at the end of each line thre is a $ sign, so those line will be merged before being sent to parselinev2.js, parselinev2 then creates JSON file written in Karlov Kod, and then is sent to g-coder.js that then turns Karlov Kod that is then translated into final G-code for CNC machines.  
+-> Karlov kod  
+  
 #### parselinev2
-    This is a second version of APT translator. This one has a different architecture in comparison to the first one.
-The first one did everything, it read APT lines and translated them directly into G-code, this one however reads the line and translates it into Karlov Kod, via kk function.
--> output.js
-Now this saves one whole line without breaks into a new row in .JSON as a string, it is prefered to use it this way since then it has more flexibility towards the structure.
-It is written in JavaScript since it has esier implementation for website usage
-For starters it has different classes for different input files.
+    This is a second version of APT translator. This one has a different architecture in comparison to the first one.  
+The first one did everything, it read APT lines and translated them directly into G-code, this one however reads the line and translates it into Karlov Kod, via kk function.  
+-> output.js  
+Now this saves one whole line without breaks into a new row in .JSON as a string, it is prefered to use it this way since then it has more flexibility towards the structure.  
+It is written in JavaScript since it has esier implementation for website usage  
+For starters it has different classes for different input files. 
 ##### Class Karlov kod
-    Since g-coder.js requires lines written in Karlov kod, and the input file is written in Karlov kod it simply turns recieved text into .JSON
+    Since g-coder.js requires lines written in Karlov kod, and the input file is written in Karlov kod it simply turns recieved text into .JSON  
 ##### Class catiav5_1_0
-    This is translates APT output written by CATIA V5R21, now there may have been some aditional pathces and changes that might differentiate this APT from the latest R21 APT or may have not been, since the news on official websites are very poor mostly since those happened more than a decade ago, but again, it may not have been like that.
+    This is translates APT output written by CATIA V5R21, now there may have been some aditional pathces and changes that might differentiate this APT from the latest R21 APT or may have not been, since the news on official websites are very poor mostly since those happened more than a decade ago, but again, it may not have been like that.  
 So firstly we have defined the variables that have to be remembered trough 2 or more cycles of translating lines.
 Then we have temporary lines that are needed for this specific line.
 
