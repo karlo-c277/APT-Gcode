@@ -6,31 +6,35 @@ import {getSettings} from "./settings.js";
 export class catiav5_1_0{
     constructor(settings){
             this.tolr_coord = 1e-3;
-            this.lsplane = "";
-            this.lsrotation = "";
-            this.ls_tip_rev = "";
-            this.ls_tip_posmak = "";
-            this.lssklop = "";
-            this.ls_x = "";
-            this.ls_y = "";
-            this.ls_z = "";
-            this.ls_i = "";
-            this.ls_j = "";
-            this.ls_k = "";
-            this.ls_spindle_speed = 0.0;
-            this.ls_on_rotation = "";
-            this.ls_dim_typ = "";
-            this.ls_clnt_typ = "";
-            this.ls_cycle = "";
-            this.lsunits = "";
-            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS"];
+            this.lsplane;
+            this.lsrotation;
+            this.ls_tip_rev;
+            this.ls_tip_posmak;
+            this.lssklop;
+            this.ls_x;
+            this.ls_y;
+            this.ls_z;
+            this.ls_i;
+            this.ls_j;
+            this.ls_k;
+            this.ls_spindle_speed;
+            this.ls_on_rotation;
+            this.ls_dim_typ;
+            this.ls_clnt_typ;
+            this.ls_cycle;
+            this.ls_cycle_data;
+            this.ls_cycle_coord;
+            this.lsunits;
+            this.multax;
+            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME"];
             this.non_def = ["PPFUN", "INDIRP"];
-            this.lsautops = 0;
-            this.ls_feed_speed = 0.0;
+            this.lsautops;
+            this.ls_feed_speed;
             this.ls_ls_movement;
-            this.rapto=0;
-            this.header="";
-            this.cycleon = "";
+            this.rapto;
+            this.header;
+            this.cycleon = false;
+            this.ls_tool_axis;
         }
     parseline(line){
             let elements;
@@ -86,6 +90,17 @@ export class catiav5_1_0{
             let angle;
             let direction;
 
+            let cycle_typ;
+            let total_depth;
+            let plunge;
+            let axial_depth;
+            let dwell_in_time;
+            let clearance;
+            let cycle_feed;
+            let cycle_spindle;
+            let depth_decrement;
+            let aditional_element;
+o
 console.log(line);
 
         if (this.header === ""){
@@ -145,6 +160,15 @@ console.log(line);
             }
             kk("COMPENSATION:" + cutter);
         }
+        else if (line.startsWith("TLAXIS")){
+            line = line.replaceAll("/",":").replaceAll(",","");
+            kk(line);
+        }
+        else if (line.startsWith("MULTAX")){
+            kk("MULTAX");
+            kk("ERROR: multi axial machining is not supported")
+            this.multax = true;
+        }
         else if (this.comments.some(word => line.startsWith(word))){
             if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
                  tool_slot = line.split("/")[1].trim();
@@ -183,10 +207,6 @@ console.log(line);
             else if (line.startsWith("OPERATION NAME")){
                  line = line.replace(/^OPERATION NAME/, "COMMENT:").replace(/^:/, "");
                 kk(line);
-            }
-            else if (line.startsWith("TLAXIS")){
-                 elements = line.split(" ");
-                kk("COMMENT:Tool axies are I" + elements[1].trim() + " J" + elements[2].trim() + " K" + elements[3].trim());
             }
             else if (line.startsWith("PPRINT")|| line.startsWith("TPRINT") ){
                 line=line.split("/")[1]
@@ -325,6 +345,20 @@ console.log(line);
             this.lsautops = 0;
         }
         else if (line.startsWith("GODLTA")){
+            if (this.cycleon === true) {
+                koord = line.split(/[,/]+/);
+                x = +koord[1];
+                y = +koord[2];
+                z = +koord[3];
+
+                this.ls_x += x;
+                this.ls_y += y;
+                this.ls_z += z;
+
+
+                this.ls_cycle_coord += "( " + this.ls_x +" "+ this.ls_y +" "+ this.ls_z + " )";
+            }
+            else {
              koord_x="";
              koord_y="";
              koord_z="";
@@ -333,23 +367,23 @@ console.log(line);
                 kk("MOVEMENT: incremental");
                 this.ls_dim_typ = "MOVEMENT: incremental";
             }
-             koord = line.split(/[,/]+/)
+             koord = line.split(/[,/]+/);
             if (koord.length === 4){
-                 x = +koord[1];
-                 y = +koord[2];
-                 z = +koord[3];
+                x = +koord[1];
+                y = +koord[2];
+                z = +koord[3];
             }
             else if (koord.length === 2){
-                 x = "++";
-                 y = "++";
-                 z = +koord[1];
+                x = "++";
+                y = "++";
+                z = +koord[3];
             }
             else {
                 kk("ERROR: GODLTA " + line);
             }
-            this.ls_x = (this.ls_x + x);
-            this.ls_y = (this.ls_y + y);
-            this.ls_z = (this.ls_z + z);
+            this.ls_x += x;
+            this.ls_y +=y;
+            this.ls_z +=z;
             
             if (x !== "++"){
                 koord_x = " X" + x;
@@ -379,9 +413,23 @@ console.log(line);
             }
 
             kk("LINE:" + koord_x + koord_y + koord_z);
-
+        }
         }
         else if (line.startsWith("GOTO")){
+            if (this.cycleon === true) {
+                koord = line.split(/[,/]+/);
+                x = +koord[1];
+                y = +koord[2];
+                z = +koord[3];
+
+                this.ls_x = x;
+                this.ls_y = y;
+                this.ls_z = z;
+
+
+                this.ls_cycle_coord += "( " + this.ls_x +" "+ this.ls_y +" "+ this.ls_z + " )";
+            }
+            else {
              koord_x=" X++";
              koord_y=" Y++";
              koord_z=" Z++";
@@ -404,7 +452,6 @@ console.log(line);
             if (z !== this.ls_z){
                  koord_z = " Z" + z;
             }
-
             if (this.rapto === 1){
                  dtx = this.ls_x - x;
                  dty = this.ls_y - y;
@@ -428,6 +475,7 @@ console.log(line);
             this.ls_x=x;
             this.ls_y=y;
             this.ls_z=z;
+            }
         }
         else if (line.startsWith("SPINDL")){
             if (line.includes("OFF")){
@@ -636,42 +684,37 @@ console.log(line);
             }
         }
         else if (line.startsWith("CYCLE")){
-            kk("CYCLE: " + line);
+            kk("MOVEMENT: absolute");
             elements = line.split(",");
             if (elements.lenght === 12){
+                this.cycleon = true;
+                cycle_typ = elements[0];
+                total_depth = elements[1];
+                plunge = elements[2];
+                axial_depth = elements[3];
+                dwell_in_time = elements[4];
+                clearance = elements[5];
+                cycle_feed = elements[6];
+                cycle_spindle = elements[7];
+                depth_decrement = elements[10];
+                aditional_element = elements[11];
 
-                let cycle_typ = elements[0];
-                let total_depth = elements[1];
-                let plunge = elements[2];
-                let axial_depth = elements[3];
-                let dwell_in_time = elements[4];
-                let clearance = elements[5];
-                let cycle_feed = elements[6];
-                let cycle_spindle = elements[7];
-                let depth_decrement = elements[10];
-                let aditional_element = elements[11];
-
-                switch (true){
-                    case cycle_typ.includes("DRILL"):
-                        
-                    break;
-                    case cycle_typ.includes("DEEPHL"):
-
-                    break;
-                    case cycle_typ.includes("BRKCHP"):
-
-                    break;
-                    case cycle_typ.includes("TAP"):
-
-                    break;
-                    case cycle_typ.includes("BORE"):
-
-                    break;
-                    case cycle_typ.includes("REAM"):
-
-                    break;
-                    
+                if (cycle_typ.includes("DRILL")||cycle_typ.includes("DEEPHL")||cycle_typ.includes("BRKCHP")){
+                    this.ls_cycle_data = "TYPE:DRILL" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + axial_depth + depth_decrement + aditional_element;
                 }
+                else if (cycle_typ.includes("REAM")) {
+                    this.ls_cycle_data = "TYPE:REAM" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + aditional_element;
+                }
+                else if (cycle_typ.includes("TAP")) {
+                    this.ls_cycle_data = "TYPE:TAP" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + aditional_element;
+                }
+            }
+            else if ((elements.lenght === 2)&&(line.comtains("OFF"))) {
+                this.cycleon = false;
+                this.ls_cycle = "CYCLE: LOCATION: "+this.ls_cycle_coord+"/ "+this.ls_cycle_data;
+            }
+            else if ((elements.lenght === 2)&&(line.comtains("ON"))) {
+                this.cycleon = true;
             }
 
         }

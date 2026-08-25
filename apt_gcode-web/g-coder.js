@@ -2,6 +2,11 @@ import {write} from "./output.js";
 
 export class WinNC_sinumerik {
     constructor(settings){
+        this.tool_i;
+        this.tool_j;
+        this.tool_k;
+        this.multax = false;
+
     }
     gcoder(line){
         let elements;
@@ -27,6 +32,22 @@ export class WinNC_sinumerik {
         let angle;
         let number_dt;
         let number;
+        let data;
+        let pre_coord;
+        let in_coord;
+
+        let el_0;
+        let el_1;
+        let el_2;
+        let el_3;
+        let el_4;
+        let el_5;
+        let el_6;
+        let el_7;
+        let el_8;
+        let el_9;
+        let r;
+        
 
 console.log(line);
 
@@ -65,7 +86,7 @@ console.log(line);
         let elements = line.split(" ");
         let name = elements[1];
         let magazine = elements[2];
-        let compensation = elemnts[3];
+        let compensation = elements[3];
 
         write(name + " " + magazine + " " + compensation);
     }
@@ -133,6 +154,12 @@ console.log(line);
             write("G90");
         }
     }
+    else if (line.startsWith("TLAXIS")){
+        elements = line.split(" ");
+        this.tool_i = +elements[1];
+        this.tool_j = +elements[2];
+        this.tool_k = +elements[3];
+    }
     else if (line.startsWith("AIR")){
 
         write("G0");
@@ -145,6 +172,9 @@ console.log(line);
     }
     else if (line.startsWith("ERROR")){
         write(line);
+    }
+    else if (line.startsWith("MULTAX")){
+        this.multax = true;
     }
     else if (line.startsWith("LINE")){
         elements = line.split(" ");
@@ -263,6 +293,61 @@ console.log(line);
                     elements ="OFF";
             }
         write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching compensation. This one is "+elements);
+    }
+    else if (line.startsWith("CYCLE")) {
+        elements = line.split("/");
+
+        data = elements[1].trim;
+        data = data.split(" ");
+        el_0 = data[0].trim;
+        el_1 = data[1].trim;
+        el_2 = data[2].trim;
+        el_3 = data[3].trim;
+        el_4 = data[4].trim;
+        el_5 = data[5].trim;
+        el_6 = data[6].trim;
+        el_7 = data[7].trim;
+
+        number = elements[0].trim;
+        number = number.split(":")[2];
+        
+        let index = number.indexOf(")(") + 1;
+        pre_coord = number.slice(0, index);
+        in_coord = number.slice(index;)
+
+        number = in_coord.replaceAll(")(", ")\n");
+
+        if (multax===false){
+            if (this.tool_i === 1){
+                write("G19");
+            }
+            else if (this.tool_j === 1){
+                write("G18");
+            }
+            else if (this.tool_k === 1){
+                write("G17");
+            }
+        }
+        else {
+            write("ERROR: Multi axial work is not supported");
+        }
+
+        r = ((el_4+el_2)*0.9);
+
+        write(number);
+        write ("G97 S" + el_6);
+        write("G291");
+        write("G98")
+        if (el_0.includes("DRILL"))  {
+            el_8 = data[8].trim;
+            el_9 = data[9].trim;
+        }
+        else if (el_0.includes("REAM"))  {
+        }
+        else if (el_0.includes("TAP"))  {
+
+        }
+        write("G290");
     }
     else {
         write(line);

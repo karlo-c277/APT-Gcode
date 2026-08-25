@@ -1,7 +1,7 @@
 # APT-Gcode
 This is an open source post processor for ATP files outputed by CAM programs  
 It features - translating ATP commands into G-code, also it has select presets for output files, so you dont need to worry if your controler will open the file. But also it allows to make a costum file header, name and extension  
-
+            - a very cool background in both localhosting and website use
 
 # Usage
 Just open up this link below, there are some DEMO files there for those who dont have APT files ready
@@ -22,7 +22,8 @@ Costs of Catia License, for the future I would like to test the newer Catia and 
 
 # Development plan
 v0.9 CYCLE/ commands full support  
-v1.0 Helix tool path support  
+v1.0 Helix tool path support
+v1.5 Complete Catia suport
 v1.+ G-code output in ISO 6983, WinNC Sinumerik, WinNC Fanuc  
 v2.0 SolidWorks APT code support  
 v2.+ Support for other CNC controlers and APT codes
