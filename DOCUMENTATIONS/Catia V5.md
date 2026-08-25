@@ -3,10 +3,10 @@
 -NOTE 4 and 5 axis motion is untested
 ## Setup
 -cycle syntacs for Taping is mandatory  
-![alt text](<Snimka zaslona 2026-08-25 092603.png>)
-![alt text](<Snimka zaslona 2026-08-25 092210.png>)
+![alt text](<Images/Snimka zaslona 2026-08-25 092603.png>)
+![alt text](<Images/Snimka zaslona 2026-08-25 092210.png>)
 -when chosing what to print in the final output, or setting the number of digits
-![alt text](<Snimka zaslona 2026-08-25 092103.png>)
+![alt text](<Images/Snimka zaslona 2026-08-25 092103.png>)
 -note number of digits depend on what your CNC conrtoler requires
 ## Line starters
 |Starter|Explanation|Note|

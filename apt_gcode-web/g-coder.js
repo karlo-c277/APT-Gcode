@@ -262,7 +262,7 @@ console.log(line);
                 default:
                     elements ="OFF";
             }
-        write("Go to .. to confirm that all tools have matching compensation. This one is "+elements);
+        write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching compensation. This one is "+elements);
     }
     else {
         write(line);
