@@ -24,12 +24,13 @@ export class catiav5_1_0{
             this.ls_cycle = "";
             this.lsunits = "";
             this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME", "TLAXIS"];
-            this.non_def = ["SWITCH", "PPFUN", "INDIRP"];
+            this.non_def = ["PPFUN", "INDIRP"];
             this.lsautops = 0;
             this.ls_feed_speed = 0.0;
             this.ls_ls_movement;
             this.rapto=0;
             this.header="";
+            this.cycleon = "";
         }
     parseline(line){
             let elements;
@@ -107,7 +108,43 @@ console.log(line);
             } else {
                 kk("ERROE: Unknown unit type " + line);
             }
-        }                          
+        }
+        else if (line.startsWith("SWITCH")){
+            num = line.split("/")[1];
+            num = num.trim;
+            switch (num) {
+                case "1":
+                    cutter ="TR";
+                    break;
+                case "2":
+                    cutter ="TL";
+                    break;
+                case "3":
+                    cutter ="BL";
+                    break;
+                case "4":
+                    cutter ="BR";
+                    break;
+                case "5":
+                    cutter ="CR";
+                    break;
+                case "6":
+                    cutter ="TC";
+                    break;
+                case "7":
+                    cutter ="CL";
+                    break;
+                case "8":
+                    cutter ="BC";
+                    break;
+                case "9":
+                    cutter ="CC";
+                    break;
+                default:
+                    cutter ="OFF";
+            }
+            kk("COMPENSATION:" + cutter);
+        }
         else if (this.comments.some(word => line.startsWith(word))){
             if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
                  tool_slot = line.split("/")[1].trim();
@@ -602,6 +639,7 @@ console.log(line);
             kk("CYCLE: " + line);
             elements = line.split(",");
             if (elements.lenght === 12){
+
                 let cycle_typ = elements[0];
                 let total_depth = elements[1];
                 let plunge = elements[2];

@@ -140,7 +140,15 @@ eng. - Karlos Code
 
 "ERROR"
     -defines that an error has occured
-    -the form for this command may be flexible
+    -the form for this command may be flexible but the line must with EROR and any aditioan information must start 1 space after ERROR
+
+"COMPENSATION:value"
+    -defines the compensation for the tool cutter
+    -where value starts 0 spaces after : and it is one of the following
+    -values are following: BR for (P4), BC for (P8), BL for (P3), CR for (P5), CC for (P9), CL for (P7), TR for (P1), TC for (P6), TL for (P2), and OFF
+    -look at image.png in DOCUMENTATIONS
+"COMPENSATION:TC"
+        0       1
 
 "LINE: X Y Z A B C"
     -LINE: means that there is a linear movement
