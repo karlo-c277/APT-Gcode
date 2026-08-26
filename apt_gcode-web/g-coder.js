@@ -11,9 +11,6 @@ export class WinNC_sinumerik {
 
     }
     gcoder(line){
-        console.log("GCODER RAW INPUT:", line);
-    console.log("GCODER TYPE:", typeof line);
-    console.log("GCODER JSON:", JSON.stringify(line));
         let elements;
         let type;
         let speed;
@@ -169,6 +166,8 @@ export class WinNC_sinumerik {
     }
     else if (line.startsWith("TLAXIS")){
         elements = line.split(" ");
+        console.log(line);
+        console.log(elements);
         this.tool_i = +elements[1];
         this.tool_j = +elements[2];
         this.tool_k = +elements[3];
@@ -324,9 +323,9 @@ export class WinNC_sinumerik {
 
         number = elements[0].trim();
         number = number.split(":")[2];
-        
+        console.log(number);
         number_dt = number.match(/\([^)]*\)/g);
-
+        console.log(number_dt);
         if (this.multax===false){
             if (Math.abs(this.tool_i) === 1){
                 write("G19");
@@ -347,10 +346,10 @@ export class WinNC_sinumerik {
 
         for (const xyz of number_dt) {
             if (this.multax===false){
-
+                console.log(this.tool_i, this.tool_j, this.tool_k);
                 if (Math.abs(this.tool_i) === 1){
                         elements = xyz.slice(1, -1).trim().split(/\s+/);
-
+                        console.log(elements);
                         x = elements[0].trim();
                         y = elements[1].trim();
                         z = elements[2].trim();
@@ -366,7 +365,7 @@ export class WinNC_sinumerik {
                 }
                 else if (Math.abs(this.tool_j) === 1){
                         elements = xyz.slice(1, -1).trim().split(/\s+/);
-
+                        console.log(elements);
                         x = elements[0].trim();
                         y = elements[1].trim();
                         z = elements[2].trim();
@@ -382,7 +381,7 @@ export class WinNC_sinumerik {
                 }
                 else if (Math.abs(this.tool_k) === 1){
                         elements = xyz.slice(1, -1).trim().split(/\s+/);
-
+                        console.log(elements);
                         x = elements[0].trim();
                         y = elements[1].trim();
                         z = elements[2].trim();
@@ -395,6 +394,9 @@ export class WinNC_sinumerik {
                         r = (z - el_4 + el_4*0.2);
 
                         coord = (x + " " + y + "R"+r+" "+bottom);
+                }
+                else {
+                    console.log("ERROR");
                 }
             }
         

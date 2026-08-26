@@ -159,7 +159,7 @@ export class catiav5_1_0{
             kk("COMPENSATION:" + cutter);
         }
         else if (line.startsWith("TLAXIS")){
-            line = line.replaceAll("/",":").replaceAll(",","");
+            line = line.replaceAll("/",":").replaceAll(","," ");
             kk(line);
         }
         else if (line.startsWith("MULTAX")){
