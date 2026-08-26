@@ -124,7 +124,7 @@ eng. - Karlos Code
     -"state" is a variable defined either as "on" or "off"
 
 "MOVEMENT: movement_type"
-    -MOVEMENT defines that there is a change in the way next point is defined wether it is incremental movement or absolute movement
+    -MOVEMENT defines that there is a change in the way next point is defined whether it is incremental movement or absolute movement
     -movement_type shall be spaced exactly 1 space from the "MOVEMENT:"
     -for Incremental, movement_type will be defined as "incremental"
     -for Absolute, movement_type will be defined as "absolute"
@@ -244,13 +244,18 @@ TYPE->  DRILL  total_depth plunge_offset dwell_time clearance feedrate spindle_s
 
 
         REAM    total_depth plunge_offset dwell_time clearance feedrate spindle_speed retraction_feed
-
+            -this cycle can be used for reaming and boring with a reaming/boring bit
+            -to be used ONLY with reaming or boring bits, not with internal turning tools
             retraction_feed is the feerate of bacwards motion
             CYCLE: LOCATION: ( X1.1 Y1.1 Z1.1 )( X5.5 Y5.5 Z5.5 )/ TYPE:REAM 50 0 3.5 0.8 10 500 11
                 0       1    2   3    4    5  67   8    9  10  11/2     0     1 2  3   4   5   6  7
 
-        TAP     total_depth plunge_offset clearance feedrate spindle_speed tool_pitch
-            
+        TAP     total_depth plunge_offset place_holder clearance feedrate spindle_speed tool_pitch
+                        1           2           3        4           5           6          7
+            -place_holder shall be used for simpler data processing
+            -its value may be anything except for " " empy space
+            -whether the theread is left hand or right hand is determined by preivously set spindle direction
+            -if it is ccw it will be left handed, if cw it is a right handed tap
             CYCLE: LOCATION: ( X1.1 Y1.1 Z1.1 )( X5.5 Y5.5 Z5.5 )/ TYPE:TAP 50 0 3.5 0.8 1 500 1
                 0       1    2   3    4    5  67   8    9  10  11/2      0   1 2  3   4  5   6 7
 

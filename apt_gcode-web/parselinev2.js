@@ -702,7 +702,7 @@ console.log(line);
                 if (cycle_typ.includes("DRILL")||cycle_typ.includes("DEEPHL")||cycle_typ.includes("BRKCHP")){
                     this.ls_cycle_data = "TYPE:DRILL" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + axial_depth + depth_decrement + aditional_element;
                 }
-                else if (cycle_typ.includes("REAM")) {
+                else if (cycle_typ.includes("REAM")||cycle_typ.includes("BORE")) {
                     this.ls_cycle_data = "TYPE:REAM" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + aditional_element;
                 }
                 else if (cycle_typ.includes("TAP")) {
