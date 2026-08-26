@@ -11,6 +11,9 @@ export class WinNC_sinumerik {
 
     }
     gcoder(line){
+        console.log("GCODER RAW INPUT:", line);
+    console.log("GCODER TYPE:", typeof line);
+    console.log("GCODER JSON:", JSON.stringify(line));
         let elements;
         let type;
         let speed;
@@ -56,11 +59,12 @@ export class WinNC_sinumerik {
         let currentDepth;
         let next_peck;
 
-console.log(line);
 
     if (line.startsWith("COMMENT")){
-        line = line.replace("COMMENT:", ";");
-        write(line);
+        elements = line.split("COMMENT:")[1].trim();
+        if (elements !== ""){
+        write(";"+elements);
+        }
     }
     else if (line.startsWith("ADD")){
         if (line.includes("RADIUS")){
@@ -304,11 +308,12 @@ console.log(line);
         write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching compensation. This one is "+elements);
     }
     else if (line.startsWith("CYCLE")) {
+        console.log(line);
         elements = line.split("/");
-
-        data = elements[1].trim;
-        data = data.split(" ");
-        el_0 = data[0].trim;
+        console.log(elements);
+        data = elements[1].trim().split(/\s+/);
+        console.log(data);
+        el_0 = data[0].trim();
         el_1 = +data[1];
         el_2 = +data[2];
         el_3 = +data[3];
@@ -317,12 +322,12 @@ console.log(line);
         el_6 = +data[6];
         el_7 = +data[7];
 
-        number = elements[0].trim;
+        number = elements[0].trim();
         number = number.split(":")[2];
         
         number_dt = number.match(/\([^)]*\)/g);
 
-        if (multax===false){
+        if (this.multax===false){
             if (Math.abs(this.tool_i) === 1){
                 write("G19");
                 this.ax_dir = this.tool_i;
@@ -341,7 +346,7 @@ console.log(line);
         }
 
         for (const xyz of number_dt) {
-            if (multax===false){
+            if (this.multax===false){
 
                 if (Math.abs(this.tool_i) === 1){
                         elements = xyz.slice(1, -1).trim().split(/\s+/);

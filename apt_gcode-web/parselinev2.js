@@ -1,4 +1,4 @@
-import {kk} from "./output.js";
+import {getLastJSON, kk} from "./output.js";
 import {getSettings} from "./settings.js";
 
 
@@ -23,7 +23,7 @@ export class catiav5_1_0{
             this.ls_clnt_typ;
             this.ls_cycle;
             this.ls_cycle_data;
-            this.ls_cycle_coord;
+            this.ls_cycle_coord = "";
             this.lsunits;
             this.multax;
             this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME"];
@@ -100,8 +100,6 @@ export class catiav5_1_0{
             let cycle_spindle;
             let depth_decrement;
             let aditional_element;
-
-console.log(line);
 
         if (this.header === ""){
             kk(window.add_command);
@@ -356,7 +354,7 @@ console.log(line);
                 this.ls_z += z;
 
 
-                this.ls_cycle_coord += "( " + this.ls_x +" "+ this.ls_y +" "+ this.ls_z + " )";
+                this.ls_cycle_coord += "( X" + this.ls_x +" Y"+ this.ls_y +" Z"+ this.ls_z + " )";
             }
             else {
              koord_x="";
@@ -427,7 +425,7 @@ console.log(line);
                 this.ls_z = z;
 
 
-                this.ls_cycle_coord += "( " + this.ls_x +" "+ this.ls_y +" "+ this.ls_z + " )";
+                this.ls_cycle_coord += "( X" + this.ls_x +" Y"+ this.ls_y +" Z"+ this.ls_z + " )";
             }
             else {
              koord_x=" X++";
@@ -686,7 +684,7 @@ console.log(line);
         else if (line.startsWith("CYCLE")){
             kk("MOVEMENT: absolute");
             elements = line.split(",");
-            if (elements.lenght === 12){
+            if (elements.length === 12){
                 this.cycleon = true;
                 cycle_typ = elements[0];
                 total_depth = elements[1];
@@ -709,11 +707,13 @@ console.log(line);
                     this.ls_cycle_data = "TYPE:TAP" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + aditional_element;
                 }
             }
-            else if ((elements.lenght === 2)&&(line.comtains("OFF"))) {
+            else if (line.includes("OFF")) {
                 this.cycleon = false;
                 this.ls_cycle = "CYCLE: LOCATION: "+this.ls_cycle_coord+"/ "+this.ls_cycle_data;
+                kk(this.ls_cycle);
+                console.log(this.ls_cycle);
             }
-            else if ((elements.lenght === 2)&&(line.comtains("ON"))) {
+            else if ((line.includes("ON"))) {
                 this.cycleon = true;
             }
 

@@ -73,6 +73,9 @@ async function translateAPT(){
 
         const jsonLines = JSON.parse(getJSON());
         for (const line of jsonLines) {
+    console.log("BEFORE GCODER:", line);
+    console.log("TYPE:", typeof line);
+    console.log("JSON:", JSON.stringify(line));
             gcoder.gcoder(line);
         }
         const result = buildOutput(settings);
