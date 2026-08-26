@@ -36,8 +36,8 @@ v2.+ Support for other CNC controlers and APT codes
 4. Open in either one in editor
 5. Run: npm install
 6. Run: npm run dev
-7. o + enter
--after 7. the website will automatically pop-up and you can use it
+7. open this link: http://localhost:5173/index-apt.html
+
 
 NOTE: doing so will open the newest version which may include some minor issues or bugs but it will contain some newer features that aren't available on website version
 

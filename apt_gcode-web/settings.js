@@ -37,13 +37,6 @@ export function getSettings(){
         settings.output.header = "%_N_{filename}_MPF";
         window.postheader = "G55";
     }
-    else if (preset === "ISO6983"){
-        settings.output.filename = document.getElementById("filename").value;
-        settings.output.encoding = "utf-8";
-        settings.output.extension = ".txt";
-        settings.output.header = "";
-        window.postheader = "";
-    }
     else if (preset === "Karlov_kod"){
         settings.output.filename = document.getElementById("filename").value;
         settings.output.encoding = "utf-8";

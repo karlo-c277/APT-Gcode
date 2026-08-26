@@ -100,7 +100,7 @@ export class catiav5_1_0{
             let cycle_spindle;
             let depth_decrement;
             let aditional_element;
-o
+
 console.log(line);
 
         if (this.header === ""){

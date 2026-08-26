@@ -311,11 +311,7 @@ console.log(line);
         number = elements[0].trim;
         number = number.split(":")[2];
         
-        let index = number.indexOf(")(") + 1;
-        pre_coord = number.slice(0, index);
-        in_coord = number.slice(index;)
-
-        number = in_coord.replaceAll(")(", ")\n");
+        
 
         if (multax===false){
             if (this.tool_i === 1){
