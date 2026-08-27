@@ -8,6 +8,8 @@ export class WinNC_sinumerik {
         this.multax = false;
         this.ax_dir;
         this.spindle_dir;
+        this.rapid = false;
+        this.post_cycle = false;
 
     }
     gcoder(line){
@@ -57,6 +59,7 @@ export class WinNC_sinumerik {
         let next_peck;
 
 
+
     if (line.startsWith("COMMENT")){
         elements = line.split("COMMENT:")[1].trim();
         if (elements !== ""){
@@ -97,6 +100,8 @@ export class WinNC_sinumerik {
         let compensation = elements[3];
 
         write(name + " " + magazine + " " + compensation);
+        this.rapid =false;
+
     }
     else if (line.startsWith("SPINDLE")){
         if (line.includes("off")){
@@ -166,18 +171,23 @@ export class WinNC_sinumerik {
     }
     else if (line.startsWith("TLAXIS")){
         elements = line.split(" ");
-        console.log(line);
-        console.log(elements);
         this.tool_i = +elements[1];
         this.tool_j = +elements[2];
         this.tool_k = +elements[3];
     }
     else if (line.startsWith("AIR")){
-
-        write("G0");
+        if (this.rapid = false){
+            write("G0");
+            this.rapid = true;
+        }
+        this.post_cycle = false;
     }
     else if (line.startsWith("CUT")){
-        write("G1");
+        if (this.rapid = true){
+            write("G1");
+            this.rapid = false;
+        }
+        this.post_cycle = false;
     }
     else if (line.startsWith("END")){
         write("M30");
@@ -234,7 +244,6 @@ export class WinNC_sinumerik {
             }
             write(x+" "+y+" "+z+" "+i+" "+j+" "+k);
         }
-
     }
     else if (line.startsWith("DWELL")){
         number_dt = line.split(" ")[2];
@@ -265,7 +274,7 @@ export class WinNC_sinumerik {
             radius = (-1)*radius;
         }
         write(direction + " X" + x + " Y" +  y + " Z" +  z + " R" +  radius);
-
+        this.rapid = false;
     }
     else if (line.startsWith("#")){
         write(line);
@@ -307,11 +316,10 @@ export class WinNC_sinumerik {
         write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching compensation. This one is "+elements);
     }
     else if (line.startsWith("CYCLE")) {
-        console.log(line);
         elements = line.split("/");
-        console.log(elements);
+
         data = elements[1].trim().split(/\s+/);
-        console.log(data);
+
         el_0 = data[0].trim();
         el_1 = +data[1];
         el_2 = +data[2];
@@ -323,9 +331,9 @@ export class WinNC_sinumerik {
 
         number = elements[0].trim();
         number = number.split(":")[2];
-        console.log(number);
         number_dt = number.match(/\([^)]*\)/g);
-        console.log(number_dt);
+
+
         if (this.multax===false){
             if (Math.abs(this.tool_i) === 1){
                 write("G19");
@@ -343,13 +351,10 @@ export class WinNC_sinumerik {
         else {
             write("ERROR: Multi axial work is not supported");
         }
-
-        for (const xyz of number_dt) {
+        for (const xyz of number_dt){
             if (this.multax===false){
-                console.log(this.tool_i, this.tool_j, this.tool_k);
                 if (Math.abs(this.tool_i) === 1){
                         elements = xyz.slice(1, -1).trim().split(/\s+/);
-                        console.log(elements);
                         x = elements[0].trim();
                         y = elements[1].trim();
                         z = elements[2].trim();
@@ -365,7 +370,6 @@ export class WinNC_sinumerik {
                 }
                 else if (Math.abs(this.tool_j) === 1){
                         elements = xyz.slice(1, -1).trim().split(/\s+/);
-                        console.log(elements);
                         x = elements[0].trim();
                         y = elements[1].trim();
                         z = elements[2].trim();
@@ -381,7 +385,6 @@ export class WinNC_sinumerik {
                 }
                 else if (Math.abs(this.tool_k) === 1){
                         elements = xyz.slice(1, -1).trim().split(/\s+/);
-                        console.log(elements);
                         x = elements[0].trim();
                         y = elements[1].trim();
                         z = elements[2].trim();
@@ -400,7 +403,7 @@ export class WinNC_sinumerik {
                 }
             }
         
-        if (el_0.includes("DRILL"))  {
+        if (el_0.includes("DRILL_1")){
             el_8 = +data[8];
             el_9 = +data[9];
 
@@ -415,6 +418,7 @@ export class WinNC_sinumerik {
                 write(pre_data +" "+ coord +" "+ data);
                 write("G80");
                 write("G290");
+                this.post_cycle = true;
             }
             else if (el_7 === 0 && el_8 === 0 && el_9 === 0) {
                 write("G97 S" + el_6);
@@ -427,6 +431,7 @@ export class WinNC_sinumerik {
                 write(pre_data +" "+ coord +" "+ data);
                 write("G80");
                 write("G290");
+                this.post_cycle = true;
             }
             else {
                 if (el_7 === 0){
@@ -444,7 +449,7 @@ export class WinNC_sinumerik {
                 while (true){
                     left = el_1 - currentDepth;
 
-                    if (currentDepth + next_peck >= el_1) {
+                    if (Math.abs(currentDepth + next_peck) >= el_1) {
                         break;
                     }
                     currentDepth += next_peck;
@@ -456,7 +461,7 @@ export class WinNC_sinumerik {
 
                     next_peck = (next_peck*(1-el_8));
 
-                    if ((el_9 !== 0) && (currentDepth + next_peck >= el_1)){
+                    if ((el_9 !== 0) && (Math.abs(currentDepth + next_peck) >= el_1)){
                         write("G0 " + d + (el_9*(-1)));
                         write ("G1 " + d + el_9);
                     }
@@ -468,28 +473,99 @@ export class WinNC_sinumerik {
                 write("G1 " + (currentDepth-el_1));
                 write("G90");
                 write("G0 X" + x + " Y" + y + " Z" + z);
+                this.rapid = true;
 
             }
             
         }
-        else if (el_0.includes("REAM")){
-            write("G0 X" + x + " Y" + y + " Z" + z);
-            write("G91");
-            write("G95 F" + el_5);
-            write("G97 S" + el_6);
+        else if (el_1.includes("DRILL_2")){
+            if (el_3 === 0 && el_8 === 0){
+                write("G97 S" + el_6);
+                write("G291");
+                write("G98");
 
-            if (el_3 !== 0){
-                write("G4 F"+el_3);
+                pre_data = "G83";
+                data = "Q" + el_7 + " F"+el_5;
+
+                write(pre_data +" "+ coord +" "+ data);
+                write("G80");
+                write("G290");
+                this.post_cycle = true;
             }
-            write("G1 " + d + (el_1*this.ax_dir));
-            write("F"+el_9);
-            write("G1 X" + x + " Y" + y + " Z" + z);
+            else {
+                if (el_7 === 0){
+                    el_7 = el_1;
+                }
+
+                next_peck=(el_7*this.ax_dir);
+                el_9 = (el_9*this.ax_dir);
+
+                write("G0 X" + x + " Y" + y + " Z" + z);
+                write("G91");
+                write("G95 F" + el_5);
+                write("G97 S" + el_6);
+
+                while (true){
+                    if (Math.abs(currentDepth + next_peck) >= el_1) {
+                        break;
+                    }
+                    currentDepth += next_peck;
+
+                    write("G1 " + d + next_peck);
+                    if (el_3 !== 0){
+                        write("G4 F"+el_3);
+                    }
+
+                    next_peck = (next_peck*(1-el_8));
+
+                    if ((el_9 !== 0) && (Math.abs(currentDepth + next_peck) >= el_1)){
+                        write("G0 " + d + (currentDepth*(-1)));
+                        write ("G1 " + d + currentDepth);
+                    }
+                    else {
+                        write("G0 " + d + (currentDepth*(-1)));
+                        write("G1 " + d + (currentDepth+next_peck));
+                    }                
+                }
+                write("G1 " + (currentDepth-el_1));
+                write("G90");
+                write("G0 X" + x + " Y" + y + " Z" + z);
+                this.rapid = true;
+
+            }
+        }
+        else if (el_0.includes("REAM")){
+            if (el_9 !== 0 && el_9 !== el_5){
+                write("G0 X" + x + " Y" + y + " Z" + z);
+                write("G91");
+                write("G95 F" + el_5);
+                write("G97 S" + el_6);
+
+                if (el_3 !== 0){
+                    write("G4 F"+el_3);
+                }
+                write("G1 " + d + (el_1*this.ax_dir));
+                write("F"+el_9);
+                write("G1 X" + x + " Y" + y + " Z" + z);
+                this.rapid = false;
+            }
+            else {
+                write("G97 S" + el_6);
+                write("G291");
+                write("G98");
+
+                write("G85 " + coord + " F" + el_5);
+
+                write("G80");
+                write("G290");
+                this.post_cycle = true;
+            }
         }
         else if (el_0.includes("TAP")){
             write("G97 S" + el_6);
             write("G291");
             write("G98");
-            if (this.spindle_dir === "cw") {
+            if (this.spindle_dir === "cw"){
                 pre_data = "G84";
             }
             else {
@@ -500,6 +576,7 @@ export class WinNC_sinumerik {
             write(pre_data +" "+ coord +" "+ data);
             write("G80");
             write("G290");
+            this.post_cycle = true;
         }
         }
 

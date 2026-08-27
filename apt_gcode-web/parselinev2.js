@@ -30,7 +30,9 @@ export class catiav5_1_0{
             this.non_def = ["PPFUN", "INDIRP"];
             this.lsautops;
             this.ls_feed_speed;
+            this.ls_movement;
             this.ls_ls_movement;
+            this.movement_typ = "CUT";
             this.rapto;
             this.header;
             this.cycleon = false;
@@ -159,8 +161,11 @@ export class catiav5_1_0{
             kk("COMPENSATION:" + cutter);
         }
         else if (line.startsWith("TLAXIS")){
-            line = line.replaceAll("/",":").replaceAll(","," ");
-            kk(line);
+            elements = line.split(/[,/]+/);
+            x = elements[1].trim();
+            y = elements[2].trim();
+            z = elements[3].trim();
+            kk("TLAXIS "+ x +" "+ y +" "+ z);
         }
         else if (line.startsWith("MULTAX")){
             kk("MULTAX");
@@ -357,6 +362,24 @@ export class catiav5_1_0{
                 this.ls_cycle_coord += "( X" + this.ls_x +" Y"+ this.ls_y +" Z"+ this.ls_z + " )";
             }
             else {
+            if (this.ls_movement === "AIR" && this.ls_ls_movement === "CUT"){
+                if (this.movement_typ === "CUT"){
+                    write("AIR");
+                    this.movement_typ = "AIR";
+                }
+            }
+            else if (this.ls_movement === "LINE" && this.ls_ls_movement === "LINE"){
+                if (this.movement_typ === "AIR"){
+                    write("CUT");
+                    this.movement_typ = "CUT";
+                }
+            }
+            else {
+                console.log(line);
+            }
+            this.ls_ls_movement = this.ls_movement;
+            this.ls_movement = "LINE";
+            
              koord_x="";
              koord_y="";
              koord_z="";
@@ -428,6 +451,25 @@ export class catiav5_1_0{
                 this.ls_cycle_coord += "( X" + this.ls_x +" Y"+ this.ls_y +" Z"+ this.ls_z + " )";
             }
             else {
+            console.log("(" + this.ls_movement +" "+ this.ls_lsmovement+")");
+            if (this.ls_movement === "AIR" && this.ls_ls_movement === "CUT"){
+                if (this.movement_typ === "CUT"){
+                    write("AIR");
+                    this.movement_typ = "AIR";
+                }
+            }
+            else if (this.ls_movement === "LINE" && this.ls_ls_movement === "LINE"){
+                if (this.movement_typ === "AIR"){
+                    write("CUT");
+                    this.movement_typ = "CUT";
+                }
+            }
+            else {
+            }
+            this.ls_ls_movement = this.ls_movement;
+            this.ls_movement = "LINE";
+ 
+
              koord_x=" X++";
              koord_y=" Y++";
              koord_z=" Z++";
@@ -644,6 +686,10 @@ export class catiav5_1_0{
                 kk("LINE: " + koord_x + koord_y + koord_z);
 
             }
+            else {
+                this.ls_ls_movement = this.ls_movement;
+                this.ls_movement = "AIR";
+            }
 
         }
         else if (line.startsWith("COOLNT")){
@@ -716,6 +762,7 @@ export class catiav5_1_0{
             else if ((line.includes("ON"))) {
                 this.cycleon = true;
             }
+            
 
         }
         else if (line.startsWith("$$")){
