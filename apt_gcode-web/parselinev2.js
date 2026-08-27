@@ -468,6 +468,8 @@ export class catiav5_1_0{
             }
             this.ls_ls_movement = this.ls_movement;
             this.ls_movement = "LINE";
+            console.log("(SECOND LOG " + this.ls_movement +" "+ this.ls_lsmovement+")");
+
  
 
              koord_x=" X++";
