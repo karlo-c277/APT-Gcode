@@ -30,8 +30,8 @@ export class catiav5_1_0{
             this.non_def = ["PPFUN", "INDIRP"];
             this.lsautops;
             this.ls_feed_speed;
-            this.ls_movement;
-            this.ls_ls_movement;
+            this.ls_movement = "LINE";
+            this.ls_ls_movement = "LINE";
             this.movement_typ = "CUT";
             this.rapto;
             this.header;
