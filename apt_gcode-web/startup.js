@@ -6,7 +6,14 @@ import {WinNC_sinumerik, Karlov_kod} from "./g-coder.js";
 
 document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("translateButton");
-    button.addEventListener("click", translateAPT);});
+    button.addEventListener("click", translateAPT);
+
+    const textInputToggle = document.getElementById("textInputToggle");
+    const textInput = document.getElementById("textInput");
+    textInputToggle.addEventListener("change", () => {
+        textInput.style.display = textInputToggle.checked ? "block" : "none";
+    });
+});
 
 async function translateAPT(){
     clearOutput();

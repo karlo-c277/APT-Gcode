@@ -11,6 +11,7 @@ export function getSettings(){
         preset: preset,
         file: document.getElementById("costumFilename").files[0],
         demo: document.getElementById("demoSelect").value,
+        textInput: document.getElementById("textInput").value,
         inputEncoding: "utf-8",
         downloadOutput: document.getElementById("downloadOutputCheck").checked,
         output: {}

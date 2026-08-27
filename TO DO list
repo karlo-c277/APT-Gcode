@@ -18,7 +18,6 @@ what if the circle is 180 or 360
 chnage g code output for arch into one for 360 degs
 Configure "TOOL:" into json and outa json
 Define what does cutter/ with a lot of elements mean, for each element and implement that
-upgrade logic on rapid, in g code it stays in rapid in  catia apt it turns off after one command
 Start making new parseline for other g code standards and apt file outputs -as you wish
 Check what encryption do different CNC_____ programs use and then make like profiles, user just selects wheter to prepare it for winnc siemens etc and the output file is automatically set with correc extension and encryption
 Check what encryption do different CAM----- programs use and then make like profiles, user just selects what program he uses and the decryp and file extension are preset (so he just enters dwelltest and the input file is dwelltest.specificext)
