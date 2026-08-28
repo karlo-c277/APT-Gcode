@@ -36,7 +36,7 @@ export function getSettings(){
         settings.output.encoding = "utf-8";
         settings.output.extension = ".mpf";
         settings.output.header = "%_N_{filename}_MPF";
-        window.postheader = "G55";
+        window.postheader = "G55\nG1";
     }
     else if (preset === "Karlov_kod"){
         settings.output.filename = document.getElementById("filename").value;

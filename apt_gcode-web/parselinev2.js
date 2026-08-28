@@ -164,7 +164,7 @@ export class catiav5_1_0{
             x = elements[1].trim();
             y = elements[2].trim();
             z = elements[3].trim();
-            kk("TLAXIS "+ x +" "+ y +" "+ z);
+            kk("TLAXIS "+x+" "+y+" "+z);
         }
         else if (line.startsWith("MULTAX")){
             kk("MULTAX");
@@ -203,15 +203,15 @@ export class catiav5_1_0{
                 kk("COMMENT:End of program")
             }
             else if (line.startsWith("PARTNO")){
-                 line = line.replace(/^PARTNO/, "COMMENT:Part number: ");
-                kk(line);
+                 D = line.replace(/^PARTNO/, "COMMENT:Part number: ");
+                kk(D);
             }
             else if (line.startsWith("OPERATION NAME")){
-                 line = line.replace(/^OPERATION NAME/, "COMMENT:").replace(/^:/, "");
-                kk(line);
+                 D = line.replace(/^OPERATION NAME/, "COMMENT:").replace(/^:/, "");
+                kk(D);
             }
             else if (line.startsWith("PPRINT")|| line.startsWith("TPRINT") ){
-                line=line.split("/")[1]
+                D = line.split("/")[1];
                 kk("COMMENT: ")
             }
             else {
@@ -720,42 +720,37 @@ export class catiav5_1_0{
             elements = line.split(",");
             if (elements.length === 12){
                 this.cycleon = true;
-                cycle_typ = elements[0];
-                total_depth = elements[1];
-                plunge = elements[2];
-                axial_depth = elements[3];
-                dwell_in_time = elements[4];
-                clearance = elements[5];
-                cycle_feed = elements[6];
-                cycle_spindle = elements[7];
-                depth_decrement = elements[10];
-                aditional_element = elements[11];
+                cycle_typ = elements[0].trim();
+                total_depth = +elements[1];
+                plunge = +elements[2];
+                axial_depth = +elements[3];
+                dwell_in_time = +elements[4];
+                clearance = +elements[5];
+                cycle_feed = +elements[6];
+                cycle_spindle = +elements[7];
+                depth_decrement = +elements[10];
+                aditional_element = +elements[11];
 
                 if (cycle_typ.includes("DRILL")||cycle_typ.includes("DEEPHL")||cycle_typ.includes("BRKCHP")){
-                    this.ls_cycle_data = "TYPE:DRILL" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + axial_depth + depth_decrement + aditional_element;
+                    this.ls_cycle_data = "TYPE:DRILL_1 " + total_depth+" "+plunge+" "+dwell_in_time+" "+clearance+" "+cycle_feed+" "+cycle_spindle+" "+axial_depth+" "+depth_decrement+" "+aditional_element;
                 }
                 else if (cycle_typ.includes("REAM")||cycle_typ.includes("BORE")) {
-                    this.ls_cycle_data = "TYPE:REAM" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + aditional_element;
+                    this.ls_cycle_data = "TYPE:REAM"+" "+total_depth +" "+ plunge+" "+dwell_in_time+" "+clearance+" "+cycle_feed+" "+cycle_spindle+" "+aditional_element;
                 }
                 else if (cycle_typ.includes("TAP")) {
-                    this.ls_cycle_data = "TYPE:TAP" + total_depth + plunge + dwell_in_time + clearance + cycle_feed + cycle_spindle + aditional_element;
+                    this.ls_cycle_data = "TYPE:TAP"+" "+total_depth+" "+plunge+" "+dwell_in_time+" "+clearance+" "+cycle_feed+" "+cycle_spindle+" "+aditional_element;
                 }
             }
             else if (line.includes("OFF")) {
                 this.cycleon = false;
                 this.ls_cycle = "CYCLE: LOCATION: "+this.ls_cycle_coord+"/ "+this.ls_cycle_data;
                 kk(this.ls_cycle);
-                console.log(this.ls_cycle);
             }
             else if ((line.includes("ON"))) {
                 this.cycleon = true;
             }
             
 
-        }
-        else if (line.startsWith("$$")){
-            line = line.split("$$")[1];
-            kk("COMMENT:" + line);
         }
         else if (line.startsWith("INDIRV")){
             elements=line.split(/[,\/\s]+/).filter(Boolean);
@@ -766,12 +761,17 @@ export class catiav5_1_0{
         else if (this.non_def.some(word => line.startsWith(word))){
             kk("ERROR not defined:" + line);
         }
+        else if (line.startsWith("$$")){
+            D = line.split("$$")[1];
+            kk("COMMENT:" + D);
+        }
         else{
             kk("ERROR: beans" + line);
         }
-        if (not (line.startsWith("RAPID"))){
+        if (!line.startsWith("RAPID")) {
             this.rapid = false;
         }
+        console.log(line);
     }
 }
 export class kkod{

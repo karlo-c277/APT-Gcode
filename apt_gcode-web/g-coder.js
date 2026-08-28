@@ -23,6 +23,9 @@ export class WinNC_sinumerik {
         let x;
         let y;
         let z;
+        let x_2;
+        let y_2;
+        let z_2;
         let i;
         let j;
         let k;
@@ -58,7 +61,7 @@ export class WinNC_sinumerik {
         let currentDepth;
         let next_peck;
 
-
+    console.log(line);
 
     if (line.startsWith("COMMENT")){
         elements = line.split("COMMENT:")[1].trim();
@@ -329,10 +332,12 @@ export class WinNC_sinumerik {
         el_6 = +data[6];
         el_7 = +data[7];
 
+        console.log(data);
+        console.log(el_0, el_1, el_2, el_3, el_4, el_5, el_6, el_7);
+
         number = elements[0].trim();
         number = number.split(":")[2];
         number_dt = number.match(/\([^)]*\)/g);
-
 
         if (this.multax===false){
             if (Math.abs(this.tool_i) === 1){
@@ -401,6 +406,13 @@ export class WinNC_sinumerik {
                 else {
                     console.log("ERROR");
                 }
+                x_2 = String(x).replace(/^X/, "");
+                y_2 = String(y).replace(/^Y/, "");
+                z_2 = String(z).replace(/^Z/, "");
+            }
+            else {
+                write("NO MULTI AXIAL WORK SUPPORTED");
+                console.error("MULTI AXIAL WORK TYPE")
             }
         
         if (el_0.includes("DRILL_1")){
@@ -441,7 +453,7 @@ export class WinNC_sinumerik {
                 next_peck=(el_7*this.ax_dir);
                 el_9 = (el_9*this.ax_dir);
 
-                write("G0 X" + x + " Y" + y + " Z" + z);
+                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
                 write("G91");
                 write("G95 F" + el_5);
                 write("G97 S" + el_6);
@@ -472,13 +484,13 @@ export class WinNC_sinumerik {
                 }
                 write("G1 " + (currentDepth-el_1));
                 write("G90");
-                write("G0 X" + x + " Y" + y + " Z" + z);
+                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
                 this.rapid = true;
 
             }
             
         }
-        else if (el_1.includes("DRILL_2")){
+        else if (el_0.includes("DRILL_2")){
             if (el_3 === 0 && el_8 === 0){
                 write("G97 S" + el_6);
                 write("G291");
@@ -500,7 +512,7 @@ export class WinNC_sinumerik {
                 next_peck=(el_7*this.ax_dir);
                 el_9 = (el_9*this.ax_dir);
 
-                write("G0 X" + x + " Y" + y + " Z" + z);
+                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
                 write("G91");
                 write("G95 F" + el_5);
                 write("G97 S" + el_6);
@@ -529,14 +541,15 @@ export class WinNC_sinumerik {
                 }
                 write("G1 " + (currentDepth-el_1));
                 write("G90");
-                write("G0 X" + x + " Y" + y + " Z" + z);
+                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
                 this.rapid = true;
 
             }
         }
         else if (el_0.includes("REAM")){
-            if (el_9 !== 0 && el_9 !== el_5){
-                write("G0 X" + x + " Y" + y + " Z" + z);
+
+            if (el_7 !== 0 && el_7 !== el_5 && el_3 !== 0){
+                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
                 write("G91");
                 write("G95 F" + el_5);
                 write("G97 S" + el_6);
@@ -545,8 +558,9 @@ export class WinNC_sinumerik {
                     write("G4 F"+el_3);
                 }
                 write("G1 " + d + (el_1*this.ax_dir));
-                write("F"+el_9);
-                write("G1 X" + x + " Y" + y + " Z" + z);
+                write("F"+el_7);
+                write("G90");
+                write("G1 X" + x_2 + " Y" + y_2 + " Z" + z_2);
                 this.rapid = false;
             }
             else {
@@ -582,7 +596,7 @@ export class WinNC_sinumerik {
 
     }
     else {
-        write(line);
+        write("UNREGISTERD CYCLE" + line);
     }
 }
 }
