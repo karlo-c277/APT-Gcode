@@ -46,12 +46,16 @@
             </div>
         </div>
         <div class="inputSettings">
-            <h4>Choose settings for input file</h4>
+            <h4>Choose APT code type:</h4>
             <select name="APT code type" id="apt-code-version">
-                <option value="">-- Choose APT code type --</option>
-                <option value="catiav5_1_0">CATIAV5 APT1.0</option>
+                <option value="">--  --</option>
+                <option value="catiav5_1_0">CATIAV5 APT 1.0</option>
                 <option value="kkod">Karlov kod</option>
             </select>
+        </div>
+        <div class="outputSettings">
+            <h4>File name (needed for header and file output)</h4>
+            <input type="text" id="filename" placeholder="CNC_gcode">
         </div>
         <div class="outputSettings">
             <h4>Choose output settings</h4>
@@ -62,10 +66,6 @@
                 <option value="WinNC_sinumerik">WinNC Sinumerik</option>
                 <option value="Karlov_kod">Karlov kod</option>
             </select>
-        </div>
-        <div class="outputSettings">
-            <h4>File name (needed for header and file output)</h4>
-            <input type="text" id="filename" placeholder="CNC_gcode">
         </div>
         <div id="costumOptions" class="hiddenPanel" style="display: none">
             <h2>Costum settings</h2>
