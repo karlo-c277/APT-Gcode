@@ -425,7 +425,21 @@ select{
 
 textarea{
     min-height: 120px;
-    resize: vertical;
+    max-height: 7500px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 16px;
+    background: #050607;
+    border: 1px solid #22262a;
+    border-radius: 7px;
+    font-family: 
+        "Cascadia Mono",
+        "Consolas",
+        "Courier New",
+        monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
 }
 
 input[type="text"]:hover,
@@ -483,7 +497,7 @@ input[type="checkbox"]{
     transform: translateY(-1px);
 }
 .text-input-toggle span{
-    color: var(--text-secondary);
+    color: var(--text);
     font-weight: 400;
     cursor: pointer;
 }
