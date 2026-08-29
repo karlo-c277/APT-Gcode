@@ -26,7 +26,7 @@ export class catiav5_1_0{
             this.ls_cycle_coord = "";
             this.lsunits;
             this.multax;
-            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "CUTTER", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME"];
+            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME"];
             this.non_def = ["PPFUN", "INDIRP"];
             this.lsautops;
             this.ls_feed_speed;
@@ -160,32 +160,46 @@ export class catiav5_1_0{
             kk("COMPENSATION:" + cutter);
         }
         else if (line.startsWith("TLAXIS")){
-            elements = line.split(/[,/]+/);
+            elements = line.split(/[,/ ]+/);
             x = elements[1].trim();
             y = elements[2].trim();
             z = elements[3].trim();
             kk("TLAXIS "+x+" "+y+" "+z);
+            this.multax = false;
+            kk("MULTAX: off")
+        }
+        else if (line.startsWith("CUTTER")){
+            elements = line.split(/[,/ ]+/);
+            if (elements.length < 3){
+                kk("COMMENT: Corner radius is "+elements[1]);
+            }
+            else if (elements.length == 8){
+                kk("COMMENT: Tool specs are: ");
+                kk("COMMENT: -cutter diameter "+elements[1]);
+                kk("COMMENT: -corner radius "+elements[2]);
+                kk("COMMENT: -horizontal distance between radius center point and tool axis "+elements[3]);
+                kk("COMMENT: -verical distnce between radius center point and cutter tip "+elements[4]);
+                kk("COMMENT: -angle of cutter tip "+elements[5]);
+                kk("COMMENT: -flank angle "+elements[6]);
+                kk("COMMENT: -tool height "+elements[7]);
+            }
         }
         else if (line.startsWith("MULTAX")){
-            kk("MULTAX");
-            kk("ERROR: multi axial machining is not supported")
-            this.multax = true;
+            if (line.includes("OFF")){
+                kk("MULTAX: off");
+                this.multax = false;
+            }
+            else {
+                kk("MULTAX: on");
+                kk("ERROR: multi axial machining is not supported")
+                this.multax = true;
+            }
+            
         }
         else if (this.comments.some(word => line.startsWith(word))){
             if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
                  tool_slot = line.split("/")[1].trim();
                 kk("COMMENT:Magazine slot number: " + tool_slot);
-            }
-            else if (line.startsWith("CUTTER/")){
-                let unit = (this.lsunits === "UNIT: MM" || line.includes("MM")) ? "MM" : "INCH";
-                if (line.split(/[,\/()]+/).length < 3){
-                     cutter = line.split("/")[1].trim();
-                    kk("COMMENT:Tool cutter radius: " + cutter + " " + unit);
-                }
-                else if (line.split(/[,\/()]+/).length >=3){
-                     cutter = line.split("/")[1].trim();
-                    kk("COMMENT:Tool cutter radius: " + cutter + " " + unit);
-                }
             }
             else if (line.startsWith("INTOL/")){
                  intol = line.split("/")[1].trim();
@@ -348,7 +362,7 @@ export class catiav5_1_0{
         }
         else if (line.startsWith("GODLTA")){
             if (this.cycleon === true) {
-                koord = line.split(/[,/]+/);
+                koord = line.split(/[,/ ]+/);
                 x = +koord[1];
                 y = +koord[2];
                 z = +koord[3];
@@ -381,7 +395,7 @@ export class catiav5_1_0{
                 kk("MOVEMENT: incremental");
                 this.ls_dim_typ = "MOVEMENT: incremental";
             }
-             koord = line.split(/[,/]+/);
+             koord = line.split(/[,/ ]+/);
             if (koord.length === 4){
                 x = +koord[1];
                 y = +koord[2];
@@ -430,7 +444,7 @@ export class catiav5_1_0{
         }
         else if (line.startsWith("GOTO")){
             if (this.cycleon === true) {
-                koord = line.split(/[,/]+/);
+                koord = line.split(/[,/ ]+/);
                 x = +koord[1];
                 y = +koord[2];
                 z = +koord[3];
@@ -464,7 +478,7 @@ export class catiav5_1_0{
                 kk("MOVEMENT: absolute");
                 this.ls_dim_typ = "MOVEMENT: absolute";
             }
-             koord = line.split(/[,/]+/);
+             koord = line.split(/[,/ ]+/);
              x = +koord[1];
              y = +koord[2];
              z = +koord[3];
@@ -506,63 +520,75 @@ export class catiav5_1_0{
         else if (line.startsWith("SPINDL")){
             if (line.includes("OFF")){
                 this.lsrotation = "SPINDLE: STATE:OFF";
-                kk("SPINDLE: STATE:off NUM:1");
+                kk("SPINDLE: STATE:off");
             }
             else if (!line.includes("ON")){
-                 spindlDT = line.split(/[,/]+/)
-                if (spindlDT.length === 4){
-                     num = spindlDT[1].trim();
-                     rotation = spindlDT[3].trim();
-                     rotation_typ = ""
 
-                    this.ls_spindle_speed = parseFloat(num)
-
-                    if (line.includes("SFM")||line.includes("SMM")) {
-                        rotation_typ = "TYPE:surface";
-                    }
-                    else if (line.includes("RPM")){
-                        rotation_typ = "TYPE:fix";
-                    }
-                    else {
-                        kk("ERROR SPINDLE SPEED IS NOT DEFINED CORECTLY (SFM OR RPM) "+line);
-                    }
+                spindlDT = line.split(/[,/ ]+/);
+                for (let values of spindlDT){
+                    values = values.trim();
+                    
+                    switch(values){
+                        case "SFM":
+                        case "SMM":
+                            rotation_typ = "TYPE:surface";
+                            break;
+                        case "RPM":
+                            rotation_typ = "TYPE:fix";
+                            break;
+                        case "CLW":
+                            this.lsrotation = "DIRECTION:cw";
+                            break;
+                        case "CCLW":
+                            this.lsrotation = "DIRECTION:ccw";
+                            break;
+                        default:
+                            if (values !== "" && !isNaN(values)){
+                                this.ls_spindle_speed = Number(values);
+                            }
+                    }                                        
+                    
                     if (this.ls_tip_rev !== rotation_typ){
                         this.ls_tip_rev = rotation_typ;
                     }
-                    if (line.includes("CLW")){
-                        this.lsrotation = "DIRECTION:cw";
-                    }
-                    else if (line.includes("CCLW")){
-                        this.lsrotation = "DIRECTION:ccw";
-                    }
-                    else {
-                        kk("ERROR SPINDLE DIRECTION NOT DEFINED " +line);
-                    }
-                    this.ls_on_rotation = ("SPINDLE: STATE:on " + rotation_typ + " SPEED:" + this.ls_spindle_speed + " " + " " + this.lsrotation + " NUM:1");
+                }
+                    this.ls_on_rotation = ("SPINDLE: STATE:on " + rotation_typ + " SPEED:" + this.ls_spindle_speed + " " + " " + this.lsrotation);
                     kk(this.ls_on_rotation);
-                }
-                else {
-                    kk("ERROR SPINDLE DATA NOT VALID REQUIRES NUM VALUE SFM/SMM/RPM AND DIRECTION "+ line);
-                }
             }
             else {
                 kk(this.ls_on_rotation);
             }
         }
         else if (line.startsWith("FEDRAT")){
-            feed = line.split(/[,/]+/);
-            numf = feed[1].trim();
-
-            if (line.includes("MMPR")||line.includes("IPR")||line.includes("REV")){
-                this.ls_tip_posmak = "TYPE:rev";
-            }
-            else if (line.includes("MMPM")||line.includes("IPM")||line.includes("MIN")){
-                this.ls_tip_posmak = "TYPE:time";
-            }
-            if (line.includes("RAPTO")){
-                this.rapto=1;
-                this.rapto_num = +feed[4]
-            }
+            feed = line.split(/[,/ ]+/);
+            let second_number = false;
+                for (let values of feed){
+                    values = values.trim();
+                    
+                    switch(values){
+                        case "MMPR":
+                        case "IPR":
+                        case "REV":
+                        case "PERREV":
+                            this.ls_tip_posmak = "TYPE:rev";
+                            break;
+                        case "MMPM":
+                        case "IPM":
+                        case "MIN":
+                        case "PERMIN":
+                            this.ls_tip_posmak = "TYPE:time";
+                            break;
+                        case "RAPTO":
+                            this.rapto = 1;
+                            this.rapto_num = +feed[4];
+                            break;
+                        default:
+                            if (values !== "" && !isNaN(values)&& second_number === false){
+                                numf = Number(values);
+                                second_number = true;
+                            }
+                    }
+                }
             kk("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + numf);
         }
         else if (line.startsWith("RAPID")){
@@ -576,7 +602,7 @@ export class catiav5_1_0{
                     kk("MOVEMENT: absolute");
                     this.ls_dim_typ = "MOVEMENT: absolute";
                 }
-                 koord = line.split(/[,/]+/);
+                 koord = line.split(/[,/ ]+/);
                  x = +koord[1];
                  y = +koord[2];
                  z = +koord[3];
@@ -627,7 +653,7 @@ export class catiav5_1_0{
                     kk("MOVEMENT: incremental");
                     this.ls_dim_typ = "MOVEMENT: incremental";
                 }
-                koord = line.split(/[,/]+/)
+                koord = line.split(/[,/ ]+/);
                 if (koord.length === 4){
                      x = +koord[1];
                      y = +koord[2];
@@ -766,7 +792,7 @@ export class catiav5_1_0{
             kk("COMMENT:" + D);
         }
         else{
-            kk("ERROR: beans" + line);
+            kk("ERROR: beans " + line);
         }
         if (!line.startsWith("RAPID")) {
             this.rapid = false;

@@ -120,13 +120,13 @@ export class WinNC_sinumerik {
             else if (line.includes("surface")){
                 type = "G96";
             }
-            if (line.includes("cw")){
+            if (line.includes("ccw")){
+                direction = "M04";
+                this.spindle_dir = "ccw";
+            }
+            else if (line.includes("cw")){
                 direction = "M03";
                 this.spindle_dir = "cw";
-            }
-            else if (line.includes("ccw")){
-                direction="M04";
-                this.spindle_dir = "ccw";
             }
             write(type+" S"+speed+" "+" "+direction);
         }
@@ -199,10 +199,15 @@ export class WinNC_sinumerik {
         write(line);
     }
     else if (line.startsWith("MULTAX")){
-        this.multax = true;
+        if (line.includes("on")){
+            this.multax = true;
+        }
+        else {
+            this.multax = false;
+        }
     }
     else if (line.startsWith("LINE")){
-        elements = line.split(" ");
+        elements = line.split(/ +/);
         if (elements.length === 4 ){
             x = elements[1];
             y = elements[2];
@@ -249,7 +254,7 @@ export class WinNC_sinumerik {
         }
     }
     else if (line.startsWith("DWELL")){
-        number_dt = line.split(" ")[2];
+        number_dt = line.split(/ +/)[2];
         number = number_dt.split(":")[1];
         if (line.includes("time")){
             write("G4 S" + number);
@@ -259,7 +264,7 @@ export class WinNC_sinumerik {
         }            
     }
     else if (line.startsWith("ARCH")){
-        elements = line.split(" ");
+        elements = line.split(/ +/);
         direction = elements[20];
         radius = +elements[2];
         x = +elements[12];
@@ -316,7 +321,7 @@ export class WinNC_sinumerik {
                 default:
                     elements ="OFF";
             }
-        write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching compensation. This one is "+elements);
+        write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching tool compensation. This one is "+elements);
     }
     else if (line.startsWith("CYCLE")) {
         elements = line.split("/");
