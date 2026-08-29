@@ -9,6 +9,7 @@ There are some .txt files those are for testing your code.
 
 
 complete manual code insert
+
 do auto code recognition
 helic trajectory set
 does the winnc im talking about actually support iso mode
@@ -22,5 +23,5 @@ chnage g code output for arch into one for 360 degs
 Configure "TOOL:" into json and outa json
 Define what does cutter/ with a lot of elements mean, for each element and implement that
 Start making new parseline for other g code standards and apt file outputs -as you wish
-Check what encryption do different CNC_____ programs use and then make like profiles, user just selects wheter to prepare it for winnc siemens etc and the output file is automatically set with correc extension and encryption
+Check what encryption do different CNC----- programs use and then make like profiles, user just selects wheter to prepare it for winnc siemens etc and the output file is automatically set with correc extension and encryption
 Check what encryption do different CAM----- programs use and then make like profiles, user just selects what program he uses and the decryp and file extension are preset (so he just enters dwelltest and the input file is dwelltest.specificext)

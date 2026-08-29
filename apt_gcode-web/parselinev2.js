@@ -235,15 +235,27 @@ export class catiav5_1_0{
         else if (line.startsWith("AUTOPS")){
             this.autops = 1;
         }
-        else if (line.includes("CIRCLE") ){
-             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
-             centar_x = +elements[3];
-             centar_y = +elements[4];
-             centar_z = +elements[5];
-             radius = +elements[6];
-             kraj_x = +elements[12];
-             kraj_y = +elements[13];
-             kraj_z = +elements[14];
+        else if (line.startsWith("TLON,GOFWD") ){
+            if (line.includes("CIRCLE")){
+                elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
+                centar_x = +elements[3];
+                centar_y = +elements[4];
+                centar_z = +elements[5];
+                radius = +elements[6];
+                if (!line.includes("INTOF")&& elements.length == 15){
+                kraj_x = +elements[12];
+                kraj_y = +elements[13];
+                kraj_z = +elements[14];
+                }
+                else if (line.includes("INTOF")&& elements.length == 17){
+                    kraj_x = +elements[14];
+                    kraj_y = +elements[15];
+                    kraj_z = +elements[16];
+                }
+                else {
+                    kk("COMMENT: Circle syntacs is invalid, there fore command rejected, for correct syntacs visit: https://catiahelp.azurewebsites.net/English/NcgUserMap/ncg-r-rf-AptFormat-SyntAptImport.htm#ncg-r-rf-AptFormat-SyntAptImport__rs-CircularInterpolationCIRCLE");
+                    break;
+                }
 
                 if (Math.abs(centar_x - kraj_x) <= this.tolr_coord && Math.abs(centar_x - this.ls_x) <= this.tolr_coord){
                     this.lsplane = "zy";
@@ -259,106 +271,114 @@ export class catiav5_1_0{
                 }
                 kk("PLANE: "+this.lsplane);
 
-            if (this.lsplane == "xz"){
-                 vektor2_x = this.ls_x - centar_x;
-                 vektor2_z = this.ls_z - centar_z;
-                 D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
+                if (this.lsplane == "xz"){
+                    vektor2_x = this.ls_x - centar_x;
+                    vektor2_z = this.ls_z - centar_z;
+                    D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
 
 
-                if (D<0){
-                     movement = "cw";
-                }
-                else if (D>0){
-                     movement = "ccw";
-                }
-                else {
-                    kk("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
-                }
-
-                start = Math.atan2(this.ls_x-centar_x, this.ls_z-centar_z);
-                end = Math.atan2(kraj_x-centar_x, kraj_z-centar_z);
-
-                if (movement === "ccw") {
-                    angle = end - start;
-                    if (angle < 0){
-                        angle += 2*Math.PI;
+                    if (D<0){
+                        movement = "cw";
                     }
+                    else if (D>0){
+                        movement = "ccw";
                     }
-                else if (movement === "cw") {
-                    angle = start - end;
-                    if (angle < 0){
-                        angle += 2*Math.PI;
+                    else {
+                        kk("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
                     }
+
+                    start = Math.atan2(this.ls_x-centar_x, this.ls_z-centar_z);
+                    end = Math.atan2(kraj_x-centar_x, kraj_z-centar_z);
+
+                    if (movement === "ccw") {
+                        angle = end - start;
+                        if (angle < 0){
+                            angle += 2*Math.PI;
+                        }
+                        }
+                    else if (movement === "cw") {
+                        angle = start - end;
+                        if (angle < 0){
+                            angle += 2*Math.PI;
+                        }
+                        }  
+                }
+                else if (this.lsplane == "xy"){
+                    vektor2_x = +this.ls_x - +centar_x;
+                    vektor2_y = +this.ls_y - +centar_y;
+                    D = +this.ls_i * vektor2_y - vektor2_x * +this.ls_j;
+
+
+                    if (D<0){
+                        movement = "cw";
+                    }
+                    else if (D>0){
+                        movement = "ccw";
+                    }
+                    else {
+                        kk("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
+                    }
+                    start = Math.atan2(this.ls_x-centar_x, this.ls_y-centar_y);
+                    end = Math.atan2(kraj_x-centar_x, kraj_y-centar_y);
+
+                    if (movement === "ccw") {
+                        angle = end - start;
+                        if (angle < 0){
+                            angle += 2*Math.PI;
+                        }
+                    }
+                    else if (movement === "cw") {
+                        angle = start - end;
+                        if (angle < 0){
+                            angle += 2*Math.PI;
+                        }
                     }  
-            }
-            else if (this.lsplane == "xy"){
-                 vektor2_x = +this.ls_x - +centar_x;
-                 vektor2_y = +this.ls_y - +centar_y;
-                 D = +this.ls_i * vektor2_y - vektor2_x * +this.ls_j;
 
+                }
+                else if (this.lsplane == "zy"){
+                    vektor2_y = +this.ls_y - +centar_y;
+                    vektor2_z = +this.ls_z - +centar_z;
+                    D = +this.ls_j * vektor2_z - vektor2_y * +this.ls_k;
 
-                if (D<0){
-                     movement = "cw";
-                }
-                else if (D>0){
-                     movement = "ccw";
-                }
-                else {
-                    kk("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
-                }
-                start = Math.atan2(this.ls_x-centar_x, this.ls_y-centar_y);
-                end = Math.atan2(kraj_x-centar_x, kraj_y-centar_y);
+                    if (D<0){
+                    movement = "cw";
+                    }
+                    else if (D>0){
+                        movement = "ccw";
+                    }
+                    else {
+                        kk("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
+                    }
+                    start = Math.atan2(this.ls_z-centar_z, this.ls_y-centar_y);
+                    end = Math.atan2(kraj_z-centar_z, kraj_y-centar_y);
 
-                if (movement === "ccw") {
-                    angle = end - start;
-                    if (angle < 0){
-                        angle += 2*Math.PI;
+                    if (movement === "ccw") {
+                        angle = end - start;
+                        if (angle < 0){
+                            angle += 2*Math.PI;
+                        }
                     }
-                    }
-                else if (movement === "cw") {
-                    angle = start - end;
-                    if (angle < 0){
-                        angle += 2*Math.PI;
-                    }
+                    else if (movement === "cw") {
+                        angle = start - end;
+                        if (angle < 0){
+                            angle += 2*Math.PI;
+                        }
                     }  
+                }
+                kk("ARCH: RADIUS: "+radius+" BEGIN: "+this.ls_x+" "+this.ls_y+" "+this.ls_z+" CENTER: "+centar_x+" "+centar_y+" "+centar_z+" END: "+kraj_x+" "+kraj_y+" "+kraj_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRECTION: "+movement+" ANGLE: "+angle);
 
+                this.ls_x = kraj_x;
+                this.ls_y = kraj_y;
+                this.ls_z = kraj_z;
+                this.lsautops = 0;
             }
-            else if (this.lsplane == "zy"){
-                 vektor2_y = +this.ls_y - +centar_y;
-                 vektor2_z = +this.ls_z - +centar_z;
-                 D = +this.ls_j * vektor2_z - vektor2_y * +this.ls_k;
-
-                if (D<0){
-                     movement = "cw";
-                }
-                else if (D>0){
-                     movement = "ccw";
-                }
-                else {
-                    kk("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
-                }
-                start = Math.atan2(this.ls_z-centar_z, this.ls_y-centar_y);
-                end = Math.atan2(kraj_z-centar_z, kraj_y-centar_y);
-
-                if (movement === "ccw") {
-                    angle = end - start;
-                    if (angle < 0){
-                        angle += 2*Math.PI;
-                    }
-                    }
-                else if (movement === "cw") {
-                    angle = start - end;
-                    if (angle < 0){
-                        angle += 2*Math.PI;
-                    }
-                    }  
+            else if (line.includes("CYLNDR")){
+                kk("COMMENT: SORRY this includes waaay too much of too advanced geometry for me :(");
+                break;
             }
-            kk("ARCH: RADIUS: "+radius+" BEGIN: "+this.ls_x+" "+this.ls_y+" "+this.ls_z+" CENTER: "+centar_x+" "+centar_y+" "+centar_z+" END: "+kraj_x+" "+kraj_y+" "+kraj_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRECTION: "+movement+" ANGLE: "+angle);
-
-            this.ls_x = kraj_x;
-            this.ls_y = kraj_y;
-            this.ls_z = kraj_z;
-            this.lsautops = 0;
+            else{
+                kk("COMMENT: Unknown command "+line);
+            }
         }
         else if (line.startsWith("GODLTA")){
             if (this.cycleon === true) {
@@ -775,6 +795,9 @@ export class catiav5_1_0{
             else if ((line.includes("ON"))) {
                 this.cycleon = true;
             }
+            else{
+                kk("COMMENT: Cycle rejected invalid cycle type look at https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Catia%20V5.md")
+            }
             
 
         }
@@ -784,6 +807,30 @@ export class catiav5_1_0{
             this.ls_j = +elements[2];
             this.ls_k = +elements[3];
         }
+        else if (line.startsWith("ROTABL")){
+            elements = line.split(/[,/ ]+/);
+            for (let values of elements){
+                values = values.trim();
+
+                switch(values){
+                    case "CLW":
+                        direction = "CLW";
+                        break;
+                    case "CCLW":
+                        direction = "CCLW";
+                        break;
+                    case "ATANGL":
+                        movement = "ANGLE";
+                        break;
+                    case "INCR":
+                        movement = "INCREMENT ANGLE";
+                        break;
+                }
+
+                kk("COMMENT: Unkown syntacs "+line);
+                break;
+            }
+        }
         else if (this.non_def.some(word => line.startsWith(word))){
             kk("ERROR not defined:" + line);
         }
@@ -792,7 +839,7 @@ export class catiav5_1_0{
             kk("COMMENT:" + D);
         }
         else{
-            kk("ERROR: beans " + line);
+            kk("ERROR: unrecognized command " + line);
         }
         if (!line.startsWith("RAPID")) {
             this.rapid = false;

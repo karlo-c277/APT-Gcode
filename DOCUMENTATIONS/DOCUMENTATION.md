@@ -3,7 +3,7 @@
 |:--|:--:|
 |APT code|https://archive.org/details/numericalcontrol0000stan|
 |CATIA V5|I went and spammed and compared APT outputs|
-||https://catiahelp.azurewebsites.net/English/NcgUserMap/ncg-r-rf-AptFormat-SyntAptImport.htm#hj-top|
+||https://catiahelp.azurewebsites.net/English/NcgUserMap/ncg-m-rf-AptFormat-sb.htm
 |Website background|https://neat.firecms.co/|
 |Test for corectness of given G-code|WinNC|
 |Encryption for WinNC document|https://asutp.org/SIEMENS/SINUMERIK/SINUMERIK_840D_sl/siemense_cnc_44sp1.pdf|
