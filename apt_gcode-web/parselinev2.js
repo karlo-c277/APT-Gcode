@@ -28,7 +28,7 @@ export class catiav5_1_0{
             this.multax;
             this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME"];
             this.non_def = ["PPFUN", "INDIRP"];
-            this.lsautops;
+            this.lsautops = false;
             this.ls_feed_speed;
             this.rapid = false;
             this.ls_movement = "CUT";
@@ -36,6 +36,7 @@ export class catiav5_1_0{
             this.header;
             this.cycleon = false;
             this.ls_tool_axis;
+            this.psis = false;
         }
     parseline(line){
             let elements;
@@ -101,6 +102,8 @@ export class catiav5_1_0{
             let cycle_spindle;
             let depth_decrement;
             let aditional_element;
+
+            let amplitude;
 
         if (this.header === ""){
             kk(window.add_command);
@@ -233,11 +236,11 @@ export class catiav5_1_0{
             }
         }
         else if (line.startsWith("AUTOPS")){
-            this.autops = 1;
+            this.autops = true;
         }
         else if (line.startsWith("TLON,GOFWD") ){
+            elements = line.split(/[,\/()]+/);
             if (line.includes("CIRCLE")){
-                elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
                 centar_x = +elements[3];
                 centar_y = +elements[4];
                 centar_z = +elements[5];
@@ -254,7 +257,6 @@ export class catiav5_1_0{
                 }
                 else {
                     kk("COMMENT: Circle syntacs is invalid, there fore command rejected, for correct syntacs visit: https://catiahelp.azurewebsites.net/English/NcgUserMap/ncg-r-rf-AptFormat-SyntAptImport.htm#ncg-r-rf-AptFormat-SyntAptImport__rs-CircularInterpolationCIRCLE");
-                    break;
                 }
 
                 if (Math.abs(centar_x - kraj_x) <= this.tolr_coord && Math.abs(centar_x - this.ls_x) <= this.tolr_coord){
@@ -373,8 +375,21 @@ export class catiav5_1_0{
                 this.lsautops = 0;
             }
             else if (line.includes("CYLNDR")){
-                kk("COMMENT: SORRY this includes waaay too much of too advanced geometry for me :(");
-                break;
+                centar_x = +elements[3];
+                centar_y = +elements[4];
+                centar_z = +elements[5];
+                amplitude = +elements[9];
+                if (!line.includes("INTOF")){
+                    kraj_x = +elements[28];
+                    kraj_y = +elements[29];
+                    kraj_z = +elements[30];
+                }
+                else if (line.includes("INTOF")){
+                    kraj_x = +elements[30];
+                    kraj_y = +elements[31];
+                    kraj_z = +elements[32];
+                }
+                kk("COMMENT: "+centar_x+ centar_y+centar_z+amplitude+kraj_x+kraj_y+kraj_z);
             }
             else{
                 kk("COMMENT: Unknown command "+line);
@@ -800,6 +815,13 @@ export class catiav5_1_0{
             }
             
 
+        }
+        else if (line.startsWith("PSIS")){
+            this.psis = true;
+            elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
+            this.ls_i = +elements[8];
+            this.ls_j = +elements[9];
+            this.ls_k = +elements[10];
         }
         else if (line.startsWith("INDIRV")){
             elements=line.split(/[,\/\s]+/).filter(Boolean);

@@ -5,6 +5,17 @@ const costumOptions = document.getElementById("costumOptions");
 const costumOutput = document.getElementById("costumOutput");
 const downloadCheckbox = document.getElementById("downloadOutputCheck");
 const errorBox = document.getElementById("errorBox");
+const textInputToggle = document.getElementById("textInputToggle");
+const textInput = document.getElementById("textInput");
+
+textInputToggle.addEventListener("change", () => {
+    if (textInputToggle.checked){
+        textInput.style.display = "block";
+    }
+    else{
+        textInput.style.display = "none"
+    }
+});
 
 const config = {
     colors: [
