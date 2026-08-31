@@ -25,6 +25,7 @@ export class catiav5_1_0{
             this.ls_cycle_data;
             this.ls_cycle_coord = "";
             this.lsunits;
+            this.ls_units_word = "mm";
             this.multax;
             this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME"];
             this.non_def = ["PPFUN", "INDIRP"];
@@ -116,11 +117,13 @@ export class catiav5_1_0{
                 if (this.lsunits !== "UNIT: MM"){
                     kk("UNIT: MM");
                     this.lsunits = "UNIT: MM";
+                    this.ls_units_word = "mm";
                 }
             } else if (line.includes("INCH")){
                 if (this.lsunits !== "UNIT: INCH"){
                     kk("UNIT: INCH");
                     this.lsunits = "UNIT: INCH";
+                    this.ls_units_word = "inch";
                 }
             } else {
                 kk("ERROE: Unknown unit type " + line);
@@ -204,17 +207,17 @@ export class catiav5_1_0{
                  tool_slot = line.split("/")[1].trim();
                 kk("COMMENT:Magazine slot number: " + tool_slot);
             }
-            else if (line.startsWith("INTOL/")){
+            else if (line.startsWith("INTOL")){
                  intol = line.split("/")[1].trim();
-                kk("COMMENT:Inside tolerance from the path: " + intol + this.ls_units_word);
+                kk("COMMENT:Inside tolerance from the path: " + intol +" "+ this.ls_units_word);
             }
-            else if (line.startsWith("OUTOL/")){
-                 outtol = line.split("/")[1].trim();
-                kk("COMMENT:Outside tolerance from the path: "+ outtol + this.ls_units_word);
+            else if (line.startsWith("OUTTOL")){
+                 outol = line.split("/")[1].trim();
+                kk("COMMENT:Outside tolerance from the path: "+ outol +" "+ this.ls_units_word);
             }
             else if (line.startsWith("TOLER/")){
                  toler = line.split("/")[1].trim();
-                kk("COMMENT:Tolerance from the path: " + toler + this.ls_units_word);
+                kk("COMMENT:Tolerance from the path: " + toler +" "+ this.ls_units_word);
             }
             else if (line.startsWith("FINI") || line.startsWith("END")){
                 kk("COMMENT:End of program")
@@ -389,7 +392,10 @@ export class catiav5_1_0{
                     kraj_y = +elements[31];
                     kraj_z = +elements[32];
                 }
-                kk("COMMENT: "+centar_x+ centar_y+centar_z+amplitude+kraj_x+kraj_y+kraj_z);
+                kk("COMMENT: CENTAR "+centar_x+" "+centar_y+" "+centar_z);
+                kk("COMMENT: AMPLITUDA "+amplitude);
+                kk("COMMENT: KRAJ "+kraj_x+" "+kraj_y+" "+kraj_z);
+                kk("COMMENT: VEKTOR TANG "+this.ls_i+" "+this.ls_j+" "+this.ls_k);
             }
             else{
                 kk("COMMENT: Unknown command "+line);
@@ -822,6 +828,27 @@ export class catiav5_1_0{
             this.ls_i = +elements[8];
             this.ls_j = +elements[9];
             this.ls_k = +elements[10];
+            x = +elements[3];
+            y = +elements[4];
+            z = +elements[5];
+            koord_x=" X++";
+            koord_y=" Y++";
+            koord_z=" Z++";
+
+            if (x !== this.ls_x){
+                koord_x = " X" + x;
+            }
+            if (y !== this.ls_y){
+                koord_y = " Y" + y;
+            }
+            if (z !== this.ls_z){
+                koord_z = " Z" + z;
+            }
+            kk("LINE:"+koord_x + koord_y + koord_z);
+
+            this.ls_x=x;
+            this.ls_y=y;
+            this.ls_z=z;            
         }
         else if (line.startsWith("INDIRV")){
             elements=line.split(/[,\/\s]+/).filter(Boolean);
