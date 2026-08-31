@@ -289,7 +289,7 @@ export class WinNC_sinumerik {
     }
     else if (line.startsWith("COMPENSATION")){
         compensation = line.split(":")[1];
-        compensation = compensation.trim;
+        compensation = compensation.trim();
         switch (compensation) {
                 case "TR":
                     elements ="1";

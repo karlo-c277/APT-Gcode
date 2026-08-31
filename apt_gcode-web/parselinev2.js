@@ -128,7 +128,7 @@ export class catiav5_1_0{
         }
         else if (line.startsWith("SWITCH")){
             num = line.split("/")[1];
-            num = num.trim;
+            num = num.trim();
             switch (num) {
                 case "1":
                     cutter ="TR";
