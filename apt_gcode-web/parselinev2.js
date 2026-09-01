@@ -406,6 +406,30 @@ export class catiav5_1_0{
                 kk("COMMENT: Unknown command "+line);
             }
         }
+        else if (line.startsWith("HELICAL/")){
+            elements = line.split(/[,\/()]+/);
+            centar_x = +elements[1];
+            centar_y = +elements[2];
+            centar_z = +elements[3];
+            this.ls_i = +elements[4];
+            this.ls_j = +elements[5];
+            this.ls_k = +elements[6];
+            vektor2_x = +elements[7];
+            vektor2_y = +elements[8];
+            vektor2_z = +elements[9];
+            feed = +elements[10];
+            radius = +elements[11];
+            kraj_x = +elements[12];
+            kraj_y = +elements[13];
+            kraj_z = +elements[14];
+            
+            this.ls_x = kraj_x;
+            this.ls_y = kraj_y;
+            this.ls_z = kraj_z;
+
+            kk("HELIX: CENTER: "+" "+centar_x+" "+centar_y+" "+centar_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRTECTION: "+vektor2_x+" "+vektor2_y+" "+vektor2_z+" PITCH: "+feed+" RADIUS:"+radius+" END: "+kraj_x+" "+kraj_y+" "+kraj_z);
+
+        }
         else if (line.startsWith("GODLTA")){
             if (this.cycleon === true) {
                 koord = line.split(/[,/ ]+/);

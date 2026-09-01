@@ -55,8 +55,7 @@ eng. - Karlos Code
         -"zy" - for zy plane
 
 "TOOL: tool_info"
-    -TOOL defines what tool is being used
-    -in case of of any tool movement (exept for LINE:) or tool change, movement remains in the last state (AIR/CUT)
+    -TOOL defines what tool is being used 
     -tool_info shall begin exactly one space after ":"
     -tool_info shall be consisted of the following information:
         NAME:tool_name
@@ -121,12 +120,10 @@ eng. - Karlos Code
     -for Absolute, movement_type will be defined as "absolute"
 
 "AIR"
-    -defines that next lines are executed in rapid movement meaning that the workpiece is not being cut
-    -in case of of any tool movement (exept for LINE:) or tool change, movement remains in the last state (AIR/CUT)
+    -defines that next lines are executed in rapid movement meaning that the workpiece is not being cut 
 
 "CUT"
-    -defines that next lines are executed in cutting movement meaning that the workpiece is being cut
-    -in case of of any tool movement (exept for LINE:) or tool change, movement remains in the last state (AIR/CUT)
+    -defines that next lines are executed in cutting movement meaning that the workpiece is being cut 
 
 "END"
     -defines that this is it. there is nothing more to be done, the program is finished
@@ -180,8 +177,7 @@ eng. - Karlos Code
     0       1       2
 
 "ARCH: arch_info"
-    -defines a partial cicular movement
-    -in case of of any tool movement (exept for LINE:) or tool change, movement remains in the last state (AIR/CUT)
+    -defines a partial cicular movement 
     -this movement can only be performed in one of the 3 base planes given in "PLANE: value"
     -arch_info must consist of the following information:
         NOTE XYZ IJK letters must not be displayed in the final code current displayment is for easier understanings
@@ -203,8 +199,7 @@ eng. - Karlos Code
     0     1     2   3       4     5     6     7       8     9     10  11    12    13    14    15       16        17      18     19     20   21    22
 
 "SINUS: sinus_info"
-    -defines that the movement to the end point is a part of SINUS wave or multiple waves
-    -in case of of any tool movement (exept for LINE:) or tool change, movement remains in the last state (AIR/CUT)
+    -defines that the movement to the end point is a part of SINUS wave or multiple waves 
     -this movement can only be performed in one of the 3 base planes given in "PLANE: value"
     -sinus_info must consist of the following information:
         -"END: value" where value is a numerical variable containing coordinates at the end of movement
@@ -214,10 +209,23 @@ eng. - Karlos Code
         Values: (X)(Y)(Z)(I)(J)(K) shall not be in final output
 "SINUS: END: (X)10 (Y)20 (Z)30 AMPLITUDE: 4 MIDLINE: ((X)10 (Y)20 (Z)30)((X)10 (Y)20 (Z)30) VECTOR: (I)0.707 (J)-0.707 (K)0
 
+"HELIX: helix_info"
+    -defines a spiral movement
+    -helix_info must consist of the following information
+        -"CENTER: value" where value is a numerical variable defining coordinates of top-most center point of the spiral path
+        -"VECTOR: value" where value is a numerical variable defining a vector tangent to the first point on path looking from the top (- not counting the pitch)
+        -"DIRECTION: value" where value is a numerical variable defining a vector paralel to the center of the spiral
+        -"PITCH: value" where value is a numerical variable definign the spiral movement
+        -"RADIUS: value" where value is a numerical variable defining the distance of the spiral from it's center line
+        -"END: value" where value is a numerical variable defining the end point of the spiral
+        Values: (X)(Y)(Z)(I)(J)(K) shall not be in final output
+"HELIX: CENTER: (X)10 (Y)20 (Z)30 VECTOR: (I)0.707 (J)-0.707 (K)0 DIRECTION: (I)0.707 (J)-0.707 (K)0 PITCH: 1.5 RADIUS 11.5 END (X)10 (Y)20 (Z)30"
+   0        1       2   3       4   5           6       7       8       9       10          11     12   13  14    15    16   17     18  19      20
+
+
 "CYCLE: cycle_info"
     -defines a canned cycle
-    -the direction of the cutting motion shall be previously determined by TLAXIS
-    -in case of of any tool movement (exept for LINE:) or tool change, movement remains in the last state (AIR/CUT)
+    -the direction of the cutting motion shall be previously determined by TLAXIS 
     -cycle_info shall consist of the following information:
         -"LOCATION: value" where value begins with 1 space after "LOCATION:" and defines point/s of beggining of each cycle
             -value: ( X Y Z )( X Y Z )/      XYZ in the fisrt () brackets are coordinates for the first CYCLE in the second () brackets for the second one etc.
@@ -243,10 +251,10 @@ TYPE->  DRILL_1  total_depth plunge_offset dwell_time clearance feedrate spindle
             return is an absolute value for rapid return after each peck, unafected decrement_rate
 
             -this cycle is used drilling
-            -if you wish not to utilize decrement_rate its value must be set to 0
-            -if you wish not to utilize return after a peck its value must be set to 0
-            -if you wish not to utilize pecks its value must be set to zero
-            -if you wish not to utilize dwell its value must be set to zero
+            -if you wish not to utilize decrement_rate it's value must be set to 0
+            -if you wish not to utilize return after a peck it's value must be set to 0
+            -if you wish not to utilize pecks it's value must be set to zero
+            -if you wish not to utilize dwell it's value must be set to zero
             --decrement_rate and return cannot be valued without set peck size 
             Other codes for this would require 4 different types of operation, whilst this one requires only one
             For shorter syntacs in final Gcode it is recomended to use combinations avilable to your CNC controler

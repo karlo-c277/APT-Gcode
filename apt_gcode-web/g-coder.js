@@ -14,6 +14,7 @@ export class WinNC_sinumerik {
     }
     gcoder(line){
         let elements;
+        let movement;
         let type;
         let speed;
         let direction;
@@ -29,6 +30,12 @@ export class WinNC_sinumerik {
         let i;
         let j;
         let k;
+        let i_2;
+        let j_2;
+        let k_2;
+        let vektor2_x;
+        let vektor2_y;
+        let vektor2_z;
         let centar_x;
         let centar_y;
         let centar_z;
@@ -44,6 +51,9 @@ export class WinNC_sinumerik {
         let coord;
         let cancel;
         let bottom;
+        let plane;
+        let turn;
+        let D;
 
         let el_0;
         let el_1;
@@ -599,6 +609,89 @@ export class WinNC_sinumerik {
         }
         }
 
+    }
+    else if (line.startsWith("HELIX")){
+        elements = line.split(/[:\s]+/);
+        centar_x = +elements[2];
+        centar_y = +elements[3];
+        centar_z = +elements[4];
+        this.ls_i = +elements[6];
+        this.ls_j = +elements[7];
+        this.ls_k = +elements[8];
+        i_2 = +elements[10];
+        j_2 = +elements[11];
+        k_2 = +elements[12];
+        number = +elements[14];
+        radius = +elements[16];
+        kraj_x = +elements[18];
+        kraj_y = +elements[19];
+        kraj_z = +elements[20];
+
+        if (Math.abs(i_2) === 1){
+            plane = "zy";
+        }
+        else if (Math.abs(j_2) === 1){
+            plane = "xz";
+        }
+        else if (Math.abs(k_2) === 1){
+            plane = "xy";
+        }
+
+        if (plane == "xz"){
+                        vektor2_x = this.ls_x - centar_x;
+                        vektor2_z = this.ls_z - centar_z;
+                        D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
+        
+        
+                        if (D<0){
+                            movement = "G2";
+                        }
+                        else if (D>0){
+                            movement = "G3";
+                        }
+                        else {
+                            write("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
+                        }
+                        coord = ("I"+centar_x+" K"+centar_z);
+                        turn = Math.trunc(Math.abs(centar_y-kraj_y)/number);
+        }
+        else if (plane == "xy"){
+                            vektor2_x = +this.ls_x - +centar_x;
+                            vektor2_y = +this.ls_y - +centar_y;
+                            D = +this.ls_i * vektor2_y - vektor2_x * +this.ls_j;
+        
+        
+                            if (D<0){
+                                movement = "G2";
+                            }
+                            else if (D>0){
+                                movement = "G3";
+                            }
+                            else {
+                                write("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
+                            }
+                            coord = ("I"+centar_x+" J"+centar_y);
+                            turn = Math.trunc(Math.abs(centar_z-kraj_z)/number);
+        }
+        else if (plane == "zy"){
+                            vektor2_y = +this.ls_y - +centar_y;
+                            vektor2_z = +this.ls_z - +centar_z;
+                            D = +this.ls_j * vektor2_z - vektor2_y * +this.ls_k;
+        
+                            if (D<0){
+                            movement = "G2";
+                            }
+                            else if (D>0){
+                                movement = "G3";
+                            }
+                            else {
+                                write("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
+                            }
+                            coord = ("J"+centar_y+" K"+centar_z);
+                            turn = Math.trunc(Math.abs(centar_x-kraj_x)/number);
+        }
+
+        write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+turn);
     }
     else {
         write("UNREGISTERD CYCLE" + line);
