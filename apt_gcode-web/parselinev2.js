@@ -243,6 +243,7 @@ export class catiav5_1_0{
         }
         else if (line.startsWith("TLON,GOFWD") ){
             elements = line.split(/[,\/()]+/);
+            console.log(elements);
             if (line.includes("CIRCLE")){
                 centar_x = +elements[3];
                 centar_y = +elements[4];
@@ -396,6 +397,10 @@ export class catiav5_1_0{
                 kk("COMMENT: AMPLITUDA "+amplitude);
                 kk("COMMENT: KRAJ "+kraj_x+" "+kraj_y+" "+kraj_z);
                 kk("COMMENT: VEKTOR TANG "+this.ls_i+" "+this.ls_j+" "+this.ls_k);
+                kk("LINE: X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z);
+                this.ls_x = kraj_x;
+                this.ls_y = kraj_y;
+                this.ls_z = kraj_z;
             }
             else{
                 kk("COMMENT: Unknown command "+line);
@@ -834,21 +839,27 @@ export class catiav5_1_0{
             koord_x=" X++";
             koord_y=" Y++";
             koord_z=" Z++";
-
-            if (x !== this.ls_x){
-                koord_x = " X" + x;
-            }
-            if (y !== this.ls_y){
-                koord_y = " Y" + y;
-            }
-            if (z !== this.ls_z){
-                koord_z = " Z" + z;
-            }
-            kk("LINE:"+koord_x + koord_y + koord_z);
-
+            
             this.ls_x=x;
             this.ls_y=y;
-            this.ls_z=z;            
+            this.ls_z=z;
+            let plane_counter = 0;
+
+            if (this.ls_i !== 0){
+                kk("PLANE: yz");
+                plane_counter += 1;
+            }
+            if (this.ls_j !== 0){
+                kk("PLANE: xz");
+                plane_counter += 1;
+            }
+            if (this.ls_k !== 0){
+                kk("PLANE: xy");
+                plane_counter += 1;
+            }
+            if (plane_counter > 1){
+                kk("ERROR: more than one vector is defined for this circular movement meaning it is not in a standard plane\n"+line);
+            }
         }
         else if (line.startsWith("INDIRV")){
             elements=line.split(/[,\/\s]+/).filter(Boolean);
