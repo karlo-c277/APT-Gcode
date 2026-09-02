@@ -242,7 +242,7 @@ export class catiav5_1_0{
             this.autops = true;
         }
         else if (line.startsWith("TLON,GOFWD") ){
-            elements = line.split(/[,\/()]+/);
+            elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
             console.log(elements);
             if (line.includes("CIRCLE")){
                 centar_x = +elements[3];
@@ -373,9 +373,7 @@ export class catiav5_1_0{
                 }
                 kk("ARCH: RADIUS: "+radius+" BEGIN: "+this.ls_x+" "+this.ls_y+" "+this.ls_z+" CENTER: "+centar_x+" "+centar_y+" "+centar_z+" END: "+kraj_x+" "+kraj_y+" "+kraj_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRECTION: "+movement+" ANGLE: "+angle);
 
-                this.ls_x = kraj_x;
-                this.ls_y = kraj_y;
-                this.ls_z = kraj_z;
+                
                 this.lsautops = 0;
             }
             else if (line.includes("CYLNDR")){
@@ -405,9 +403,12 @@ export class catiav5_1_0{
             else{
                 kk("COMMENT: Unknown command "+line);
             }
+            this.ls_x = kraj_x;
+            this.ls_y = kraj_y;
+            this.ls_z = kraj_z;
         }
-        else if (line.startsWith("HELICAL/")){
-            elements = line.split(/[,\/()]+/);
+        else if (line.startsWith("HELICAL")){
+            elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
             centar_x = +elements[1];
             centar_y = +elements[2];
             centar_z = +elements[3];

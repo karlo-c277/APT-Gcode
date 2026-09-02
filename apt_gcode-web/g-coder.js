@@ -10,6 +10,9 @@ export class WinNC_sinumerik {
         this.spindle_dir;
         this.rapid = false;
         this.post_cycle = false;
+        this.ls_x;
+        this.ls_y;
+        this.ls_z;
 
     }
     gcoder(line){
@@ -223,16 +226,30 @@ export class WinNC_sinumerik {
             y = elements[2];
             z = elements[3];
 
+            x_2 = String(x).replace(/^X/, "");
+            y_2 = String(y).replace(/^Y/, "");
+            z_2 = String(z).replace(/^Z/, "");
+
             if (x === "X++"){
                 x = "";
+            }
+            else {
+                this.ls_x = +x_2;
             }
             if (y === "Y++"){
                 y = "";
             }
+            else {
+                this.ls_y = +y_2;
+            }
             if (z === "Z++"){
                 z = "";
             }
+            else {
+                this.ls_z = +z_2;
+            }
             write(x+" "+y+" "+z);
+
         }
         else if (elements.length === 7){
             x = elements[1];
@@ -281,6 +298,14 @@ export class WinNC_sinumerik {
         y = +elements[13];
         z = +elements[14];
         angle = +elements[22];
+
+        x_2 = String(x).replace(/^X/, "");
+        y_2 = String(y).replace(/^Y/, "");
+        z_2 = String(z).replace(/^Z/, "");
+
+        this.ls_x = +x_2;
+        this.ls_y = +y_2;
+        this.ls_z = +z_2;
 
         if (direction === "cw"){
             direction = "G2";
@@ -346,9 +371,6 @@ export class WinNC_sinumerik {
         el_5 = +data[5];
         el_6 = +data[6];
         el_7 = +data[7];
-
-        console.log(data);
-        console.log(el_0, el_1, el_2, el_3, el_4, el_5, el_6, el_7);
 
         number = elements[0].trim();
         number = number.split(":")[2];
@@ -427,7 +449,7 @@ export class WinNC_sinumerik {
             }
             else {
                 write("NO MULTI AXIAL WORK SUPPORTED");
-                console.error("MULTI AXIAL WORK TYPE")
+                console.error("MULTI AXIAL WORK TYPE");
             }
         
         if (el_0.includes("DRILL_1")){
@@ -607,6 +629,10 @@ export class WinNC_sinumerik {
             write("G290");
             this.post_cycle = true;
         }
+
+        this.ls_x = +x_2;
+        this.ls_y = +y_2;
+        this.ls_z = +z_2;
         }
 
     }
@@ -627,6 +653,8 @@ export class WinNC_sinumerik {
         kraj_y = +elements[19];
         kraj_z = +elements[20];
 
+        console.log(elements);
+
         if (Math.abs(i_2) === 1){
             plane = "zy";
         }
@@ -636,12 +664,11 @@ export class WinNC_sinumerik {
         else if (Math.abs(k_2) === 1){
             plane = "xy";
         }
-
+        console.log(plane);
         if (plane == "xz"){
                         vektor2_x = this.ls_x - centar_x;
                         vektor2_z = this.ls_z - centar_z;
                         D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
-        
         
                         if (D<0){
                             movement = "G2";
@@ -656,10 +683,14 @@ export class WinNC_sinumerik {
                         turn = Math.trunc(Math.abs(centar_y-kraj_y)/number);
         }
         else if (plane == "xy"){
-                            vektor2_x = +this.ls_x - +centar_x;
-                            vektor2_y = +this.ls_y - +centar_y;
-                            D = +this.ls_i * vektor2_y - vektor2_x * +this.ls_j;
-        
+                            vektor2_x = this.ls_x - centar_x;
+                            vektor2_y = this.ls_y - centar_y;
+                            D = this.ls_i * vektor2_y - vektor2_x * this.ls_j;
+
+                            console.log(this.ls_x+" "+centar_x+" "+this.ls_y+" "+centar_y);
+
+                            console.log(vektor2_x);
+                            console.log(vektor2_y);
         
                             if (D<0){
                                 movement = "G2";
@@ -674,9 +705,9 @@ export class WinNC_sinumerik {
                             turn = Math.trunc(Math.abs(centar_z-kraj_z)/number);
         }
         else if (plane == "zy"){
-                            vektor2_y = +this.ls_y - +centar_y;
-                            vektor2_z = +this.ls_z - +centar_z;
-                            D = +this.ls_j * vektor2_z - vektor2_y * +this.ls_k;
+                            vektor2_y = this.ls_y - centar_y;
+                            vektor2_z = this.ls_z - centar_z;
+                            D = this.ls_j * vektor2_z - vektor2_y * this.ls_k;
         
                             if (D<0){
                             movement = "G2";
@@ -690,8 +721,10 @@ export class WinNC_sinumerik {
                             coord = ("J"+centar_y+" K"+centar_z);
                             turn = Math.trunc(Math.abs(centar_x-kraj_x)/number);
         }
-
-        write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+turn);
+        write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+" TURN="+turn);
+        this.ls_x = +kraj_x;
+        this.ls_y = +kraj_y;
+        this.ls_z = +kraj_z;
     }
     else {
         write("UNREGISTERD CYCLE" + line);
