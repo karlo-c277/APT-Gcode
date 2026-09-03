@@ -27,7 +27,6 @@ export class catiav5_1_0{
             this.lsunits;
             this.ls_units_word = "mm";
             this.multax;
-            this.comments = ["TPRINT", "PPRINT", "LOADTL", "TOOLNO", "REWIND", "SELECTL", "INTOL", "OUTTOL", "TOLER", "FINI", "END", "PARTNO", "OPERATION NAME"];
             this.non_def = ["PPFUN", "INDIRP"];
             this.lsautops = false;
             this.ls_feed_speed;
@@ -55,7 +54,6 @@ export class catiav5_1_0{
             let vektor2_z;
             let D;
             let movement;
-            let koord;
             let koord_x;
             let koord_y;
             let koord_z;
@@ -73,11 +71,8 @@ export class catiav5_1_0{
             let dtx;
             let dty;
             let dtz;
-            let spindlDT;
             let num;
-            let rotation;
             let rotation_typ;
-            let feednumf;
             let tool_slot;
             let cutter;
             let intol;
@@ -105,6 +100,8 @@ export class catiav5_1_0{
             let aditional_element;
 
             let amplitude;
+            let element;
+            let begin;
 
         if (this.header === ""){
             kk(window.add_command);
@@ -112,7 +109,12 @@ export class catiav5_1_0{
         }
         if (!line || !line.trim()) {return};
 
-        if (line.startsWith("UNITS")){
+        elements = line.split(/[,/ ]+/);
+        begin = elements[0];
+        element = line.split("/");
+
+        switch (begin){
+        case "UNITS":
             if (line.includes("MM")){
                 if (this.lsunits !== "UNIT: MM"){
                     kk("UNIT: MM");
@@ -128,9 +130,9 @@ export class catiav5_1_0{
             } else {
                 kk("ERROE: Unknown unit type " + line);
             }
-        }
-        else if (line.startsWith("SWITCH")){
-            num = line.split("/")[1];
+            break;
+        case "SWITCH":
+            num = element[1];
             num = num.trim();
             switch (num) {
                 case "1":
@@ -164,18 +166,16 @@ export class catiav5_1_0{
                     cutter ="OFF";
             }
             kk("COMPENSATION:" + cutter);
-        }
-        else if (line.startsWith("TLAXIS")){
-            elements = line.split(/[,/ ]+/);
+            break;
+        case "TLAXIS":
             x = elements[1].trim();
             y = elements[2].trim();
             z = elements[3].trim();
             kk("TLAXIS "+x+" "+y+" "+z);
             this.multax = false;
             kk("MULTAX: off")
-        }
-        else if (line.startsWith("CUTTER")){
-            elements = line.split(/[,/ ]+/);
+            break;
+        case "CUTTER":
             if (elements.length < 3){
                 kk("COMMENT: Corner radius is "+elements[1]);
             }
@@ -189,8 +189,8 @@ export class catiav5_1_0{
                 kk("COMMENT: -flank angle "+elements[6]);
                 kk("COMMENT: -tool height "+elements[7]);
             }
-        }
-        else if (line.startsWith("MULTAX")){
+            break;
+        case "MULTAX":
             if (line.includes("OFF")){
                 kk("MULTAX: off");
                 this.multax = false;
@@ -200,23 +200,34 @@ export class catiav5_1_0{
                 kk("ERROR: multi axial machining is not supported")
                 this.multax = true;
             }
-            
-        }
-        else if (this.comments.some(word => line.startsWith(word))){
+            break;
+        case "TPRINT":
+        case "PPRINT":
+        case "LOADTL":
+        case "TOOLNO":
+        case "REWIND":
+        case "SELECTL":
+        case "INTOL":
+        case "OUTTOL":
+        case "TOLER":
+        case "FINI":
+        case "END":
+        case "PARTNO":
+        case "OPERATION NAME":
             if (line.startsWith("LOADTL/") || line.startsWith("SELECTL/")){
-                 tool_slot = line.split("/")[1].trim();
+                 tool_slot = element[1].trim();
                 kk("COMMENT:Magazine slot number: " + tool_slot);
             }
             else if (line.startsWith("INTOL")){
-                 intol = line.split("/")[1].trim();
+                 intol = element[1].trim();
                 kk("COMMENT:Inside tolerance from the path: " + intol +" "+ this.ls_units_word);
             }
             else if (line.startsWith("OUTTOL")){
-                 outol = line.split("/")[1].trim();
+                 outol = element[1].trim();
                 kk("COMMENT:Outside tolerance from the path: "+ outol +" "+ this.ls_units_word);
             }
             else if (line.startsWith("TOLER/")){
-                 toler = line.split("/")[1].trim();
+                 toler = element[1].trim();
                 kk("COMMENT:Tolerance from the path: " + toler +" "+ this.ls_units_word);
             }
             else if (line.startsWith("FINI") || line.startsWith("END")){
@@ -231,17 +242,17 @@ export class catiav5_1_0{
                 kk(D);
             }
             else if (line.startsWith("PPRINT")|| line.startsWith("TPRINT") ){
-                D = line.split("/")[1];
+                D = element[1];
                 kk("COMMENT: ")
             }
             else {
                 kk("COMMENT: " + line);
             }
-        }
-        else if (line.startsWith("AUTOPS")){
+            break;
+        case "AUTOPS":
             this.autops = true;
-        }
-        else if (line.startsWith("TLON,GOFWD") ){
+            break;
+        case "TLON,GOFWD":
             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
             console.log(elements);
             if (line.includes("CIRCLE")){
@@ -406,8 +417,8 @@ export class catiav5_1_0{
             this.ls_x = kraj_x;
             this.ls_y = kraj_y;
             this.ls_z = kraj_z;
-        }
-        else if (line.startsWith("HELICAL")){
+            break;
+        case "HELICAL":
             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
             centar_x = +elements[1];
             centar_y = +elements[2];
@@ -429,14 +440,12 @@ export class catiav5_1_0{
             this.ls_z = kraj_z;
 
             kk("HELIX: CENTER: "+" "+centar_x+" "+centar_y+" "+centar_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRTECTION: "+vektor2_x+" "+vektor2_y+" "+vektor2_z+" PITCH: "+feed+" RADIUS:"+radius+" END: "+kraj_x+" "+kraj_y+" "+kraj_z);
-
-        }
-        else if (line.startsWith("GODLTA")){
+            break;
+        case "GODLTA":
             if (this.cycleon === true) {
-                koord = line.split(/[,/ ]+/);
-                x = +koord[1];
-                y = +koord[2];
-                z = +koord[3];
+                x = +elements[1];
+                y = +elements[2];
+                z = +elements[3];
 
                 this.ls_x += x;
                 this.ls_y += y;
@@ -466,16 +475,15 @@ export class catiav5_1_0{
                 kk("MOVEMENT: incremental");
                 this.ls_dim_typ = "MOVEMENT: incremental";
             }
-             koord = line.split(/[,/ ]+/);
-            if (koord.length === 4){
-                x = +koord[1];
-                y = +koord[2];
-                z = +koord[3];
+            if (elements.length === 4){
+                x = +elements[1];
+                y = +elements[2];
+                z = +elements[3];
             }
-            else if (koord.length === 2){
+            else if (elements.length === 2){
                 x = "++";
                 y = "++";
-                z = +koord[3];
+                z = +elements[3];
             }
             else {
                 kk("ERROR: GODLTA " + line);
@@ -511,14 +519,13 @@ export class catiav5_1_0{
                 this.rapto = 0;
             }
             kk("LINE:" + koord_x + koord_y + koord_z);
-        }
-        }
-        else if (line.startsWith("GOTO")){
+            }
+            break;
+        case "GOTO":
             if (this.cycleon === true) {
-                koord = line.split(/[,/ ]+/);
-                x = +koord[1];
-                y = +koord[2];
-                z = +koord[3];
+                x = +elements[1];
+                y = +elements[2];
+                z = +elements[3];
 
                 this.ls_x = x;
                 this.ls_y = y;
@@ -549,10 +556,9 @@ export class catiav5_1_0{
                 kk("MOVEMENT: absolute");
                 this.ls_dim_typ = "MOVEMENT: absolute";
             }
-             koord = line.split(/[,/ ]+/);
-             x = +koord[1];
-             y = +koord[2];
-             z = +koord[3];
+             x = +eleemnts[1];
+             y = elements[2];
+             z = +elements[3];
 
             if (x !== this.ls_x){
                  koord_x = " X" + x;
@@ -587,16 +593,14 @@ export class catiav5_1_0{
             this.ls_y=y;
             this.ls_z=z;
             }
-        }
-        else if (line.startsWith("SPINDL")){
+            break;
+        case "SPINDL":
             if (line.includes("OFF")){
                 this.lsrotation = "SPINDLE: STATE:OFF";
                 kk("SPINDLE: STATE:off");
             }
             else if (!line.includes("ON")){
-
-                spindlDT = line.split(/[,/ ]+/);
-                for (let values of spindlDT){
+                for (let values of elements){
                     values = values.trim();
                     
                     switch(values){
@@ -629,11 +633,10 @@ export class catiav5_1_0{
             else {
                 kk(this.ls_on_rotation);
             }
-        }
-        else if (line.startsWith("FEDRAT")){
-            feed = line.split(/[,/ ]+/);
+            break;
+        case "FEDRAT":
             let second_number = false;
-                for (let values of feed){
+                for (let values of elements){
                     values = values.trim();
                     
                     switch(values){
@@ -661,9 +664,8 @@ export class catiav5_1_0{
                     }
                 }
             kk("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + numf);
-        }
-        else if (line.startsWith("RAPID")){
-
+            break;
+        case "RAPID":
             if (line.includes("GOTO")){
                  koord_x=" X++";
                  koord_y=" Y++";
@@ -673,10 +675,9 @@ export class catiav5_1_0{
                     kk("MOVEMENT: absolute");
                     this.ls_dim_typ = "MOVEMENT: absolute";
                 }
-                 koord = line.split(/[,/ ]+/);
-                 x = +koord[1];
-                 y = +koord[2];
-                 z = +koord[3];
+                 x = +elements[1];
+                 y = +elements[2];
+                 z = +elements[3];
 
                 if (x !== this.ls_x){
                      koord_x = " X" + x;
@@ -724,16 +725,15 @@ export class catiav5_1_0{
                     kk("MOVEMENT: incremental");
                     this.ls_dim_typ = "MOVEMENT: incremental";
                 }
-                koord = line.split(/[,/ ]+/);
-                if (koord.length === 4){
-                     x = +koord[1];
-                     y = +koord[2];
-                     z = +koord[3];
+                if (elements.length === 4){
+                     x = +elements[1];
+                     y = +elements[2];
+                     z = +elements[3];
                 }
-                else if (koord.length === 2){
+                else if (elements.length === 2){
                      x = "++";
                      y = "++";
-                     z = +koord[1];
+                     z = +elements[1];
                 }
                 else {
                     kk("ERROR: GODLTA " + line);
@@ -776,8 +776,8 @@ export class catiav5_1_0{
             else {
                 this.rapid = true;
             }
-        }
-        else if (line.startsWith("COOLNT")){
+            break;
+        case "COOLNT":
             if (line.includes("FLOOD")){
                 this.ls_clnt_typ = "COOLANT: STATE:on TYPE:flood";
                 kk("COOLANT: STATE:on TYPE:flood");
@@ -801,9 +801,10 @@ export class catiav5_1_0{
                     kk("ERROR: THERE IS NO PREDEFINED COOLANT TYPE, FUNTION ON CANNOT WORK");
                 }
             }
-        }
-        else if (line.startsWith("DELAY")||line.startsWith("DWELL")){
-            dwell=line.split("/")[1];
+            break;
+        case "DELAY":
+        case "DWELL":
+            dwell=element[1];
             if (line.includes("REV")){
                 revs=dwell.split(",").trim();
                 kk("DWELL: TYPE:rev NUMBER:" + revs);
@@ -811,8 +812,8 @@ export class catiav5_1_0{
             else{
                 kk("DWELL: TYPE:time NUMBER:" + dwell.trim());
             }
-        }
-        else if (line.startsWith("CYCLE")){
+            break;
+        case "CYCLE":
             kk("MOVEMENT: absolute");
             elements = line.split(",");
             if (elements.length === 12){
@@ -849,10 +850,8 @@ export class catiav5_1_0{
             else{
                 kk("COMMENT: Cycle rejected invalid cycle type look at https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Catia%20V5.md")
             }
-            
-
-        }
-        else if (line.startsWith("PSIS")){
+            break;
+        case "PSIS":
             this.psis = true;
             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
             this.ls_i = +elements[8];
@@ -885,15 +884,14 @@ export class catiav5_1_0{
             if (plane_counter > 1){
                 kk("ERROR: more than one vector is defined for this circular movement meaning it is not in a standard plane\n"+line);
             }
-        }
-        else if (line.startsWith("INDIRV")){
+            break;
+        case "INDIRV":
             elements=line.split(/[,\/\s]+/).filter(Boolean);
             this.ls_i = +elements[1];
             this.ls_j = +elements[2];
             this.ls_k = +elements[3];
-        }
-        else if (line.startsWith("ROTABL")){
-            elements = line.split(/[,/ ]+/);
+            break;
+        case "ROTABL":
             for (let values of elements){
                 values = values.trim();
 
@@ -915,17 +913,19 @@ export class catiav5_1_0{
                 kk("COMMENT: Unkown syntacs "+line);
                 break;
             }
-        }
-        else if (this.non_def.some(word => line.startsWith(word))){
+            break;
+        case "PPFUN":
+        case "INDIRP":
             kk("ERROR not defined:" + line);
-        }
-        else if (line.startsWith("$$")){
+            break;
+        case "$$":
             D = line.split("$$")[1];
             kk("COMMENT:" + D);
-        }
-        else{
+            break;
+        default:
             kk("ERROR: unrecognized command " + line);
-        }
+            break;
+
         if (!line.startsWith("RAPID")) {
             this.rapid = false;
         }
