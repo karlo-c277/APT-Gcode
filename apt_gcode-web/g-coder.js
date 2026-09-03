@@ -74,15 +74,22 @@ export class WinNC_sinumerik {
         let currentDepth;
         let next_peck;
 
+        let start;
+
     console.log(line);
 
-    if (line.startsWith("COMMENT")){
+    elements = line.split(" ");
+    start = line.split(/[\/,:\s]+/);
+
+    switch (start[0]){
+
+    case "COMMENT":
         elements = line.split("COMMENT:")[1].trim();
         if (elements !== ""){
         write(";"+elements);
         }
-    }
-    else if (line.startsWith("ADD")){
+        break;
+    case "ADD":
         if (line.includes("RADIUS")){
             write("DIAMOF");
         }
@@ -90,7 +97,7 @@ export class WinNC_sinumerik {
             write("DIAMON");
         }
     }
-    else if (line.startsWith("UNIT")){
+    case "UNIT")){
         if (line.includes("MM")){
             write("G71");
         }
@@ -98,7 +105,7 @@ export class WinNC_sinumerik {
             write("G70");
         }
     }
-    else if (line.startsWith("PLANE")){
+    case "PLANE")){
         if (line.includes("xy")){
             write("G17");
         }
@@ -109,22 +116,21 @@ export class WinNC_sinumerik {
             write("G19");
         }
     }
-    else if (line.startsWith("TOOL")){
-        let elements = line.split(" ");
-        let name = elements[1];
-        let magazine = elements[2];
-        let compensation = elements[3];
+    case "TOOL")){
+        name = elements[1];
+        magazine = elements[2];
+        compensation = elements[3];
 
         write(name + " " + magazine + " " + compensation);
         this.rapid =false;
 
     }
-    else if (line.startsWith("SPINDLE")){
+    case "SPINDLE")){
         if (line.includes("off")){
             write("M05");
         }
         else if (line.includes("on")){
-            elements = line.split(" ");
+            
             speed = elements[3].split(":")[1];
             
             if(line.includes ("fix")){
@@ -144,8 +150,7 @@ export class WinNC_sinumerik {
             write(type+" S"+speed+" "+" "+direction);
         }
     }
-    else if (line.startsWith("FEEDRATE")){
-        elements = line.split(" ");
+    case "FEEDRATE")){
         speed = elements[2].split(":")[1];
         if (line.includes("time")){
             type = "G94";
@@ -158,7 +163,7 @@ export class WinNC_sinumerik {
         }
         write(type + " F" + speed);
     }
-    else if (line.startsWith("COOLANT")){
+    case "COOLANT")){
         if (line.includes("off")){
             write("M09");
         }
@@ -169,7 +174,7 @@ export class WinNC_sinumerik {
             write("M08");
         }
     }
-    else if (line.startsWith("AIR_PURGE")){
+    case "AIR_PURGE")){
         if (line.includes("on")){
             write("M71");
         }
@@ -177,7 +182,7 @@ export class WinNC_sinumerik {
             write("M72");
         }
     }
-    else if (line.startsWith("MOVEMENT")){
+    case "MOVEMENT")){
         if (line.includes("incremental")){
             write("G91");
         }
@@ -185,33 +190,32 @@ export class WinNC_sinumerik {
             write("G90");
         }
     }
-    else if (line.startsWith("TLAXIS")){
-        elements = line.split(" ");
+    case "TLAXIS")){
         this.tool_i = +elements[1];
         this.tool_j = +elements[2];
         this.tool_k = +elements[3];
     }
-    else if (line.startsWith("AIR")){
+    case "AIR")){
         if (this.rapid = false){
             write("G0");
             this.rapid = true;
         }
         this.post_cycle = false;
     }
-    else if (line.startsWith("CUT")){
+    case "CUT")){
         if (this.rapid = true){
             write("G1");
             this.rapid = false;
         }
         this.post_cycle = false;
     }
-    else if (line.startsWith("END")){
+    case "END")){
         write("M30");
     }
-    else if (line.startsWith("ERROR")){
+    case "ERROR")){
         write(line);
     }
-    else if (line.startsWith("MULTAX")){
+    case "MULTAX")){
         if (line.includes("on")){
             this.multax = true;
         }
@@ -219,7 +223,7 @@ export class WinNC_sinumerik {
             this.multax = false;
         }
     }
-    else if (line.startsWith("LINE")){
+    case "LINE")){
         elements = line.split(/ +/);
         if (elements.length === 4 ){
             x = elements[1];
@@ -280,7 +284,7 @@ export class WinNC_sinumerik {
             write(x+" "+y+" "+z+" "+i+" "+j+" "+k);
         }
     }
-    else if (line.startsWith("DWELL")){
+    case "DWELL")){
         number_dt = line.split(/ +/)[2];
         number = number_dt.split(":")[1];
         if (line.includes("time")){
@@ -290,7 +294,7 @@ export class WinNC_sinumerik {
             write("G4 R" + number);
         }            
     }
-    else if (line.startsWith("ARCH")){
+    case "ARCH")){
         elements = line.split(/ +/);
         direction = elements[20];
         radius = +elements[2];
@@ -319,10 +323,10 @@ export class WinNC_sinumerik {
         write(direction + " X" + x + " Y" +  y + " Z" +  z + " R" +  radius);
         this.rapid = false;
     }
-    else if (line.startsWith("#")){
+    case "#")){
         write(line);
     }
-    else if (line.startsWith("COMPENSATION")){
+    case "COMPENSATION")){
         compensation = line.split(":")[1];
         compensation = compensation.trim();
         switch (compensation) {
@@ -358,7 +362,7 @@ export class WinNC_sinumerik {
             }
         write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching tool compensation. This one is "+elements);
     }
-    else if (line.startsWith("CYCLE")) {
+    case "CYCLE")) {
         elements = line.split("/");
 
         data = elements[1].trim().split(/\s+/);
@@ -652,20 +656,8 @@ export class WinNC_sinumerik {
         kraj_x = +elements[18];
         kraj_y = +elements[19];
         kraj_z = +elements[20];
-
-        console.log(elements);
-
-        if (Math.abs(i_2) === 1){
-            plane = "zy";
-        }
-        else if (Math.abs(j_2) === 1){
-            plane = "xz";
-        }
-        else if (Math.abs(k_2) === 1){
-            plane = "xy";
-        }
-        console.log(plane);
-        if (plane == "xz"){
+        
+        if (Math.abs(j_2) === 1){
                         vektor2_x = this.ls_x - centar_x;
                         vektor2_z = this.ls_z - centar_z;
                         D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
@@ -682,7 +674,7 @@ export class WinNC_sinumerik {
                         coord = ("I"+centar_x+" K"+centar_z);
                         turn = Math.trunc(Math.abs(centar_y-kraj_y)/number);
         }
-        else if (plane == "xy"){
+        else if (Math.abs(k_2)=== 1){
                             vektor2_x = this.ls_x - centar_x;
                             vektor2_y = this.ls_y - centar_y;
                             D = this.ls_i * vektor2_y - vektor2_x * this.ls_j;
@@ -704,7 +696,7 @@ export class WinNC_sinumerik {
                             coord = ("I"+centar_x+" J"+centar_y);
                             turn = Math.trunc(Math.abs(centar_z-kraj_z)/number);
         }
-        else if (plane == "zy"){
+        else if (Math.abs(i_2) === 1){
                             vektor2_y = this.ls_y - centar_y;
                             vektor2_z = this.ls_z - centar_z;
                             D = this.ls_j * vektor2_z - vektor2_y * this.ls_k;

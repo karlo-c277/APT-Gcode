@@ -8,16 +8,12 @@ There are some .txt files those are for testing your code.
 
 
 
-check other helix option, maybe not all helix maybe just in main planes
 do auto code recognition
 do stuff about CYLINDR for catia
 do stuff about Sinusoidal movement in WinNC
-helic trajectory set
 does the winnc im talking about actually support iso mode
 is there a taping with or without compensation chuck in catia, if so what is the syntacs difference
 set in settings like a slider to adjust how much of the catia clearance is entered as rapid to clearance for cycles in g-coder (if multax === false --set to 0.2 rn)
-complete thread cutting apt syntacs
-complete synacs for a random curve path and uncover allat stuff
 add a logic for multi axis machines
 what if the circle is 180 or 360
 chnage g code output for arch into one for 360 degs
