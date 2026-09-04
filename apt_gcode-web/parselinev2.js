@@ -36,6 +36,7 @@ export class catiav5_1_0{
             this.cycleon = false;
             this.ls_tool_axis;
             this.psis = false;
+            this.rejected_cyc = false;
         }
     parseline(line){
             let elements;
@@ -99,6 +100,7 @@ export class catiav5_1_0{
         elements = line.split(/[,/ ]+/);
         begin = elements[0];
         element = line.split("/");
+        console.log(line);
 
         switch (begin){
 
@@ -436,7 +438,7 @@ export class catiav5_1_0{
 
             kk("HELIX: CENTER: "+" "+centar_x+" "+centar_y+" "+centar_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRTECTION: "+vektor2_x+" "+vektor2_y+" "+vektor2_z+" PITCH: "+D+" RADIUS:"+radius+" END: "+kraj_x+" "+kraj_y+" "+kraj_z);
             break;
-        
+        console.log(line);
         case "GODLTA":
             if (this.cycleon === true) {
                 x = +elements[1];
@@ -553,8 +555,8 @@ export class catiav5_1_0{
                 kk("MOVEMENT: absolute");
                 this.ls_dim_typ = "MOVEMENT: absolute";
             }
-             x = +eleemnts[1];
-             y = elements[2];
+             x = +elements[1];
+             y = +elements[2];
              z = +elements[3];
 
             if (x !== this.ls_x){
@@ -795,11 +797,11 @@ export class catiav5_1_0{
                 kk("COOLANT: STATE:off");
             }
             else if (line.includes("ON")){
-                if (this.ls_clnt_typ !== ""){
-                    kk(this.ls_clnt_typ);
+                if (this.ls_clnt_typ === ""){
+                    kk("ERROR: THERE IS NO PREDEFINED COOLANT TYPE, FUNTION ON CANNOT WORK");
                 }
                 else {
-                    kk("ERROR: THERE IS NO PREDEFINED COOLANT TYPE, FUNTION ON CANNOT WORK");
+                    kk(this.ls_clnt_typ+" ");
                 }
             }
             break;
@@ -817,9 +819,9 @@ export class catiav5_1_0{
             break;
         
         case "CYCLE":
-            kk("MOVEMENT: absolute");
             elements = line.split(",");
             if (elements.length === 12){
+                kk("MOVEMENT: absolute");
                 this.cycleon = true;
                 cycle_typ = elements[0].trim();
                 total_depth = +elements[1];
@@ -843,15 +845,21 @@ export class catiav5_1_0{
                 }
             }
             else if (line.includes("OFF")) {
-                this.cycleon = false;
-                this.ls_cycle = "CYCLE: LOCATION: "+this.ls_cycle_coord+"/ "+this.ls_cycle_data;
-                kk(this.ls_cycle);
+                if (!this.rejected_cyc){
+                    this.cycleon = false;
+                    this.ls_cycle = "CYCLE: LOCATION: "+this.ls_cycle_coord+"/ "+this.ls_cycle_data;
+                    kk(this.ls_cycle);
+                    this.rejected_cyc = false;
+                }
             }
             else if ((line.includes("ON"))) {
+                kk("MOVEMENT: absolute");
                 this.cycleon = true;
             }
             else{
-                kk("COMMENT: Cycle rejected invalid cycle type look at https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Catia%20V5.md")
+                kk("COMMENT: Cycle rejected invalid cycle type look at https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Catia%20V5.md");
+                this.rejected_cyc = true;
+                break;
             }
             break;
         

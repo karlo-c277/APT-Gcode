@@ -14,3 +14,17 @@
 ![alt text](<Images/Snimka zaslona 2026-08-25 092103.png>)  
 
 For more information on CATIA APT sytacs visit this [website](https://catiahelp.azurewebsites.net/English/NcgUserMap/ncg-r-rf-AptFormat-SyntAptImport.htm#hj-top)
+
+|CYCLES|VALID|
+|:---|:---:|
+|Drill|YES|
+|Drill with dwell delay|YES|
+|Spot drilling|YES|
+|Counter-boring with a dedicated bit|YES|
+|Counter-sinking with a dedicated bit|YES|
+|Deep hole drilling|YES|
+|Drill with break chip|YES|
+|Taping|YES|
+|Boring with a dedicated bit|YES|
+|Reaming with a dedicated bit|YES|
+|Any other cycle|NO|
