@@ -83,13 +83,15 @@ export class WinNC_sinumerik{
 
     switch (start[0]){
 
-    case "COMMENT":
+    
+        case "COMMENT":
         elements = line.split("COMMENT:")[1].trim();
         if (elements !== ""){
         write(";"+elements);
         }
         break;
-    case "ADD":
+    
+        case "ADD":
         if (line.includes("RADIUS")){
             write("DIAMOF");
         }
@@ -97,7 +99,8 @@ export class WinNC_sinumerik{
             write("DIAMON");
         }
         break;
-    case "UNIT":
+    
+        case "UNIT":
         if (line.includes("MM")){
             write("G71");
         }
@@ -105,7 +108,8 @@ export class WinNC_sinumerik{
             write("G70");
         }
         break;
-    case "PLANE":
+    
+        case "PLANE":
         if (line.includes("xy")){
             write("G17");
         }
@@ -116,7 +120,8 @@ export class WinNC_sinumerik{
             write("G19");
         }
         break;
-    case "TOOL":
+    
+        case "TOOL":
         name = elements[1];
         magazine = elements[2];
         compensation = elements[3];
@@ -125,7 +130,8 @@ export class WinNC_sinumerik{
         this.rapid =false;
 
         break;
-    case "SPINDLE":
+    
+        case "SPINDLE":
         if (line.includes("off")){
             write("M05");
         }
@@ -150,7 +156,8 @@ export class WinNC_sinumerik{
             write(type+" S"+speed+" "+" "+direction);
         }
         break;
-    case "FEEDRATE":
+    
+        case "FEEDRATE":
         speed = elements[2].split(":")[1];
         if (line.includes("time")){
             type = "G94";
@@ -163,7 +170,8 @@ export class WinNC_sinumerik{
         }
         write(type + " F" + speed);
         break;
-    case "COOLANT":
+    
+        case "COOLANT":
         if (line.includes("off")){
             write("M09");
         }
@@ -174,7 +182,8 @@ export class WinNC_sinumerik{
             write("M08");
         }
         break;
-    case "AIR_PURGE":
+    
+        case "AIR_PURGE":
         if (line.includes("on")){
             write("M71");
         }
@@ -182,7 +191,8 @@ export class WinNC_sinumerik{
             write("M72");
         }
         break;
-    case "MOVEMENT":
+    
+        case "MOVEMENT":
         if (line.includes("incremental")){
             write("G91");
         }
@@ -190,32 +200,38 @@ export class WinNC_sinumerik{
             write("G90");
         }
         break;
-    case "TLAXIS":
+    
+        case "TLAXIS":
         this.tool_i = +elements[1];
         this.tool_j = +elements[2];
         this.tool_k = +elements[3];
         break;
-    case "AIR":
+    
+        case "AIR":
         if (this.rapid = false){
             write("G0");
             this.rapid = true;
         }
         this.post_cycle = false;
         break;
-    case "CUT":
+    
+        case "CUT":
         if (this.rapid = true){
             write("G1");
             this.rapid = false;
         }
         this.post_cycle = false;
         break;
-    case "END":
+    
+        case "END":
         write("M30");
         break;
-    case "ERROR":
+    
+        case "ERROR":
         write(line);
         break;
-    case "MULTAX":
+    
+        case "MULTAX":
         if (line.includes("on")){
             this.multax = true;
             write("NO MULTI AXIAL WORK SUPPORTED");
@@ -224,7 +240,8 @@ export class WinNC_sinumerik{
             this.multax = false;
         }
         break;
-    case "LINE":
+    
+        case "LINE":
         elements = line.split(/ +/);
         if (elements.length === 4 ){
             x = elements[1];
@@ -285,7 +302,8 @@ export class WinNC_sinumerik{
             write(x+" "+y+" "+z+" "+i+" "+j+" "+k);
         }
         break;
-    case "DWELL":
+    
+        case "DWELL":
         number_dt = line.split(/ +/)[2];
         number = number_dt.split(":")[1];
         if (line.includes("time")){
@@ -295,7 +313,8 @@ export class WinNC_sinumerik{
             write("G4 R" + number);
         }            
         break;
-    case "ARCH":
+    
+        case "ARCH":
         elements = line.split(/ +/);
         direction = elements[20];
         radius = +elements[2];
@@ -324,10 +343,12 @@ export class WinNC_sinumerik{
         write(direction + " X" + x + " Y" +  y + " Z" +  z + " R" +  radius);
         this.rapid = false;
         break;
-    case "#":
+    
+        case "#":
         write(line);
         break;
-    case "COMPENSATION":
+    
+        case "COMPENSATION":
         compensation = line.split(":")[1];
         compensation = compensation.trim();
         switch (compensation) {
@@ -363,7 +384,8 @@ export class WinNC_sinumerik{
             }
         write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching tool compensation. This one is "+elements);
         break;
-    case "CYCLE":
+    
+        case "CYCLE":
         elements = line.split("/");
 
         data = elements[1].trim().split(/\s+/);
@@ -640,7 +662,8 @@ export class WinNC_sinumerik{
         this.ls_z = +z_2;
         }
         break;
-    case "HELIX":
+    
+        case "HELIX":
         elements = line.split(/[:\s]+/);
         centar_x = +elements[2];
         centar_y = +elements[3];
@@ -718,7 +741,8 @@ export class WinNC_sinumerik{
         this.ls_y = +kraj_y;
         this.ls_z = +kraj_z;
         break;
-    default:
+    
+        default:
         write("UNREGISTERD CYCLE" + line);
         break;
 }
