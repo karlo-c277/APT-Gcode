@@ -32,7 +32,7 @@ export class catiav5_1_0{
             this.rapid = false;
             this.ls_movement = "CUT";
             this.rapto;
-            this.header;
+            this.header = false;
             this.cycleon = false;
             this.ls_tool_axis;
             this.psis = false;
@@ -91,9 +91,9 @@ export class catiav5_1_0{
             let element;
             let begin;
 
-        if (this.header === ""){
+        if (!this.header){
             kk(window.add_command);
-            this.header = "yes";
+            this.header = true;
         }
         if (!line || !line.trim()) {return};
 
@@ -439,6 +439,7 @@ export class catiav5_1_0{
             kk("HELIX: CENTER: "+" "+centar_x+" "+centar_y+" "+centar_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRTECTION: "+vektor2_x+" "+vektor2_y+" "+vektor2_z+" PITCH: "+D+" RADIUS:"+radius+" END: "+kraj_x+" "+kraj_y+" "+kraj_z);
             break;
         console.log(line);
+        
         case "GODLTA":
             if (this.cycleon === true) {
                 x = +elements[1];
@@ -481,7 +482,7 @@ export class catiav5_1_0{
             else if (elements.length === 2){
                 x = "++";
                 y = "++";
-                z = +elements[3];
+                z = +elements[1];
             }
             else {
                 kk("ERROR: GODLTA " + line);

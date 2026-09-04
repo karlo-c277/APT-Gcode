@@ -71,7 +71,6 @@ export class WinNC_sinumerik{
         let r;
         let d;
         let left;
-        let currentDepth;
         let next_peck;
 
         let start;
@@ -208,7 +207,7 @@ export class WinNC_sinumerik{
         break;
     
         case "AIR":
-        if (this.rapid = false){
+        if (!this.rapid){
             write("G0");
             this.rapid = true;
         }
@@ -216,7 +215,7 @@ export class WinNC_sinumerik{
         break;
     
         case "CUT":
-        if (this.rapid = true){
+        if (this.rapid){
             write("G1");
             this.rapid = false;
         }
@@ -521,6 +520,8 @@ export class WinNC_sinumerik{
                 write("G91");
                 write("G95 F" + el_5);
                 write("G97 S" + el_6);
+
+                let currentDepth = 0;
 
                 while (true){
                     left = el_1 - currentDepth;
