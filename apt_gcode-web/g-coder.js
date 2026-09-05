@@ -77,12 +77,15 @@ export class WinNC_sinumerik{
 
     console.log(line);
 
+    if (line.startsWith ("COMMENT")){
+            line = line.replace("COMMENT:", "COMMENT: ");
+    }
+
     elements = line.split(" ");
     start = line.split(/[\/,:\s]+/);
 
     switch (start[0]){
 
-    
         case "COMMENT":
         elements = line.split("COMMENT:")[1].trim();
         if (elements !== ""){

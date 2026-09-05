@@ -1,8 +1,6 @@
 import {getLastJSON, kk} from "./output.js";
 import {getSettings} from "./settings.js";
 
-
-
 export class catiav5_1_0{
     constructor(settings){
             this.tolr_coord = 1e-3;
@@ -96,8 +94,10 @@ export class catiav5_1_0{
             this.header = true;
         }
         if (!line || !line.trim()) {return};
+        console.log(line);
+        
 
-        elements = line.split(/[,/ ]+/);
+        elements = line.split(/[,/ *]+/);
         begin = elements[0];
         element = line.split("/");
         console.log(line);
@@ -248,7 +248,8 @@ export class catiav5_1_0{
             this.autops = true;
             break;
         
-        case "TLON,GOFWD":
+        case "TLON":
+            if (line.includes("GOFWD")){
             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
             console.log(elements);
             if (line.includes("CIRCLE")){
@@ -418,6 +419,11 @@ export class catiav5_1_0{
             this.ls_y = kraj_y;
             this.ls_z = kraj_z;
             break;
+            }
+            else {
+            kk("ERROR: unrecognized command " + line);
+            break;
+            }
         
         case "HELICAL":
             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
@@ -866,6 +872,7 @@ export class catiav5_1_0{
             else{
                 kk("COMMENT: Cycle rejected invalid cycle type look at https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Catia%20V5.md");
                 this.rejected_cyc = true;
+                kk("COMMENT: "+line);
                 break;
             }
             break;
@@ -946,15 +953,18 @@ export class catiav5_1_0{
             kk("COMMENT:" + D);
             break;
         
+        case "CUTCOM":
+            break;
+        
         default:
             kk("ERROR: unrecognized command " + line);
             break;
 
-        if (!line.startsWith("RAPID")) {
+    }
+    if (!line.startsWith("RAPID")) {
             this.rapid = false;
         }
         console.log(line);
-    }
     }
 }
 export class kkod{
