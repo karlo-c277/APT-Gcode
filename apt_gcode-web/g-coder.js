@@ -663,7 +663,11 @@ export class WinNC_sinumerik{
         this.ls_z = +z_2;
         }
         break;
-    
+        
+        case "SINUS":
+            write("ERROR this controler does not support sinusoidal movement");
+            break;
+
         case "HELIX":
         elements = line.split(/[:\s]+/);
         centar_x = +elements[2];

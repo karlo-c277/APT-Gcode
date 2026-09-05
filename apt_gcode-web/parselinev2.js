@@ -118,7 +118,7 @@ export class catiav5_1_0{
                     this.ls_units_word = "inch";
                 }
             } else {
-                kk("ERROE: Unknown unit type " + line);
+                kk("ERROR: Unknown unit type " + line);
             }
             break;
         
@@ -281,6 +281,7 @@ export class catiav5_1_0{
                 }
                 else {
                     kk("ERROR CHANGE OF ALL 3 COORDINATES RE-DO THE APT OUTPUT " + line);
+                    break;
                 }
                 kk("PLANE: "+this.lsplane);
 
@@ -297,7 +298,8 @@ export class catiav5_1_0{
                         movement = "ccw";
                     }
                     else {
-                        kk("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
+                        kk("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line);
+                        break;
                     }
 
                     start = Math.atan2(this.ls_x-centar_x, this.ls_z-centar_z);
@@ -329,7 +331,8 @@ export class catiav5_1_0{
                         movement = "ccw";
                     }
                     else {
-                        kk("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
+                        kk("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line);
+                        break;
                     }
                     start = Math.atan2(this.ls_x-centar_x, this.ls_y-centar_y);
                     end = Math.atan2(kraj_x-centar_x, kraj_y-centar_y);
@@ -360,7 +363,8 @@ export class catiav5_1_0{
                         movement = "ccw";
                     }
                     else {
-                        kk("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
+                        kk("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line);
+                        break;
                     }
                     start = Math.atan2(this.ls_z-centar_z, this.ls_y-centar_y);
                     end = Math.atan2(kraj_z-centar_z, kraj_y-centar_y);
@@ -485,7 +489,8 @@ export class catiav5_1_0{
                 z = +elements[1];
             }
             else {
-                kk("ERROR: GODLTA " + line);
+                kk("ERROR: GODLTA ELEMENTS ARE INCOMPLETE" + line);
+                break;
             }
             this.ls_x += x;
             this.ls_y +=y;
@@ -739,7 +744,8 @@ export class catiav5_1_0{
                      z = +elements[1];
                 }
                 else {
-                    kk("ERROR: GODLTA " + line);
+                    kk("ERROR: GODLTA ELEMENTS ARE INCOMPLETE " + line);
+                    break;
                 }
                 this.ls_x = (this.ls_x + x);
                 this.ls_y = (this.ls_y + y);

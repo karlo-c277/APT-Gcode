@@ -19,9 +19,7 @@ CATIA APT1.0 has 0 documentation, all that I could find were like 2 or 3 notific
 Costs of Catia License, for the future I would like to test the newer Catia and other programs as well but they cost a lot  
   
   
-# Development plan
-v0.9 CYCLE/ commands full support  
-v1.0 Helix tool path support  
+# Development plan  
 v1.5 Complete Catia suport  
 v1.+ G-code output in ISO 6983, WinNC Sinumerik, WinNC Fanuc  
 v2.0 SolidWorks APT code support  
