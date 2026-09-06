@@ -424,6 +424,7 @@ export class catiav5_1_0{
             kk("ERROR: unrecognized command " + line);
             break;
             }
+            break;
         
         case "HELICAL":
             elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
@@ -963,8 +964,8 @@ export class catiav5_1_0{
     }
     if (!line.startsWith("RAPID")) {
             this.rapid = false;
-        }
-        console.log(line);
+    }
+    console.log(line);
     }
 }
 export class kkod{

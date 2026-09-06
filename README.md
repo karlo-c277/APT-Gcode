@@ -7,7 +7,7 @@ It features - translating ATP commands into G-code, also it has select presets f
 Just open up this link below, there are some DEMO files there for those who dont have APT files ready 
 http://karlougrin.com/apt_gcode-web/index-apt.html  
   
-![alt text](DOCUMENTATIONS/Images/2026-08-25_15-30.png)  
+![alt text](image_3.png)  
   
   
 # Documentatuion and recources
@@ -32,7 +32,7 @@ v2.+ Support for other CNC controlers and APT codes
 3. Download zip file or clone the repo  
 4. Open in either one in editor  
 5. Run: npm install  
-6. Run: npm run dev  
+6. Run: npm run dev   
 7. open this link: http://localhost:5173/index-apt.html  
   
   
