@@ -20,3 +20,4 @@
 |-mill|https://www.emco-world.com/fileadmin/pim/EMCO_WinNC_for_Sinumerik_Operate_Mill_EN_1848_C_01.pdf|
 |ISO291 canned cycles|https://www.machinistguides.com/g81-code/|
 ||https://tormach.com/machine-codes/drilling-cycle-g81|
+|Catia PPTable|https://catia-v5-help.anarkia333data.center/online/mfgug_C2/mfgugrf0800.htm?utm_source|
