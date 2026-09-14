@@ -25,7 +25,7 @@ eng. - Karlos Code
 "ADD: add_info"
     -ADD defines a header of the G-code
     -add_info may contain RADIUS to define that the g code is written in radius values, or DIAMETER for diameter
-    -add_info may be defined in other ways but MUST be nused to define a g code command and in that case shall not contain RADIUS or DIAMETER
+    -add_info may be defined in other ways but MUST be used to define a g code command and in that case shall not contain RADIUS or DIAMETER
 
 "UNIT: unit_type"
     -UNIT command shall define what measuremnt unit type is used
@@ -78,18 +78,26 @@ eng. - Karlos Code
         -if there is NO tool compensation number defined tool_compensation shall be valued as "++"
         -tool_compensation shall be represented as a 3 digit number beginning from 000, 001 untill 999
         -tool_compensation shall be spaced exactly 0 spaces from "COMPENSAION:"
+    "COOLANT:coolant_type"
+        -coolant_type shall define what type of coolant is used by default for this tool
+        -if there is no coolant coolant_type shall be defined with ++
+        -if the coolant that isn't a default one is being used it must not be defiend only with "COOLANT: STATE:on"
 "TOOL: NAME:bean_cutter MAGAZINE:004 COMPENSATION:067"
     0           1               2           3
 
 "SPINDLE: spindle_info"
     -this defines a change in spindle information
     -spindle_info shall consist of the following information:
-        -"STATE:value" where value is a variable starting 0 spaces from "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of spindle_info may be undefined
+        -"STATE:value" where value is a variable starting 0 spaces from "STATE:" and is valued either as "on", "off" or "lock", !! in case of value="off/lock" the rest of spindle_info may be undefined
         -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and it must be valued only as "surface" as for surface speed or "fix" as for fixed RPM speed
         -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers       
         -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" and it must only be valued as "cw" for clockwise or as "ccw" for counter-clockwise
+    -spindle_info can also consist of:
+        -"MAX:value" where value is the maximum speed in RPM
+        -in this case no other spindle_info may be in the sytacs
 "SPINDLE: STATE:on TYPE:fix SPEED:1500 DIRECTION:cw NUM:1"
 "SPINDLE: STATE:off NUM:1"
+"SPINDLE: MAX:1500"
     0       1           2       3           4         5
 
 "FEEDRATE: feedrate_info"
@@ -101,6 +109,7 @@ eng. - Karlos Code
     0           1          2
 
 "COOLANT: coolant_info"
+    -in case of using a coolant that is a defaulted to the current tool the syntacs "COOLANT: STATE:on" is allowed
     -defines what type of coolant is used
     -coolant_info shall consist of the following information:
         -"STATE:value" where value is a variable starting 0 spaces after "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of coolant_info may be undefined
@@ -142,7 +151,24 @@ eng. - Karlos Code
     -values are following: BR for (P4), BC for (P8), BL for (P3), CR for (P5), CC for (P9), CL for (P7), TR for (P1), TC for (P6), TL for (P2), and OFF
     -look at image.png in DOCUMENTATIONS
 "COMPENSATION:TC"
-        0       1
+        0      1
+
+"ROTHED: value"
+    -defines the rotation of the tool head
+    -value shall contain:
+        -axis of rotation written either as x or y or z or i or j or K
+        -type of rotation written as ABS or INC where ABS means the absolute axis angle and INC means an incremental angle
+        -direction or rotation defining which way does the tool head move written as cw or ccw
+        -angle defining the set angle
+    -each value shall start at least 1 space after the previous element
+"ROTHED: k ABS cw 15"
+    0    1  2   3  4
+
+"ROTABL: value"
+    - same as for "ROTHED" exept the first word what is changed to ROTABL
+
+"MILL_TURRET_INVERSION"
+    - this states that the turret is now inverted
 
 "TLAXIS: value"
     -defines tool axies
@@ -150,7 +176,7 @@ eng. - Karlos Code
     -the resultant vector must be equal to 1
     -TLAXIS definition is needed for axial machining like taping, drilling, reaming
     -if the cutting motion is completed down the Z axis "TLAXIS: 0 0 -1";
-    -if it up the Z axis K=1
+    -if it is up the Z axis K=1
     -if it is equaly on both z and x axis "TLAXIS: 0.7071 0 -0.7071"
 
 "LINE: X Y Z A B C"
