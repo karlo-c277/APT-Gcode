@@ -174,7 +174,7 @@ eng. - Karlos Code
     -defines tool axies
     -value is a set of numerical varables that describe the direction of cutting motion in IJK vectors
     -the resultant vector must be equal to 1
-    -TLAXIS definition is needed for axial machining like taping, drilling, reaming
+    -TLAXIS definition is needed for axial machining like tapping, drilling, reaming
     -if the cutting motion is completed down the Z axis "TLAXIS: 0 0 -1";
     -if it is up the Z axis K=1
     -if it is equaly on both z and x axis "TLAXIS: 0.7071 0 -0.7071"
@@ -262,9 +262,26 @@ One cycle must be defined like following:
         spindle_info that consits of spindle value and unit (surface or fix)
         retract_type that defines if the retraction is rapid (1) or in specific feedrate (0)
         retract_feed defines the feedrate retraction if it isn't rapid
+    -each element must be separated with 1 comma (,) and at lest one space from the previous element
 
 "CYCLE/CYnum, CYnum_data"
-    - for different cycles 
+    -for different cycles there are needed specific parameters
+    CY0 -no aditional parameters
+        -used for simple drilling where the tool does the cutting and returns
+
+    CY1, dwell_mode, dwell_value
+            -dwell_mode defines if it is set in time (2), revolutions (1) or if there is none (0)
+            -dwell_value defines the waiting amount in given units
+
+    CY2, dwell_mode, dwell_value, peck_size
+            -where peck_size is the peck size
+    
+    CY3, dwell_mode, dwell_value, peck_size, decrement_rate, decrement_limit
+            -decrement_rate defines the percentage of how much is the current peck smaller than the last one
+            -decrement_limit defines the number the decrement rate is applied
+    CY4, tool_pitch
+            -used for single pass thread creating
+
 
 
 
