@@ -75,43 +75,46 @@ eng. - Karlos Code
     "coolant_type"
         -coolant_type shall define what type of coolant is used by default for this tool
         -if there is no coolant coolant_type shall be defined with ++
-        -if the coolant that isn't a default one is being used it must not be defiend only with "COOLANT: STATE:on"
-    -each element must be separated with one comma (,) and at least one space from the other element
+        -if the coolant that isn't a default one is being used it must not be defiend only with "COOLANT: on"
+    -each element must be separated with one comma (,) and at least one space from the other elements
 "TOOL: bean_cutter, 4, 67, flood"
     0       1      2  3    4
 
 "SPINDLE: spindle_info"
     -this defines a change in spindle information
     -spindle_info shall consist of the following information:
-        -"STATE:value" where value is a variable starting 0 spaces from "STATE:" and is valued either as "on", "off" or "lock", !! in case of value="off/lock" the rest of spindle_info may be undefined
-        -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and it must be valued only as "surface" as for surface speed or "fix" as for fixed RPM speed
-        -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers       
-        -"DIRECTION:value" where value is a variable starting 0 spaces from "DIRECTION:" and it must only be valued as "cw" for clockwise or as "ccw" for counter-clockwise
-    -spindle_info can also consist of:
-        -"MAX:value" where value is the maximum speed in RPM
-        -in this case no other spindle_info may be in the sytacs
-"SPINDLE: STATE:on TYPE:fix SPEED:1500 DIRECTION:cw NUM:1"
-"SPINDLE: STATE:off NUM:1"
-"SPINDLE: MAX:1500"
-    0       1           2       3           4         5
+        -current state of the spindle that is valued either as "on", "off" or "lock", !! in case of value="off/lock" the rest of spindle_info may be undefined exept for the spindle number
+        -type of the spindle speed defining surface speed as "surface" and constant speed in revolutions as "fix", in case of state being "off" or "lock" it can be undefined
+        -spindle speed and in case of state being "off" or "lock" it can be undefined
+        -direction defining if the spindle is turning clockwise "cw" or counter clockwise "ccw"
+    -if max limit for spindle speed is being set then spindle_infoshall consist of the following:
+        -"MAX,value" where value is defining the maximum allowed spindle speed in RPM
+    -each element must be separated with one comma (,) and at least one space from the other elements
+"SPINDLE: on, fix, 1500, cw, 1"
+"SPINDLE:  off, 1"
+"SPINDLE: MAX, 1500"
+    0       1  2     3    4  5
 
 "FEEDRATE: feedrate_info"
     -this defines the speed of changing tool position during "CUT"
     -feedrate_info shall consist of the following information:
-        -"TYPE:value" where value is a variable starting 0 spaces from "TYPE:" and is valued eiter as "time" for -distance per minute- or "rev" for -distance per revolution- or "inver" for inverse feed type -> 1/"time"
-        -"SPEED:value" where value is a numerical variable starting 0 spaces from "SPEED:" and it shall contain only positive and both whole or decimal numbers
-"FEEDRATE: TYPE:rev SPEED:0.05"
-    0           1          2
+        -type of feedrate defined eiter as "time" for -distance per minute- or "rev" for -distance per revolution- or "inver" for inverse feed type -> 1/"time"
+        -speed of the feedrate defining it's value
+    -each element must be separated with one comma (,) and at least one space from the other elements
+"FEEDRATE: rev, 0.05"
+    0        1    2
 
 "COOLANT: coolant_info"
     -in case of using a coolant that is a defaulted to the current tool the syntacs "COOLANT: STATE:on" is allowed
     -defines what type of coolant is used
     -coolant_info shall consist of the following information:
-        -"STATE:value" where value is a variable starting 0 spaces after "STATE:" and is valued either as "on" or "off", !! in case of value="off" the rest of coolant_info may be undefined
-        -"TYPE:value" where value is a variable starting 0 spaces after "TYPE:" and it shall be valued either as "mist" for light fluid or "flood" for heavy fluid usage
-"COOLANT: STATE:on TYPE:flood"
-"COOLANT: STATE:off"
-    0           1       2
+        -current state is valued either as "on" or "off", !! in case of value="off" the rest of coolant_info may be undefined
+        -type of coolant valued either as "mist" for light fluid or "flood" for heavy fluid usage
+    -each element must be separated with one comma (,) and at least one space from the other elements
+    -in case of using coolant that was defined at the tool call  allowed sytacs is "COOLANT: on"
+"COOLANT: on, flood"
+"COOLANT: off"
+    0       1   2
 
 "AIR_PURGE: state"
     -defines usage of compressed air for clearing chips and simmilar usages
@@ -149,14 +152,14 @@ eng. - Karlos Code
             -look at image.png in DOCUMENTATIONS
         "compensation_coords" it contains the X, Y, Z distance set
         "nose_radius" defines the radius on the tip of the cutting bit
-    -each element must be separated with one comma (,) and at least one space from the other element
+    -each element must be separated with one comma (,) and at least one space from the other elements
 "COMPENSATION_CHG: 1, TC, 12, 34.5, 6, 0.7"
         0      1   2   3   4    5   6
 
 "COMPENSATION_SET:value"
     -this tool takes a different compensation register
     -it must contain the tool number and new compensation register
-    -each element must be separated with one comma (,) and at least one space from the other element
+    -each element must be separated with one comma (,) and at least one space from the other elements
 "COMPENSATION_SET: 3, 6"
    0               1  2
 
@@ -167,8 +170,8 @@ eng. - Karlos Code
         -type of rotation written as ABS or INC where ABS means the absolute axis angle and INC means an incremental angle
         -direction or rotation defining which way does the tool head move written as cw or ccw
         -angle defining the set angle
-    -each value shall start at least 1 space after the previous element
-"ROTHED: k ABS cw 15"
+    -each element must be separated with one comma (,) and at least one space from the other elements
+"ROTHED: k, ABS, cw, 15"
     0    1  2   3  4
 
 "ROTABL: value"
@@ -182,9 +185,9 @@ eng. - Karlos Code
     -value is a set of numerical varables that describe the direction of cutting motion in IJK vectors
     -the resultant vector must be equal to 1
     -TLAXIS definition is needed for axial machining like tapping, drilling, reaming
-    -if the cutting motion is completed down the Z axis "TLAXIS: 0 0 -1";
+    -if the cutting motion is completed down the Z axis "TLAXIS: 0, 0, -1";
     -if it is up the Z axis K=1
-    -if it is equaly on both z and x axis "TLAXIS: 0.7071 0 -0.7071"
+    -if it is equaly on both z and x axis "TLAXIS: 0.7071, 0, -0.7071"
 
 "LINE: X Y Z A B C"
     -LINE: means that there is a linear movement
@@ -197,50 +200,53 @@ eng. - Karlos Code
         -inside the whole X there shall be no spaces
     Same aplies for all of the remeining elements but they must be ordered in the following array X Y Z A B C
     In case of not using multi axial machining process the ABC element may be left out
-"LINE: X10 Y++ Z30 A24 B35 C++"
-"LINE: X10 Y34 Z++"
-    0   1   2   3   4   5   6
+    -each element must be separated with one comma (,) and at least one space from the other elements
+"LINE: X10, Y++, Z30, A24, B35, C++"
+"LINE: X10, Y34, Z++"
+    0   1    2    3    4    5    6
 
 "DWELL: dwell_info"
     -defines how long the tool is dwelling/stopped whilst the spindle is spinning
     -dwell_info must consist of the following information:
-        -"TYPE:value" where value is a variable starting 0 spaces from the "TYPE:" and is valued either as "rev" meaning how many revolutions until next command or "time" for amount of time until next command
-        -"NUMBER:value" where value is a numerical variable starting 0 spaces from the "NUMBER:" and it shall only contain positive and both whole or decimal numbers
-"DWELL: TYPE:time NUMBER:12"
-    0       1       2
+        -type to wait that is valued either as "rev" meaning how many revolutions until next command or "time" for amount of time in seconds until next command
+        -value defining how much of the given unist is the wait
+    -each element must be separated with one comma (,) and at least one space from the other elements
+"DWELL: time, 12"
+    0     1   2
 
-"ARCH: arch_info"
+"ARCH/arch_info"
     -defines a partial cicular movement 
     -this movement can only be performed in one of the 3 base planes given in "PLANE: value"
     -arch_info must consist of the following information:
-        NOTE XYZ IJK letters must not be displayed in the final code current displayment is for easier understanings
-        -"RADIUS: value" where value is a numerical variable starting 1 spaces from "RADIUS:" and it shall only contain positive and both whole or decimal numbers
-            -meaning the radius or the movement
-        -"BEGIN: value" where value is a numerical variable starting 1 spaces from "BEGIN:"
-            -meaning the complete XYZ coordinates of the beginning of teh center of the arch, stated as following example: "BEGIN: X20 Y12.5897 Z-30.87" !!must match last tool coordinates
-        -"CENTER:value" where value is a numerical variable starting 1 spaces from "CENTER:"
-            -meaning the complete XYZ coordinates of the center of the arch, stated as following example: "CENTER: X20 Y12.5897 Z-30.87"
-        -"END: value" where value is a numerical variable starting 1 spaces from "END:"
-            -meaning the complete XYZ coordinates of the end of the arch, stated as following example: "END: X20 Y12.5897 Z-30.87"
-        -"VECTOR: value" where value is a numerical variable starting 1 spaces from "VECTOR:"
-            -meaning the compete IJK vector set of the directional vector (total lenght of 1) that is tanget to the arch'es circle in the beginning point like this example "VECTOR: I0.707 J-0.707 K0"
-        -"DIRECTION: value" where value is a variable starting 1 spaces from "DIRECTION:" valued either as "cw" for clockwise or "ccw" for counter clockwise arch direcion
-        -"ANGLE: vlaue" where value is a variable starting 1 space from "ANGLE:" it may be valued as either an angle in decimal radians, degrees or more or less than 180deg or 1Pi (Radians)(Degrees)(1/-1)
-        -NOTE there may be aditional info added AFTER the previously stated ones by any format of choice
-        Values: (X)(Y)(Z)(I)(J)(K) shall nopt be in final output
-"ARCH: RADIUS: 12 BEGIN: (X)10 (Y)20 (Z)30 CENTER: (X)10 (Y)20 (Z)30 END: (X)10 (Y)20 (Z)30 VECTOR: (I)0.707 (J)-0.707 (K)0 DIRECTION: cw ANGLE: value"
-    0     1     2   3       4     5     6     7       8     9     10  11    12    13    14    15       16        17      18     19     20   21    22
+        "CETER, value" containg XYZ component of the circle center
+        "AXIS, value" defining circle axis component
+        "TANGENT, value" defining a vector tangent to the begining of the circle
+        "INFO, value" defining it's radius, direction and angle
+        "END, value" defining it's end coordinates
+    -each element must be separated with one comma (,) and at least one space from the other elements
+        Values: (X)(Y)(Z)(I)(J)(K) shall not be in final output
+"ARCH/CENTER, (X)10, (Y)20, (Z)30
+ARCH/AXIS, (I)0.707, (J)-0.707, (K)0
+ARCH/TANGENT, (I)0.707, (J)-0.707, (K)0
+ARCH/INFO, 12, cw, angle
+ARCH/END, (X)10, (Y)20, (Z)30"
 
-"SINUS: sinus_info"
+"SINUS/sinus_info"
     -defines that the movement to the end point is a part of SINUS wave or multiple waves 
     -this movement can only be performed in one of the 3 base planes given in "PLANE: value"
     -sinus_info must consist of the following information:
-        -"END: value" where value is a numerical variable containing coordinates at the end of movement
-        -"AMPLITUDE: value" where value is a numerical variable defining the sinusial AMPLITUDE
-        -"MIDLINE: value" where value is a numerical variable defining a line segment that is the sinusial midline from start and end point
-        -"VECTOR: value" where value is a numerical variable defining a vector tangent to the wave at start point
+        "CENTER, vlaue" defining the begining point of the sinusoidal midline
+        "AXIS, value" deining the direction of the midline
+        "TANGENT, value" defining the vector tangent to the beginning point of the sinusoide
+        "INFO, value" consisting of the AMPLITUDE
+        "END, value" consisting of the final coordinates
+    -each element must be separated with one comma (,) and at least one space from the other elements
         Values: (X)(Y)(Z)(I)(J)(K) shall not be in final output
-"SINUS: END: (X)10 (Y)20 (Z)30 AMPLITUDE: 4 MIDLINE: ((X)10 (Y)20 (Z)30)((X)10 (Y)20 (Z)30) VECTOR: (I)0.707 (J)-0.707 (K)0
+"SINUS/CENTER, (X)10, (Y)20, (Z)30
+SINUS/AXIS, (I)0.707, (J)-0.707, (K)0
+SINUS/TANGENT, (I)0.707, (J)-0.707, (K)0
+SINUS/INFO, 12
+SINUS/END, (X)10, (Y)20, (Z)30"
 
 "HELIX/helix_info"
     -defines a spiral movement
@@ -300,9 +306,9 @@ One cycle must be defined like following:
     - and every coordinate separated with a comma from the other coordinate
 "CYCLE/COORD/ 12, 34, 56 / 12, 34, 57/...
 
-
-
-    
+"CYCLE/DATA, cycle_data"
+CYCLE/CY1, CY1_data"
+CYCLE/COORD"
 
     
         !!!The the list is still in development still not entierly defined plese reach out to karlo.ugrin@mail.com for info
