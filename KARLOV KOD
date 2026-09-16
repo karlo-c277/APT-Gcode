@@ -163,6 +163,12 @@ eng. - Karlos Code
 "COMPENSATION_SET: 3, 6"
    0               1  2
 
+"CUTCOM:value"
+    -cutting compensation
+    -value can be: on off left right normds_on/off normps_on/off
+    -I have no Idea what any of this is but its something from catia apt
+    
+
 "ROTHED: value"
     -defines the rotation of the tool head
     -value shall contain:

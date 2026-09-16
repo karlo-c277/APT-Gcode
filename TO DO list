@@ -8,7 +8,9 @@ There are some .txt files those are for testing your code.
 
 
 
-make function for lineslit if there is 3 values 4 values 5 or 6
+calculate the axis for the circles and see that is the 3d circle
+calculate axis for the sinus/cylindr which is the direction of the center line
+make function for linesplit if there is 3 values 4 values 5 or 6
 catia start what is axis lock
                     axis move
                     CUTCOM  normds/ps
@@ -22,7 +24,7 @@ catia start what is axis lock
             what are all coolant supply sytacs
 catia enb
 do auto code recognition
-do stuff about Sinusoidal movement in WinNC
+do like fast code input like for the manual writing there is a menu with like code blocks and user click on one it sawns in the text box and he has to enter the data
 does the winnc im talking about actually support iso mode
 is there a taping with or without compensation chuck in catia, if so what is the syntacs difference
 set in settings like a slider to adjust how much of the catia clearance is entered as rapid to clearance for cycles in g-coder (if multax === false --set to 0.2 rn)

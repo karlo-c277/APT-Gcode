@@ -35,9 +35,14 @@ export class catiav5_1_0{
             this.ls_tool_axis;
             this.psis = false;
             this.rejected_cyc = false;
+            this.ls_spindle;
+            this.ls_normds = false;
+            this.ls_normps = false;
+            this.ls_l_r = "";
         }
     parseline(line){
             let elements;
+            let elements2;
             let centar_x;
             let centar_y;
             let centar_z;
@@ -97,35 +102,16 @@ export class catiav5_1_0{
         console.log(line);
         
 
-        elements = line.split(/[,/ *]+/);
+        elements = line.split(/[,/ ]+/);
+        elements2 = line.split(/[,/]/);
         begin = elements[0];
         element = line.split("/");
         console.log(line);
 
         switch (begin){
 
-        case "UNITS":
-            if (line.includes("MM")){
-                if (this.lsunits !== "UNIT: MM"){
-                    kk("UNIT: MM");
-                    this.lsunits = "UNIT: MM";
-                    this.ls_units_word = "mm";
-                }
-            } else if (line.includes("INCH")){
-                if (this.lsunits !== "UNIT: INCH"){
-                    kk("UNIT: INCH");
-                    this.lsunits = "UNIT: INCH";
-                    this.ls_units_word = "inch";
-                }
-            } else {
-                kk("ERROR: Unknown unit type " + line);
-            }
-            break;
-        
-        case "SWITCH":
-            D = element[1];
-            D = D.trim();
-            switch (D) {
+        case "COMPENSATION":
+            switch (elements2[2].trim()) {
                 case "1":
                     x ="TR";
                     break;
@@ -156,7 +142,7 @@ export class catiav5_1_0{
                 default:
                     x ="OFF";
             }
-            kk("COMPENSATION:" + x);
+            kk("COMPENSATION_CHG: "+elements2[1].trim()+", "+x+", "+elements2[3].trim()+", "+elements2[4].trim()+", "+elements2[5].trim()+", "+elements2[6].trim());
             break;
         
         case "TLAXIS":
@@ -166,22 +152,6 @@ export class catiav5_1_0{
             kk("TLAXIS "+x+" "+y+" "+z);
             this.multax = false;
             kk("MULTAX: off")
-            break;
-        
-        case "CUTTER":
-            if (elements.length < 3){
-                kk("COMMENT: Corner radius is "+elements[1]);
-            }
-            else if (elements.length == 8){
-                kk("COMMENT: Tool specs are: ");
-                kk("COMMENT: -cutter diameter "+elements[1]);
-                kk("COMMENT: -corner radius "+elements[2]);
-                kk("COMMENT: -horizontal distance between radius center point and tool axis "+elements[3]);
-                kk("COMMENT: -verical distnce between radius center point and cutter tip "+elements[4]);
-                kk("COMMENT: -angle of cutter tip "+elements[5]);
-                kk("COMMENT: -flank angle "+elements[6]);
-                kk("COMMENT: -tool height "+elements[7]);
-            }
             break;
         
         case "MULTAX":
@@ -197,6 +167,9 @@ export class catiav5_1_0{
             break;
         
         case "LOADTL":
+            D = line.replace("LOADTL/","COMPENSATION_SET:");
+            break;
+
         case "SELECTL":
             D = element[1].trim();
             kk("COMMENT:Magazine slot number: " + D);
@@ -217,7 +190,6 @@ export class catiav5_1_0{
             kk("COMMENT:Tolerance from the path: " + D +" "+ this.ls_units_word);
             break;
         
-        case "FINI":
         case "END":
             kk("COMMENT:End of program");
             break;
@@ -383,9 +355,12 @@ export class catiav5_1_0{
                         }
                     }  
                 }
-                kk("ARCH: RADIUS: "+radius+" BEGIN: "+this.ls_x+" "+this.ls_y+" "+this.ls_z+" CENTER: "+centar_x+" "+centar_y+" "+centar_z+" END: "+kraj_x+" "+kraj_y+" "+kraj_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRECTION: "+movement+" ANGLE: "+angle);
+                kk("ARCH/CENTER, "+centar_x+", "+centar_y+", "+centar_z);
+                kk("ARCH/AXIS");
+                kk("ARCH/TANGENT, "+this.ls_i+", "+this.ls_j+", "+this.ls_k);
+                kk("ARCH/INFO, "+radius+", "+movement+", "+angle);
+                kk("ARCH/END, "+kraj_x+", "+kraj_y+", "+kraj_z);
 
-                
                 this.lsautops = 0;
             }
             else if (line.includes("CYLNDR")){
@@ -403,11 +378,11 @@ export class catiav5_1_0{
                     kraj_y = +elements[31];
                     kraj_z = +elements[32];
                 }
-                kk("COMMENT: CENTAR "+centar_x+" "+centar_y+" "+centar_z);
-                kk("COMMENT: AMPLITUDA "+amplitude);
-                kk("COMMENT: KRAJ "+kraj_x+" "+kraj_y+" "+kraj_z);
-                kk("COMMENT: VEKTOR TANG "+this.ls_i+" "+this.ls_j+" "+this.ls_k);
-                kk("LINE: X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z);
+                kk("SINUS/CENTER, "+centar_x+", "+centar_y+", "+centar_z);
+                kk("SINUS/AXIS");
+                kk("SINUS/INFO, "+amplitude);
+                kk("SINUS/TANGENT, "+this.ls_i+", "+this.ls_j+", "+this.ls_k);
+                kk("SINUS/END,"+kraj_x+", "+kraj_y+", "+kraj_z);
                 this.ls_x = kraj_x;
                 this.ls_y = kraj_y;
                 this.ls_z = kraj_z;
@@ -424,32 +399,10 @@ export class catiav5_1_0{
             kk("ERROR: unrecognized command " + line);
             break;
             }
-            break;
         
         case "HELICAL":
-            elements = line.split(/[,\/()]+/).map(e=> e.trim()).filter(e=>e.length>0);
-            centar_x = +elements[1];
-            centar_y = +elements[2];
-            centar_z = +elements[3];
-            this.ls_i = +elements[4];
-            this.ls_j = +elements[5];
-            this.ls_k = +elements[6];
-            vektor2_x = +elements[7];
-            vektor2_y = +elements[8];
-            vektor2_z = +elements[9];
-            D = +elements[10];
-            radius = +elements[11];
-            kraj_x = +elements[12];
-            kraj_y = +elements[13];
-            kraj_z = +elements[14];
-            
-            this.ls_x = kraj_x;
-            this.ls_y = kraj_y;
-            this.ls_z = kraj_z;
-
-            kk("HELIX: CENTER: "+" "+centar_x+" "+centar_y+" "+centar_z+" VECTOR: "+this.ls_i+" "+this.ls_j+" "+this.ls_k+" DIRTECTION: "+vektor2_x+" "+vektor2_y+" "+vektor2_z+" PITCH: "+D+" RADIUS:"+radius+" END: "+kraj_x+" "+kraj_y+" "+kraj_z);
+            D = line.replace("HELICAL","HELIX");
             break;
-        console.log(line);
         
         case "GODLTA":
             if (this.cycleon === true) {
@@ -462,7 +415,7 @@ export class catiav5_1_0{
                 this.ls_z += z;
 
 
-                this.ls_cycle_coord += "( X" + this.ls_x +" Y"+ this.ls_y +" Z"+ this.ls_z + " )";
+                this.ls_cyc_coord += "/ "+ this.ls_x +", "+ this.ls_y +", "+ this.ls_z+" ";
             }
             else {
             if (this.rapid === true){
@@ -544,7 +497,7 @@ export class catiav5_1_0{
                 this.ls_z = z;
 
 
-                this.ls_cycle_coord += "( X" + this.ls_x +" Y"+ this.ls_y +" Z"+ this.ls_z + " )";
+                this.ls_cyc_coord += "/ "+ this.ls_x +", "+ this.ls_y +", "+ this.ls_z+" ";
             }
             else {
             if (this.rapid === true){
@@ -608,76 +561,50 @@ export class catiav5_1_0{
             break;
         
         case "SPINDL":
-            if (line.includes("OFF")){
-                this.lsrotation = "SPINDLE: STATE:OFF";
-                kk("SPINDLE: STATE:off");
-            }
-            else if (!line.includes("ON")){
-                for (let values of elements){
-                    values = values.trim();
-                    
-                    switch(values){
-                        case "SFM":
-                        case "SMM":
-                            D = "TYPE:surface";
-                            break;
-                        case "RPM":
-                            D = "TYPE:fix";
-                            break;
+            switch(elements2[1].trim()){
+                case "ON":
+                    kk(this.ls_spindle);
+                    break;
+                case "OFF":
+                    kk("SPINDLE: off");
+                    break;
+                case "LOCK":
+                    kk("SPINDLE: lock");
+                    break;
+                default:
+                    switch(elements2[3].trim()){
                         case "CLW":
-                            this.lsrotation = "DIRECTION:cw";
+                            D = "cw";
                             break;
                         case "CCLW":
-                            this.lsrotation = "DIRECTION:ccw";
+                            D = "ccw";
                             break;
-                        default:
-                            if (values !== "" && !isNaN(values)){
-                                this.ls_spindle_speed = Number(values);
-                            }
-                    }                                        
-                    
-                    if (this.ls_tip_rev !== D){
-                        this.ls_tip_rev = D;
                     }
-                }
-                    this.ls_on_rotation = ("SPINDLE: STATE:on " + D + " SPEED:" + this.ls_spindle_speed + " " + " " + this.lsrotation);
-                    kk(this.ls_on_rotation);
-            }
-            else {
-                kk(this.ls_on_rotation);
+
+                    switch(elements2[2].trim()){
+                        case "RPM":
+                            x = "fix";
+                            break;
+                        case "SFM":
+                            x = "surface";
+                            break;
+                    }
+                    this.ls_spindle = "SPINDLE: on, "+elements2[1].trim()+", "+x+", "+D+", 1";
+                    break;
             }
             break;
         
         case "FEDRAT":
-            let second_number = false;
-                for (let values of elements){
-                    values = values.trim();
-                    
-                    switch(values){
-                        case "MMPR":
-                        case "IPR":
-                        case "REV":
-                        case "PERREV":
-                            this.ls_tip_posmak = "TYPE:rev";
-                            break;
-                        case "MMPM":
-                        case "IPM":
-                        case "MIN":
-                        case "PERMIN":
-                            this.ls_tip_posmak = "TYPE:time";
-                            break;
-                        case "RAPTO":
-                            this.rapto = 1;
-                            this.rapto_num = +element[4];
-                            break;
-                        default:
-                            if (values !== "" && !isNaN(values)&& second_number === false){
-                                D = Number(values);
-                                second_number = true;
-                            }
-                    }
-                }
-            kk("FEEDRATE: " + this.ls_tip_posmak + " SPEED:" + D);
+            switch(elements2[2].trim()){
+                case "MMPM":
+                    D = "time";
+                    break;
+                case "MMPR":
+                    D = "rev";
+                    break;
+            }
+            this.ls_tip_posmak = D;
+            kk("FEEDRATE: "+D+", "+elements[1].trim());
             break;
         
         case "RAPID":
@@ -796,19 +723,19 @@ export class catiav5_1_0{
         
         case "COOLNT":
             if (line.includes("FLOOD")){
-                this.ls_clnt_typ = "COOLANT: STATE:on TYPE:flood";
-                kk("COOLANT: STATE:on TYPE:flood");
+                this.ls_clnt_typ = "COOLANT: on, flood";
+                kk("COOLANT: on, flood");
             }
             else if (line.includes("MIST")){
-                this.ls_clnt_typ = "COOLANT: STATE:on TYPE:mist";
-                kk("COOLANT: STATE:on TYPE:mist");
+                this.ls_clnt_typ = "COOLANT: on, mist";
+                kk("COOLANT: on, mist");
             }
             else if (line.includes("AIR")){
-                this.ls_clnt_typ = "COOLANT: STATE:on TYPE:air";
-                kk("COOLANT: STATE:on TYPE:air");
+                this.ls_clnt_typ = "COOLANT: on, air";
+                kk("COOLANT: on, air");
             }
             else if (line.includes("OFF")){
-                kk("COOLANT: STATE:off");
+                kk("COOLANT: off");
             }
             else if (line.includes("ON")){
                 if (this.ls_clnt_typ === ""){
@@ -821,60 +748,33 @@ export class catiav5_1_0{
             break;
         
         case "DELAY":
-        case "DWELL":
-            D=element[1];
+            D=elements2[1];
             if (line.includes("REV")){
                 x=D.split(",").trim();
-                kk("DWELL: TYPE:rev NUMBER:" + x);
+                kk("DWELL: rev, " + x);
             }
             else{
-                kk("DWELL: TYPE:time NUMBER:" + D.trim());
+                kk("DWELL: time, " + D.trim());
             }
             break;
         
         case "CYCLE":
-            elements = line.split(",");
-            if (elements.length === 12){
-                kk("MOVEMENT: absolute");
-                this.cycleon = true;
-                cycle_typ = elements[0].trim();
-                total_depth = +elements[1];
-                plunge = +elements[2];
-                axial_depth = +elements[3];
-                dwell_in_time = +elements[4];
-                clearance = +elements[5];
-                cycle_feed = +elements[6];
-                cycle_spindle = +elements[7];
-                depth_decrement = +elements[10];
-                aditional_element = +elements[11];
-
-                if (cycle_typ.includes("DRILL")||cycle_typ.includes("DEEPHL")||cycle_typ.includes("BRKCHP")){
-                    this.ls_cycle_data = "TYPE:DRILL_1 " + total_depth+" "+plunge+" "+dwell_in_time+" "+clearance+" "+cycle_feed+" "+cycle_spindle+" "+axial_depth+" "+depth_decrement+" "+aditional_element;
-                }
-                else if (cycle_typ.includes("REAM")||cycle_typ.includes("BORE")) {
-                    this.ls_cycle_data = "TYPE:REAM"+" "+total_depth +" "+ plunge+" "+dwell_in_time+" "+clearance+" "+cycle_feed+" "+cycle_spindle+" "+aditional_element;
-                }
-                else if (cycle_typ.includes("TAP")) {
-                    this.ls_cycle_data = "TYPE:TAP"+" "+total_depth+" "+plunge+" "+dwell_in_time+" "+clearance+" "+cycle_feed+" "+cycle_spindle+" "+aditional_element;
-                }
-            }
-            else if (line.includes("OFF")) {
-                if (!this.rejected_cyc){
-                    this.cycleon = false;
-                    this.ls_cycle = "CYCLE: LOCATION: "+this.ls_cycle_coord+"/ "+this.ls_cycle_data;
-                    kk(this.ls_cycle);
-                    this.rejected_cyc = false;
-                }
-            }
-            else if ((line.includes("ON"))) {
-                kk("MOVEMENT: absolute");
-                this.cycleon = true;
-            }
-            else{
-                kk("COMMENT: Cycle rejected invalid cycle type look at https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Catia%20V5.md");
-                this.rejected_cyc = true;
-                kk("COMMENT: "+line);
-                break;
+            switch(elements2[1].trim()){
+                case "NAME":
+                    this.ls_cyc_name = line.trim();
+                    break;
+                case "DATA":
+                    this.ls_cyc_data = line.trim();
+                    break;
+                case "OFF":
+                    kk(this.ls_cyc_name);
+                    kk(this.ls_cyc_data);
+                    kk(this.ls_cyc_specific);
+                    kk("CYCLE/COORD"+this.ls_cyc_coord);
+                    break;
+                default:
+                    this.ls_cyc_specific = line.trim();
+                    break;
             }
             break;
         
@@ -919,46 +819,68 @@ export class catiav5_1_0{
             this.ls_j = +elements[2];
             this.ls_k = +elements[3];
             break;
-         
-        case "ROTABL":
-            for (let values of elements){
-                values = values.trim();
 
-                switch(values){
-                    case "CLW":
-                        D = "CLW";
-                        break;
-                    case "CCLW":
-                        D = "CCLW";
-                        break;
-                    case "ATANGL":
-                        movement = "ANGLE";
-                        break;
-                    case "INCR":
-                        movement = "INCREMENT ANGLE";
-                        break;
-                }
+        case "MAXSPNDL":
+            kk("SPINDLE: MAX, "+elements[1].trim());
+            break;
 
-                kk("COMMENT: Unkown syntacs "+line);
-                break;
-            }
-            break;
-        
-        case "PPFUN":
-        case "INDIRP":
-            kk("ERROR not defined:" + line);
-            break;
-        
         case "$$":
             D = line.split("$$")[1];
             kk("COMMENT:" + D);
             break;
         
         case "CUTCOM":
+            switch(elements2[1].trim()){
+                case "ON":
+                    kk(this.ls_normds);
+                    kk(this.ls_normps);
+                    kk(this.ls_l_r);
+                    break;
+                case "OFF":
+                    kk("CUTCOM: off");
+                    break;
+                case "NORMDS_ON":
+                    this.ls_normds = true;
+                    break;
+                case "NORMDS_OFF":
+                    this.ls_normds = false;
+                    break;
+                case "NORMPS_ON":
+                    this.ls_normps = true;
+                    break;
+                case "NORMPS_OFF":
+                    this.ls_normps = false;
+                    break
+                case "LEFT":
+                    this.ls_l_r = "left";
+                    break;
+                case "RIGHT":
+                    this.ls_l_r = "right";
+                    break;
+                default:
+                    kk("ERROR: invalid CUTCOM "+line);
+                    break;
+            }
+            break;
+        
+        case "CHANGE_TOOL":
+            if (elements2[4].trim() === ""){
+                D = "++";
+            }
+            else{
+                D = elements2[4];
+            }
+            kk("TOOL: "+elements2[1].trim()+", "+elements2[2].trim()+", "+elements2[3].trim()+", "+D.trim());
+            this.ls_clnt_typ = elements2[4];
             break;
         
         default:
-            kk("ERROR: unrecognized command " + line);
+            if (line.startsWith("ERROR")){
+                kk(line);
+            }
+            else{
+                kk("ERROR: unrecognized command " + line);
+            }
             break;
 
     }
