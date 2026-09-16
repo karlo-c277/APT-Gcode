@@ -58,32 +58,27 @@ eng. - Karlos Code
     -TOOL defines what tool is being used 
     -tool_info shall begin exactly one space after ":"
     -tool_info shall be consisted of the following information:
-        NAME:tool_name
-        MAGAZINE:slot_number
-        COMPENSATION:tool_compensation
-    -"NAME:" is a non variable meaning it is a fixed value
-    -"MAGAZINE:" is a non variable meaning it is a fixed value
-    -"COMPENSATION:" is a non variable meaning it is a fixed value
-    "NAME:tool_name"
+    "tool_name"
         -tool_name may be a variable for example "Threading+tool+d15+b7" where the spaces are defined with "+"
         -if there is NO tool name defined tool_name shall be valued as "++" -> " NAME:++ "        
         -tool_name shall be spaced exactly 0 spaces from "NAME:"
-    "MAGAZINE:slot_number"
+    "slot_number"
         -slot_number may be a variable but shall only be a number
         -if there is NO slot number defined slot_number shall be valued as "++"
         -slot_number shall be represented as a 3 digit number beginning from 000, 001 untill 999
         -slot_number shall be spaced exactly 0 spaces from "MAGAZINE:"
-    "COMPENSATION:tool_compensation"
+    "tool_compensation"
         -tool_compensation may be a variable but shall only be a number
         -if there is NO tool compensation number defined tool_compensation shall be valued as "++"
         -tool_compensation shall be represented as a 3 digit number beginning from 000, 001 untill 999
         -tool_compensation shall be spaced exactly 0 spaces from "COMPENSAION:"
-    "COOLANT:coolant_type"
+    "coolant_type"
         -coolant_type shall define what type of coolant is used by default for this tool
         -if there is no coolant coolant_type shall be defined with ++
         -if the coolant that isn't a default one is being used it must not be defiend only with "COOLANT: STATE:on"
-"TOOL: NAME:bean_cutter MAGAZINE:004 COMPENSATION:067"
-    0           1               2           3
+    -each element must be separated with one comma (,) and at least one space from the other element
+"TOOL: bean_cutter, 4, 67, flood"
+    0       1      2  3    4
 
 "SPINDLE: spindle_info"
     -this defines a change in spindle information
@@ -145,13 +140,25 @@ eng. - Karlos Code
     -value may only be on / off
     -value = on signals that this is a multi axial operation
 
-"COMPENSATION:value"
-    -defines the compensation for the tool cutter
-    -where value starts 0 spaces after : and it is one of the following
-    -values are following: BR for (P4), BC for (P8), BL for (P3), CR for (P5), CC for (P9), CL for (P7), TR for (P1), TC for (P6), TL for (P2), and OFF
-    -look at image.png in DOCUMENTATIONS
-"COMPENSATION:TC"
-        0      1
+"COMPENSATION_CHG:value"
+    -this compenstation register has some changes that need to be logged
+    -defines the compensation for the tool and consits of the following:
+        "correction_register" it defines what corrector is being edited it can be valued from 1 to 99
+        "cutter_quadrant" defines what point on cutter is being looked at
+            -values are following: BR for (P4), BC for (P8), BL for (P3), CR for (P5), CC for (P9), CL for (P7), TR for (P1), TC for (P6), TL for (P2), and OFF
+            -look at image.png in DOCUMENTATIONS
+        "compensation_coords" it contains the X, Y, Z distance set
+        "nose_radius" defines the radius on the tip of the cutting bit
+    -each element must be separated with one comma (,) and at least one space from the other element
+"COMPENSATION_CHG: 1, TC, 12, 34.5, 6, 0.7"
+        0      1   2   3   4    5   6
+
+"COMPENSATION_SET:value"
+    -this tool takes a different compensation register
+    -it must contain the tool number and new compensation register
+    -each element must be separated with one comma (,) and at least one space from the other element
+"COMPENSATION_SET: 3, 6"
+   0               1  2
 
 "ROTHED: value"
     -defines the rotation of the tool head
@@ -235,18 +242,22 @@ eng. - Karlos Code
         Values: (X)(Y)(Z)(I)(J)(K) shall not be in final output
 "SINUS: END: (X)10 (Y)20 (Z)30 AMPLITUDE: 4 MIDLINE: ((X)10 (Y)20 (Z)30)((X)10 (Y)20 (Z)30) VECTOR: (I)0.707 (J)-0.707 (K)0
 
-"HELIX: helix_info"
+"HELIX/helix_info"
     -defines a spiral movement
     -helix_info must consist of the following information
-        -"CENTER: value" where value is a numerical variable defining coordinates of top-most center point of the spiral path
-        -"VECTOR: value" where value is a numerical variable defining a vector tangent to the first point on path looking from the top (- not counting the pitch)
-        -"DIRECTION: value" where value is a numerical variable defining a vector paralel to the center of the spiral
-        -"PITCH: value" where value is a numerical variable definign the spiral movement
-        -"RADIUS: value" where value is a numerical variable defining the distance of the spiral from it's center line
+        -"CENTER, value" where value is a numerical variable defining coordinates of top-most center point of the spiral path
+        -"TANGENT, value" where value is a numerical variable defining a vector tangent to the first point on path looking from the top (- not counting the pitch)
+        -"AXIS, value" where value is a numerical variable defining a vector paralel to the center of the spiral
+        -"INFO, value" where value defines helix pitch, helix radius, helix height, helix full turns
         -"END: value" where value is a numerical variable defining the end point of the spiral
         Values: (X)(Y)(Z)(I)(J)(K) shall not be in final output
-"HELIX: CENTER: (X)10 (Y)20 (Z)30 VECTOR: (I)0.707 (J)-0.707 (K)0 DIRECTION: (I)0.707 (J)-0.707 (K)0 PITCH: 1.5 RADIUS 11.5 END (X)10 (Y)20 (Z)30"
-   0        1       2   3       4   5           6       7       8       9       10          11     12   13  14    15    16   17     18  19      20
+        -each element mus be separated with one comma and at least one space
+        -this is how the final output must look like
+"HELIX/CENTER, (X)10, (Y)20, (Z)30 
+HELIX/TANGENT, (I)0.707, (J)-0.707, (K)0 
+HELIX/AXIS, (I)0.707, (J)-0.707, (K)0 
+HELIX/INFO, 1.5 11.5 30 19 
+HELIX/END, (X)10, (Y)20, (Z)30"
 
 Cycles
 One cycle must be defined like following:
@@ -282,10 +293,16 @@ One cycle must be defined like following:
     CY4, tool_pitch
             -used for single pass thread creating
 
+"CYCLE/COORD"
+    -contains the xyz component of the begining points of each cycle, clearance included
+    -it mus be formated like following:
+    -every set of coordinate must be separated with / 
+    - and every coordinate separated with a comma from the other coordinate
+"CYCLE/COORD/ 12, 34, 56 / 12, 34, 57/...
 
 
 
     
-    %MFG_FEED_RETRACT_MODE, %MFG_FEED_RETRACT_VALUE
+
     
         !!!The the list is still in development still not entierly defined plese reach out to karlo.ugrin@mail.com for info
