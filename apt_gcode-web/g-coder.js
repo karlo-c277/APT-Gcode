@@ -13,10 +13,26 @@ export class WinNC_sinumerik{
         this.ls_x;
         this.ls_y;
         this.ls_z;
+        this.coolant;
+        this.arch_radius;
+        this.arch_direction;
+        this.arch_angle;
+        this.ls_on_cutcom;
+        this.helix_center_x;
+        this.helix_center_y;
+        this.helix_center_z;
+        this.helix_axis_i;
+        this.helix_axis_j;
+        this.helix_axis_k;
+        this.helix_pitch;
+        this.helix_radius;
+        this.helix_height;
+        this.helix_turns;
 
     }
     gcoder(line){
         let elements;
+        let element;
         let movement;
         let type;
         let speed;
@@ -38,7 +54,7 @@ export class WinNC_sinumerik{
         let k_2;
         let vektor2_x;
         let vektor2_y;
-        let vektor2_z;
+        let vektor2_z;element = line.split(",");
         let centar_x;
         let centar_y;
         let centar_z;
@@ -51,7 +67,7 @@ export class WinNC_sinumerik{
         let number;
         let pre_data;
         let data;
-        let coord;
+        let coord;element = line.split(",");
         let cancel;
         let bottom;
         let plane;
@@ -82,6 +98,7 @@ export class WinNC_sinumerik{
     }
 
     elements = line.split(" ");
+    element = line.split(/[:,]/);
     start = line.split(/[\/,:\s]+/);
 
     switch (start[0]){
@@ -109,6 +126,9 @@ export class WinNC_sinumerik{
         else if (line.includes("INCH")){
             write("G70");
         }
+        else{
+            write("ERROR: invalid unit type")
+        }
         break;
     
         case "PLANE":
@@ -124,24 +144,27 @@ export class WinNC_sinumerik{
         break;
     
         case "TOOL":
-        name = elements[1];
-        magazine = elements[2];
-        compensation = elements[3];
+        name = element[1];
+        magazine = element[2];
+        compensation = element[3];
+        this.coolant = element[4];
 
         write(name + " " + magazine + " " + compensation);
-        this.rapid =false;
-
+        this.rapid = false;
         break;
     
         case "SPINDLE":
         if (line.includes("off")){
+            if (element[2].trim()!=="1"){
+                write("; Spindle nr."+element[2].trim()+" is off but there is no separate spindle control");
+            }
             write("M05");
         }
         else if (line.includes("on")){
             
-            speed = elements[3].split(":")[1];
+            speed = element[3].trim();
             
-            if(line.includes ("fix")){
+            if (line.includes ("fix")){
                 type = "G97";
             }
             else if (line.includes("surface")){
@@ -155,12 +178,19 @@ export class WinNC_sinumerik{
                 direction = "M03";
                 this.spindle_dir = "cw";
             }
+            if (element[2].trim()!=="1"){
+                write("; Spindle nr."+element[2].trim()+" is being set but there is no separate spindle control");
+            }
             write(type+" S"+speed+" "+" "+direction);
+        }
+        else{
+            speed = element[2].trim();
+            write("G26 S"+speed);
         }
         break;
     
         case "FEEDRATE":
-        speed = elements[2].split(":")[1];
+        speed = element[2].trim();
         if (line.includes("time")){
             type = "G94";
         }
@@ -203,12 +233,6 @@ export class WinNC_sinumerik{
         }
         break;
     
-        case "TLAXIS":
-        this.tool_i = +elements[1];
-        this.tool_j = +elements[2];
-        this.tool_k = +elements[3];
-        break;
-    
         case "AIR":
         if (!this.rapid){
             write("G0");
@@ -242,7 +266,61 @@ export class WinNC_sinumerik{
             this.multax = false;
         }
         break;
-    
+        
+        case "COMPENSATION_CHG":
+        write("For correction register nr."+element[1].trim()+" compensation values are: tool tip quadrant: "+element[2].trim()+" xyz values: "+element[3].trim()+" "+element[4].trim()+" "+element[5].trim()+" nose radius is: "+element[6].trim());
+        break;
+
+        case "COMPENSATION_CHG":
+        write("For tool on slot nr."+element[1].trim()+" the set compensation register is: "+element[2].trim());
+        break;
+
+        case "CUTCOM":
+        switch (element[1].trim()){
+
+            case "OFF":
+                write("G40");
+            break;
+            
+            case "ON":
+                write(this.ls_on_cutcom);
+            break;
+
+            case "LEFT":
+                write("G41");
+                this.ls_on_cutcom = "G41";
+            break;
+
+            case "RIGHT":
+                write("G42");
+                this.ls_on_cutcom = "G42";
+            break;
+
+            default:
+                write("ERROR unknown cutcom value: "+line);
+                this.ls_on_cutcom = "ERROR unknown cutcom value";
+            break;
+        }
+        break;
+
+        case("ROTHED"):
+        write("Rotation of the head: axis "+element[1].trim()+" type of angle (absolute/incremental) "+element[2].trim()+" direction of rotation "+element[3].trim()+" angle "+element[4].trim());
+        break;
+
+        case("ROTABL"):
+        write("Rotation of the table axis "+element[1].trim()+" type of angle (absolute/incremental) "+element[2].trim()+" direction of rotation "+element[3].trim()+" angle "+element[4].trim());
+        break;
+
+        case("MILL_TURRET_INVERSION"):
+        write("The mill turret is inverted");
+        break;
+
+        case "TLAXIS":
+        this.tool_i = +elements[1];
+        this.tool_j = +elements[2];
+        this.tool_k = +elements[3];
+        break;
+        
         case "LINE":
         elements = line.split(/ +/);
         if (elements.length === 4 ){
@@ -316,75 +394,38 @@ export class WinNC_sinumerik{
         }            
         break;
     
-        case "ARCH":
-        elements = line.split(/ +/);
-        direction = elements[20];
-        radius = +elements[2];
-        x = +elements[12];
-        y = +elements[13];
-        z = +elements[14];
-        angle = +elements[22];
+        case "ARCH/CENTER":
+        case "ARCH/AXIS":
+        case "ARCH/TANGENT":
+        break;
 
-        x_2 = String(x).replace(/^X/, "");
-        y_2 = String(y).replace(/^Y/, "");
-        z_2 = String(z).replace(/^Z/, "");
+        case "ARCH/INFO":
+            this.arch_radius = +element[1];
+            this.arch_direction = +element[2];
+            this.arch_angle = +element[3];
+        break;
+        
+        case "ARCH/END":
+        this.ls_x = +element[1];
+        this.ls_y = +element[2];
+        this.ls_z = +element[3];
 
-        this.ls_x = +x_2;
-        this.ls_y = +y_2;
-        this.ls_z = +z_2;
 
-        if (direction === "cw"){
-            direction = "G2";
+        if (this.arch_direction === "cw"){
+            this.arch_direction = "G2";
         }
-        else if (direction === "ccw"){
-            direction = "G3";
+        else if (this.arch_direction === "ccw"){
+            this.arch_direction = "G3";
         }
-        if (angle > 180){
-            radius = (-1)*radius;
+        if (this.arch_angle > 180){
+            this.arch_radius = (-1)*this.arch_radius;
         }
-        write(direction + " X" + x + " Y" +  y + " Z" +  z + " R" +  radius);
+        write(this.arch_direction + " X" + this.ls_x + " Y" +  this.ls_y + " Z" +  this.ls_z + " R" +  this.arch_radius);
         this.rapid = false;
         break;
     
         case "#":
         write(line);
-        break;
-    
-        case "COMPENSATION":
-        compensation = line.split(":")[1];
-        compensation = compensation.trim();
-        switch (compensation) {
-                case "TR":
-                    elements ="1";
-                    break;
-                case "TL":
-                    elements ="2";
-                    break;
-                case "BL":
-                    elements ="3";
-                    break;
-                case "BR":
-                    elements ="4";
-                    break;
-                case "CR":
-                    elements ="5";
-                    break;
-                case "TC":
-                    elements ="6";
-                    break;
-                case "CL":
-                    elements ="7";
-                    break;
-                case "BC":
-                    elements ="8";
-                    break;
-                case "CC":
-                    elements ="9";
-                    break;
-                default:
-                    elements ="OFF";
-            }
-        write("Go to https://github.com/karlo-c277/APT-Gcode/blob/main/DOCUMENTATIONS/Images/image.png to confirm that all tools have matching tool compensation. This one is "+elements);
         break;
     
         case "CYCLE":
@@ -667,11 +708,44 @@ export class WinNC_sinumerik{
         }
         break;
         
-        case "SINUS":
+        case "SINUS/CENTER":
+        case "SINUS/AXIS":
+        case "SINUS/TANGENT":
+        case "SINUS/INFO":
+        case "SINUS/END":
             write("ERROR this controler does not support sinusoidal movement");
             break;
 
-        case "HELIX":
+        case "HELIX/CENTER":
+            this.helix_center_x = +element[1];
+            this.helix_center_y = +element[2];
+            this.helix_center_z = +element[3];
+        break;
+
+        case "HELIX/TANGENT":
+            this.ls_i = +element[1];
+            this.ls_j = +element[2];
+            this.ls_k = +element[3];
+        break;
+
+        case "HELIX/AXIS":
+            this.helix_axis_i = +element[1];
+            this.helix_axis_j = +element[2];
+            this.helix_axis_k = +element[3];
+        break;
+
+        case "HELIX/INFO":
+            this.helix_pitch = +element[1];
+            this.helix_radius = +element[2];
+            this.helix_height = +element[3];
+            this.helix_turns = +element[4];
+        break;
+
+        case "HELIX/END":
+            kraj_x = +elements[1];
+            kraj_y = +elements[2];
+            kraj_z = +elements[3];
+            
         elements = line.split(/[:\s]+/);
         centar_x = +elements[2];
         centar_y = +elements[3];

@@ -154,7 +154,7 @@ eng. - Karlos Code
         "nose_radius" defines the radius on the tip of the cutting bit
     -each element must be separated with one comma (,) and at least one space from the other elements
 "COMPENSATION_CHG: 1, TC, 12, 34.5, 6, 0.7"
-        0      1   2   3   4    5   6
+        0          1   2   3   4    5   6
 
 "COMPENSATION_SET:value"
     -this tool takes a different compensation register

@@ -380,8 +380,8 @@ export class catiav5_1_0{
                 }
                 kk("SINUS/CENTER, "+centar_x+", "+centar_y+", "+centar_z);
                 kk("SINUS/AXIS");
-                kk("SINUS/INFO, "+amplitude);
                 kk("SINUS/TANGENT, "+this.ls_i+", "+this.ls_j+", "+this.ls_k);
+                kk("SINUS/INFO, "+amplitude);
                 kk("SINUS/END,"+kraj_x+", "+kraj_y+", "+kraj_z);
                 this.ls_x = kraj_x;
                 this.ls_y = kraj_y;
@@ -393,12 +393,11 @@ export class catiav5_1_0{
             this.ls_x = kraj_x;
             this.ls_y = kraj_y;
             this.ls_z = kraj_z;
-            break;
             }
             else {
             kk("ERROR: unrecognized command " + line);
-            break;
             }
+            break;
         
         case "HELICAL":
             D = line.replace("HELICAL","HELIX");
