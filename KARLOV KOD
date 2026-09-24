@@ -312,7 +312,8 @@ One cycle must be defined like following:
     - and every coordinate separated with a comma from the other coordinate
 "CYCLE/COORD/ 12, 34, 56 / 12, 34, 57/...
 
-"CYCLE/DATA, cycle_data"
+"CYCLE/NAME, cycle_name
+CYCLE/DATA, cycle_data"
 CYCLE/CY1, CY1_data"
 CYCLE/COORD"
 

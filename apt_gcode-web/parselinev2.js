@@ -20,7 +20,7 @@ export class catiav5_1_0{
             this.ls_dim_typ;
             this.ls_clnt_typ;
             this.ls_cycle;
-            this.ls_cycle_data;
+            this.ls_cyc_data;
             this.ls_cycle_coord = "";
             this.lsunits;
             this.ls_units_word = "mm";
@@ -496,7 +496,7 @@ export class catiav5_1_0{
                 this.ls_z = z;
 
 
-                this.ls_cyc_coord += "/ "+ this.ls_x +", "+ this.ls_y +", "+ this.ls_z+" ";
+                this.ls_cycle_coord += "/ "+ this.ls_x +", "+ this.ls_y +", "+ this.ls_z+" ";
             }
             else {
             if (this.rapid === true){
@@ -769,7 +769,7 @@ export class catiav5_1_0{
                     kk(this.ls_cyc_name);
                     kk(this.ls_cyc_data);
                     kk(this.ls_cyc_specific);
-                    kk("CYCLE/COORD"+this.ls_cyc_coord);
+                    kk("CYCLE/COORD"+this.ls_cycle_coord);
                     break;
                 default:
                     this.ls_cyc_specific = line.trim();

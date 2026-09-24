@@ -28,6 +28,20 @@ export class WinNC_sinumerik{
         this.helix_radius;
         this.helix_height;
         this.helix_turns;
+        this.total_depth ;
+        this.clearance;
+        this.feed_1;
+        this.feed_2
+        this.feed_typ;
+        this.spindle;
+        this.spindle_unit;
+        this.retract;
+        this.cy;
+        this.cyc_dwell;
+        this.peck;
+        this.decrement;
+        this.decrement_limit;
+        this.pitch;
 
     }
     gcoder(line){
@@ -37,7 +51,6 @@ export class WinNC_sinumerik{
         let type;
         let speed;
         let direction;
-        let name;
         let magazine;
         let compensation;
         let x;
@@ -54,10 +67,7 @@ export class WinNC_sinumerik{
         let k_2;
         let vektor2_x;
         let vektor2_y;
-        let vektor2_z;element = line.split(",");
-        let centar_x;
-        let centar_y;
-        let centar_z;
+        let vektor2_z;
         let kraj_x;
         let kraj_y;
         let kraj_z;
@@ -67,7 +77,7 @@ export class WinNC_sinumerik{
         let number;
         let pre_data;
         let data;
-        let coord;element = line.split(",");
+        let coord;
         let cancel;
         let bottom;
         let plane;
@@ -428,19 +438,81 @@ export class WinNC_sinumerik{
         write(line);
         break;
     
-        case "CYCLE":
-        elements = line.split("/");
+        case "CYCLE/NAME":
+            let name = line.split("NAME,");
+            write(";Cycle "+name);
+        break;
 
-        data = elements[1].trim().split(/\s+/);
+        case "CYCLE/DATA":
+            this.total_depth = +element[1];
+            this.clearance = +element[2];
+            this.feed_1 = +element[3];
+            this.feed_typ = +element[4];
+            this.spindle = +element[5];
+            this.spindle_unit = +element[6];
+            this.retract = +element[7];
 
-        el_0 = data[0].trim();
-        el_1 = +data[1];
-        el_2 = +data[2];
-        el_3 = +data[3];
-        el_4 = +data[4];
-        el_5 = +data[5];
-        el_6 = +data[6];
-        el_7 = +data[7];
+            if (this.retract === 0){
+                this.feed_2 = +element[8];
+            }
+            else{
+                this.feed_2 = "rapid";
+            }
+        break;
+
+        case "CYCLE/CY0":
+            this.cy = 0;
+        break;
+
+        case "CYCLE/CY1":
+            this.cy = 1;
+            if (+element[1] === 1){
+                this.cyc_dwell = "G4 S"+ element[2].trim();
+            }
+            else if (+element[1] === 2){
+                this.cyc_dwell = "G4 R"+ element[3].trim();
+            }
+            else{
+                this.cyc_dwell = "";
+            }
+        break;
+
+        case "CYCLE/CY2":
+            this.cy = 2;
+            if (+element[1] === 1){
+                this.cyc_dwell = "G4 S"+ element[2].trim();
+            }
+            else if (+element[1] === 2){
+                this.cyc_dwell = "G4 R"+ element[3].trim();
+            }
+            else{
+                this.cyc_dwell = "";
+            }
+            this.peck = +element[4];
+        break;
+
+        case "CYCLE/CY3":
+            this.cy = 3;
+            if (+element[1] === 1){
+                this.cyc_dwell = "G4 S"+ element[2].trim();
+            }
+            else if (+element[1] === 2){
+                this.cyc_dwell = "G4 R"+ element[3].trim();
+            }
+            else{
+                this.cyc_dwell = "";
+            }
+            this.peck = +element[4];
+            this.decrement = +element[5];
+            this.decrement_limit = +element[6];
+        break;
+
+        case "CYCLE/CY4":
+            this.cy = 4;
+            this.pitch = +element[1];
+        break;
+
+        case "CYCLE/COORD":
 
         number = elements[0].trim();
         number = number.split(":")[2];
@@ -745,26 +817,11 @@ export class WinNC_sinumerik{
             kraj_x = +elements[1];
             kraj_y = +elements[2];
             kraj_z = +elements[3];
-            
-        elements = line.split(/[:\s]+/);
-        centar_x = +elements[2];
-        centar_y = +elements[3];
-        centar_z = +elements[4];
-        this.ls_i = +elements[6];
-        this.ls_j = +elements[7];
-        this.ls_k = +elements[8];
-        i_2 = +elements[10];
-        j_2 = +elements[11];
-        k_2 = +elements[12];
-        number = +elements[14];
-        radius = +elements[16];
-        kraj_x = +elements[18];
-        kraj_y = +elements[19];
-        kraj_z = +elements[20];
+
         
-        if (Math.abs(j_2) === 1){
-                        vektor2_x = this.ls_x - centar_x;
-                        vektor2_z = this.ls_z - centar_z;
+        if (Math.abs(this.helix_axis_j) === 1){
+                        vektor2_x = this.ls_x - this.helix_center_x;
+                        vektor2_z = this.ls_z - this.helix_center_z;
                         D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
         
                         if (D<0){
@@ -776,15 +833,14 @@ export class WinNC_sinumerik{
                         else {
                             write("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
                         }
-                        coord = ("I"+centar_x+" K"+centar_z);
-                        turn = Math.trunc(Math.abs(centar_y-kraj_y)/number);
+                        coord = ("I"+this.helix_center_x+" K"+this.helix_center_z);
         }
-        else if (Math.abs(k_2)=== 1){
-                            vektor2_x = this.ls_x - centar_x;
-                            vektor2_y = this.ls_y - centar_y;
+        else if (Math.abs(this.helix_axis_k)=== 1){
+                            vektor2_x = this.ls_x - this.helix_center_x;
+                            vektor2_y = this.ls_y - this.helix_center_y;
                             D = this.ls_i * vektor2_y - vektor2_x * this.ls_j;
 
-                            console.log(this.ls_x+" "+centar_x+" "+this.ls_y+" "+centar_y);
+                            console.log(this.ls_x+" "+this.helix_center_x+" "+this.ls_y+" "+this.helix_center_y);
 
                             console.log(vektor2_x);
                             console.log(vektor2_y);
@@ -798,12 +854,11 @@ export class WinNC_sinumerik{
                             else {
                                 write("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
                             }
-                            coord = ("I"+centar_x+" J"+centar_y);
-                            turn = Math.trunc(Math.abs(centar_z-kraj_z)/number);
+                            coord = ("I"+this.helix_center_x+" J"+this.helix_center_y);
         }
-        else if (Math.abs(i_2) === 1){
-                            vektor2_y = this.ls_y - centar_y;
-                            vektor2_z = this.ls_z - centar_z;
+        else if (Math.abs(this.helix_axis_2) === 1){
+                            vektor2_y = this.ls_y - this.helix_center_y;
+                            vektor2_z = this.ls_z - this.helix_center_z;
                             D = this.ls_j * vektor2_z - vektor2_y * this.ls_k;
         
                             if (D<0){
@@ -815,10 +870,9 @@ export class WinNC_sinumerik{
                             else {
                                 write("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
                             }
-                            coord = ("J"+centar_y+" K"+centar_z);
-                            turn = Math.trunc(Math.abs(centar_x-kraj_x)/number);
+                            coord = ("J"+this.helix_center_y+" K"+this.helix_center_z);
         }
-        write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+" TURN="+turn);
+        write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+" TURN="+this.helix_turns);
         this.ls_x = +kraj_x;
         this.ls_y = +kraj_y;
         this.ls_z = +kraj_z;
