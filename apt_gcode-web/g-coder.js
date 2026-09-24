@@ -111,7 +111,7 @@ export class WinNC_sinumerik{
     element = line.split(/[:,]/);
     start = line.split(/[\/,:\s]+/);
 
-    switch (start[0]){
+    switch (start[0].trim()){
 
         case "COMMENT":
         elements = line.split("COMMENT:")[1].trim();
@@ -447,7 +447,7 @@ export class WinNC_sinumerik{
             this.total_depth = +element[1];
             this.clearance = +element[2];
             this.feed_1 = +element[3];
-            this.feed_typ = +element[4];
+            this.feed_typ = element[4].trim();
             this.spindle = +element[5];
             this.spindle_unit = +element[6];
             this.retract = +element[7];
@@ -513,10 +513,7 @@ export class WinNC_sinumerik{
         break;
 
         case "CYCLE/COORD":
-
-        number = elements[0].trim();
-        number = number.split(":")[2];
-        number_dt = number.match(/\([^)]*\)/g);
+        number_dt = line.split("COORD/")[1].split("/").map(xyz => xyz.trim()).filter(Boolean);
 
         if (this.multax===false){
             if (Math.abs(this.tool_i) === 1){
@@ -537,246 +534,558 @@ export class WinNC_sinumerik{
         }
         for (const xyz of number_dt){
             if (this.multax===false){
-                if (Math.abs(this.tool_i) === 1){
-                        elements = xyz.slice(1, -1).trim().split(/\s+/);
-                        x = elements[0].trim();
-                        y = elements[1].trim();
-                        z = elements[2].trim();
+                elements = xyz.split(",");
+                x = +elements[0];
+                y = +elements[1];
+                z = +elements[2];
+                coord = "X"+x+" Y"+" Z"+z;
 
-                        x = Number(x.slice(1));
-                        kraj_x = x-(el_1+el_4);
-                        bottom = ("X" + kraj_x);
-                        d = "X";
-
-                        r = (x - el_4 + el_4*0.2);
-
-                        coord = (y + " " + z);
-                }
-                else if (Math.abs(this.tool_j) === 1){
-                        elements = xyz.slice(1, -1).trim().split(/\s+/);
-                        x = elements[0].trim();
-                        y = elements[1].trim();
-                        z = elements[2].trim();
-
-                        y = Number(y.slice(1));
-                        kraj_y = y-(el_1+el_4);
-                        bottom = ("Y" + kraj_y);
-                        d = "Y";
-
-                        r = (y - el_4 + el_4*0.2);
-
-                        coord = (x + " " + z);
-                }
-                else if (Math.abs(this.tool_k) === 1){
-                        elements = xyz.slice(1, -1).trim().split(/\s+/);
-                        x = elements[0].trim();
-                        y = elements[1].trim();
-                        z = elements[2].trim();
-
-                        z = Number(z.slice(1));
-                        kraj_z = z-(el_1+el_4);
-                        bottom = ("Z" + kraj_z);
-                        d = "Z";
-
-                        r = (z - el_4 + el_4*0.2);
-
-                        coord = (x + " " + y + "R"+r+" "+bottom);
-                }
-                else {
-                    console.log("ERROR");
-                }
-                x_2 = String(x).replace(/^X/, "");
-                y_2 = String(y).replace(/^Y/, "");
-                z_2 = String(z).replace(/^Z/, "");
+                this.ls_x = x;
+                this.ls_y = y;
+                this.ls_z = z;
             }
             else {
                 write("NO MULTI AXIAL WORK SUPPORTED");
                 console.error("MULTI AXIAL WORK TYPE");
             }
-        
-        if (el_0.includes("DRILL_1")){
-            el_8 = +data[8];
-            el_9 = +data[9];
+            let currentDepth = 0;
+            if (Math.abs(this.tool_k)===1){
+                switch (this.cy){
+                    case 0:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Z"+(this.clearance*this.tool_k));
 
-            if (el_3 === 0 && el_7 === 0 && el_8 === 0 && el_9 === 0) {
-                write("G97 S" + el_6);
-                write("G291");
-                write("G98");
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
 
-                pre_data = "G84";
-                data = ("F"+el_5);
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
 
-                write(pre_data +" "+ coord +" "+ data);
-                write("G80");
-                write("G290");
-                this.post_cycle = true;
-            }
-            else if (el_7 === 0 && el_8 === 0 && el_9 === 0) {
-                write("G97 S" + el_6);
-                write("G291");
-                write("G98");
+                        write("G1 Z"+this.total_depth*this.tool_k);
+                        write("G90");
 
-                pre_data = "G82";
-                data = "P" + (el_3*1000) + " F"+el_5;
+                        if (this.feed_2 === "rapid"){
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write(coord);
+                        }
+                    break;
 
-                write(pre_data +" "+ coord +" "+ data);
-                write("G80");
-                write("G290");
-                this.post_cycle = true;
-            }
-            else {
-                if (el_7 === 0){
-                    el_7 = el_1;
+                    case 1:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Z"+(this.clearance*this.tool_k));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+
+                        write("G1 Z"+this.total_depth*this.tool_k);
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+
+                    case 2:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Z"+(this.clearance*this.tool_k));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+                        while (this.total_depth > currentDepth){
+                            write("G1 Z"+(this.peck*this.tool_k));
+                            D = this.total_depth - currentDepth;
+                            currentDepth += this.peck;
+                            write(this.cyc_dwell);
+                        }
+
+                        write("G1 Z"+(D*this.tool_k));
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+                    
+                    case 3:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Z"+(this.clearance*this.tool_k));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+                        let loop_nr = 0;
+                        let currentPeck = 0;
+                        while (this.total_depth > currentDepth){
+                            loop_nr += 1;
+                            while (loop_nr <= this.decrement_limit){
+                                currentPeck = this.peck*dhis.decrement*loop_nr;
+                            }
+                            write("G1 Z"+(currentPeck*this.tool_k));
+                            D = this.total_depth - currentDepth;
+                            currentDepth += currentPeck;
+                            write(this.cyc_dwell);
+                        }
+
+                        write("G1 Z"+(D*this.tool_k));
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+
+                    case 4:
+                        write("Please output this cycle in the CNC controler since this is thread cutting operation");
+                        write("Coordinates: "+coord+" Total depth "+ this.total_depth+" clearance"+ this.clearance+" forward feed"+ this.feed_1+ ", back feed"+this.retract+" feed type "+this.feed_typ);
+                        write("Spindle speed & unit "+this.spindle+", "+this.spindle_unit);
+                        write("Tool pitch "+ this.pitch);
+                    break;
+
                 }
+            }
+            else if (Math.abs(this.tool_j)===1){
+                switch (this.cy){
+                    case 0:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Y"+(this.clearance*this.tool_j));
 
-                next_peck=(el_7*this.ax_dir);
-                el_9 = (el_9*this.ax_dir);
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
 
-                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
-                write("G91");
-                write("G95 F" + el_5);
-                write("G97 S" + el_6);
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
 
-                let currentDepth = 0;
+                        write("G1 Y"+this.total_depth*this.tool_j);
+                        write("G90");
 
-                while (true){
-                    left = el_1 - currentDepth;
+                        if (this.feed_2 === "rapid"){
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write(coord);
+                        }
+                    break;
 
-                    if (Math.abs(currentDepth + next_peck) >= el_1) {
-                        break;
-                    }
-                    currentDepth += next_peck;
+                    case 1:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Y"+(this.clearance*this.tool_j));
 
-                    write("G1 " + d + next_peck);
-                    if (el_3 !== 0){
-                        write("G4 F"+el_3);
-                    }
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
 
-                    next_peck = (next_peck*(1-el_8));
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
 
-                    if ((el_9 !== 0) && (Math.abs(currentDepth + next_peck) >= el_1)){
-                        write("G0 " + d + (el_9*(-1)));
-                        write ("G1 " + d + el_9);
-                    }
-                    else {
-                        write("G0 " + d + (el_9*(-1)));
-                        write("G1 " + d + (el_9+next_peck));
-                    }                
+                        write("G1 Y"+this.total_depth*this.tool_j);
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+
+                    case 2:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Y"+(this.clearance*this.tool_j));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+                        while (this.total_depth > currentDepth){
+                            write("G1 Y"+(this.peck*this.tool_j));
+                            D = this.total_depth - currentDepth;
+                            currentDepth += this.peck;
+                            write(this.cyc_dwell);
+                        }
+
+                        write("G1 Y"+(D*this.tool_j));
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+                    
+                    case 3:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("Y"+(this.clearance*this.tool_j));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+                        let loop_nr = 0;
+                        let currentPeck = 0;
+                        while (this.total_depth > currentDepth){
+                            loop_nr += 1;
+                            while (loop_nr <= this.decrement_limit){
+                                currentPeck = this.peck*this.decrement*loop_nr;
+                            }
+                            write("G1 Y"+(currentPeck*this.tool_j));
+                            D = this.total_depth - currentDepth;
+                            currentDepth += currentPeck;
+                            write(this.cyc_dwell);
+                        }
+
+                        write("G1 Y"+(D*this.tool_j));
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+
+                    case 4:
+                        write("Please output this cycle in the CNC controler since this is thread cutting operation");
+                        write("Coordinates: "+coord+" Total depth "+ this.total_depth+" clearance"+ this.clearance+" forward feed"+ this.feed_1+ ", back feed"+this.retract+" feed type "+this.feed_typ);
+                        write("Spindle speed & unit "+this.spindle+", "+this.spindle_unit);
+                        write("Tool pitch "+ this.pitch);
+                    break;
+
                 }
-                write("G1 " + (currentDepth-el_1));
-                write("G90");
-                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
-                this.rapid = true;
-
             }
-            
-        }
-        else if (el_0.includes("DRILL_2")){
-            if (el_3 === 0 && el_8 === 0){
-                write("G97 S" + el_6);
-                write("G291");
-                write("G98");
+            else if (Math.abs(this.tool_i)===1){
+                switch (this.cy){
+                    case 0:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("X"+(this.clearance*this.tool_i));
 
-                pre_data = "G83";
-                data = "Q" + el_7 + " F"+el_5;
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
 
-                write(pre_data +" "+ coord +" "+ data);
-                write("G80");
-                write("G290");
-                this.post_cycle = true;
-            }
-            else {
-                if (el_7 === 0){
-                    el_7 = el_1;
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+
+                        write("G1 X"+this.total_depth*this.tool_i);
+                        write("G90");
+
+                        if (this.feed_2 === "rapid"){
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write(coord);
+                        }
+                    break;
+
+                    case 1:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("X"+(this.clearance*this.tool_i));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+
+                        write("G1 X"+this.total_depth*this.tool_i);
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+
+                    case 2:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("X"+(this.clearance*this.tool_i));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+                        while (this.total_depth > currentDepth){
+                            write("G1 X"+(this.peck*this.tool_i));
+                            D = this.total_depth - currentDepth;
+                            currentDepth += this.peck;
+                            write(this.cyc_dwell);
+                        }
+
+                        write("G1 X"+(D*this.tool_i));
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+                    
+                    case 3:
+                        write("G0 "+coord);
+                        write("G91");
+                        write("X"+(this.clearance*this.tool_i));
+
+                        if (this.feed_typ === "MMPR"){
+                            write("G95 F"+this.feed_1);
+                        }
+                        else{
+                            write("G94 F"+this.feed_1);
+                        }
+
+                        if (this.spindle_unit = "RPM"){
+                            write ("G97 S"+this.spindle);
+                        }
+                        else{
+                            write ("G96 S"+this.spindle);
+                        }
+                        let loop_nr = 0;
+                        let currentPeck = 0;
+                        while (this.total_depth > currentDepth){
+                            loop_nr += 1;
+                            while (loop_nr <= this.decrement_limit){
+                                currentPeck = this.peck*this.decrement*loop_nr;
+                            }
+                            write("G1 X"+(currentPeck*this.tool_i));
+                            D = this.total_depth - currentDepth;
+                            currentDepth += currentPeck;
+                            write(this.cyc_dwell);
+                        }
+
+                        write("G1 X"+(D*this.tool_i));
+                        write(this.cyc_dwell);
+
+                        if (this.feed_2 === "rapid"){
+                            write("G90");
+                            write("G0"+coord);
+                        }
+                        else{
+                            if (this.feed_typ === "MMPR"){
+                                write("G95 F"+this.feed_2);
+                            }
+                            else{
+                                write("G94 F"+this.feed_2);
+                            }
+                            write("G90");
+                            write(coord);
+                        }
+                    break;
+
+                    case 4:
+                        write("Please output this cycle in the CNC controler since this is thread cutting operation");
+                        write("Coordinates: "+coord+" Total depth "+ this.total_depth+" clearance"+ this.clearance+" forward feed"+ this.feed_1+ ", back feed"+this.retract+" feed type "+this.feed_typ);
+                        write("Spindle speed & unit "+this.spindle+", "+this.spindle_unit);
+                        write("Tool pitch "+ this.pitch);
+                    break;
+
                 }
-
-                next_peck=(el_7*this.ax_dir);
-                el_9 = (el_9*this.ax_dir);
-
-                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
-                write("G91");
-                write("G95 F" + el_5);
-                write("G97 S" + el_6);
-
-                while (true){
-                    if (Math.abs(currentDepth + next_peck) >= el_1) {
-                        break;
-                    }
-                    currentDepth += next_peck;
-
-                    write("G1 " + d + next_peck);
-                    if (el_3 !== 0){
-                        write("G4 F"+el_3);
-                    }
-
-                    next_peck = (next_peck*(1-el_8));
-
-                    if ((el_9 !== 0) && (Math.abs(currentDepth + next_peck) >= el_1)){
-                        write("G0 " + d + (currentDepth*(-1)));
-                        write ("G1 " + d + currentDepth);
-                    }
-                    else {
-                        write("G0 " + d + (currentDepth*(-1)));
-                        write("G1 " + d + (currentDepth+next_peck));
-                    }                
-                }
-                write("G1 " + (currentDepth-el_1));
-                write("G90");
-                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
-                this.rapid = true;
-
             }
-        }
-        else if (el_0.includes("REAM")){
-
-            if (el_7 !== 0 && el_7 !== el_5 && el_3 !== 0){
-                write("G0 X" + x_2 + " Y" + y_2 + " Z" + z_2);
-                write("G91");
-                write("G95 F" + el_5);
-                write("G97 S" + el_6);
-
-                if (el_3 !== 0){
-                    write("G4 F"+el_3);
-                }
-                write("G1 " + d + (el_1*this.ax_dir));
-                write("F"+el_7);
-                write("G90");
-                write("G1 X" + x_2 + " Y" + y_2 + " Z" + z_2);
-                this.rapid = false;
-            }
-            else {
-                write("G97 S" + el_6);
-                write("G291");
-                write("G98");
-
-                write("G85 " + coord + " F" + el_5);
-
-                write("G80");
-                write("G290");
-                this.post_cycle = true;
-            }
-        }
-        else if (el_0.includes("TAP")){
-            write("G97 S" + el_6);
-            write("G291");
-            write("G98");
-            if (this.spindle_dir === "cw"){
-                pre_data = "G84";
-            }
-            else {
-                pre_data = "G74";
-            }
-            data = ("F"+el_5);
-
-            write(pre_data +" "+ coord +" "+ data);
-            write("G80");
-            write("G290");
-            this.post_cycle = true;
-        }
-
-        this.ls_x = +x_2;
-        this.ls_y = +y_2;
-        this.ls_z = +z_2;
         }
         break;
         
