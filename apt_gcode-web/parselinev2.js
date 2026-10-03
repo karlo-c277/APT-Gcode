@@ -864,7 +864,12 @@ export class catiav5_1_0{
         case "rawG":
             kk(line);
             break;
-            
+
+        case "rawKK":
+            D = line.replace("rawKK", "");
+            kk(D);
+            break;
+
         default:
             if (line.startsWith("ERROR")){
                 kk(line);

@@ -31,6 +31,10 @@ eng. - Karlos Code
     -this is used when an aditional command or anything else wants to be written but needs to byass the translation process with the "rawG" word excluded
     -the first letter of the syntacs must NOT be an empty space " ", comma "," or a slash "/"
 
+"rawKK: KK commands"
+    -this is used to bypass the first translation layer that translates the code into KK
+    -the first letter of the syntacs must NOT be an empty space " ", comma "," or a slash "/"
+
 "UNIT: unit_type"
     -UNIT command shall define what measuremnt unit type is used
     -default units are milimeters
