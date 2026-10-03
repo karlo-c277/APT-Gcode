@@ -269,9 +269,7 @@ SINUS/END, (X)10, (Y)20, (Z)30"
     -helix_info must consist of the following information
         -"CENTER, value" where value is a numerical variable defining coordinates of top-most center point of the spiral path
         -"TANGENT, value" where value is a numerical variable defining a vector tangent to the first point on path looking from the top (- not counting the pitch)
-        -"AXIS, value" where value is a numerical variable defining a vector paralel to the center of the spiral
-        -"INFO, value" where value defines helix pitch, helix radius, helix height, helix full turns
-        -"END: value" where value is a numerical variable defining the end point of the spiral
+        -"AXIS, value" where value is a numerical variable defining a vector paralel to the center of the spira        -"END: value" where value is a numerical variable defining the end point of the spiral
         Values: (X)(Y)(Z)(I)(J)(K) shall not be in final output
         -each element mus be separated with one comma and at least one space
         -this is how the final output must look like
