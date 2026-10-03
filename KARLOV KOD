@@ -27,6 +27,10 @@ eng. - Karlos Code
     -add_info may contain RADIUS to define that the g code is written in radius values, or DIAMETER for diameter
     -add_info may be defined in other ways but MUST be used to define a g code command and in that case shall not contain RADIUS or DIAMETER
 
+"rawG: G-code commands"
+    -this is used when an aditional command or anything else wants to be written but needs to byass the translation process with the "rawG" word excluded
+    -the first letter of the syntacs must NOT be an empty space " ", comma "," or a slash "/"
+
 "UNIT: unit_type"
     -UNIT command shall define what measuremnt unit type is used
     -default units are milimeters
@@ -105,6 +109,8 @@ eng. - Karlos Code
     0        1    2
 
 "COOLANT: coolant_info"
+    -if there are multiple coolant nozzles the control for the next nozzle is "COOOLANT: coolant_id"
+        -coolant_id must not contain any of following words on, off, flood, mist, air
     -in case of using a coolant that is a defaulted to the current tool the syntacs "COOLANT: STATE:on" is allowed
     -defines what type of coolant is used
     -coolant_info shall consist of the following information:
@@ -118,6 +124,7 @@ eng. - Karlos Code
 
 "AIR_PURGE: state"
     -defines usage of compressed air for clearing chips and simmilar usages
+    -this is not same as coolant air, that defines usage of compressed air trought the coolant nozzle, whilst this is for a fan or a compressor
     -"state" is a variable defined either as "on" or "off"
 
 "MOVEMENT: movement_type"
@@ -206,9 +213,8 @@ eng. - Karlos Code
         -inside the whole X there shall be no spaces
     Same aplies for all of the remeining elements but they must be ordered in the following array X Y Z A B C
     In case of not using multi axial machining process the ABC element may be left out
-    -each element must be separated with one comma (,) and at least one space from the other elements
-"LINE: X10, Y++, Z30, A24, B35, C++"
-"LINE: X10, Y34, Z++"
+"LINE: X10 Y++ Z30 A24 B35 C++"
+"LINE: X10 Y34 Z++"
     0   1    2    3    4    5    6
 
 "DWELL: dwell_info"

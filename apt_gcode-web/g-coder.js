@@ -128,7 +128,12 @@ export class WinNC_sinumerik{
             write("DIAMON");
         }
         break;
-    
+        
+        case "rawG":
+            D = line.replace("rawG:", "");
+            write(D);
+            break;
+
         case "UNIT":
         if (line.includes("MM")){
             write("G71");
@@ -152,17 +157,7 @@ export class WinNC_sinumerik{
             write("G19");
         }
         break;
-    
-        case "TOOL":
-        name = element[1];
-        magazine = element[2];
-        compensation = element[3];
-        this.coolant = element[4];
 
-        write(name + " " + magazine + " " + compensation);
-        this.rapid = false;
-        break;
-    
         case "SPINDLE":
         if (line.includes("off")){
             if (element[2].trim()!=="1"){
@@ -223,8 +218,11 @@ export class WinNC_sinumerik{
         else if (line.includes("flood")){
             write("M08");
         }
+        else if (line.includes("air")){
+            write("ERROR: this controler doesn't have an option to output compressed air throught the coolant nozzle, see AIR_purge SYNTACS")
+        }
         break;
-    
+        
         case "AIR_PURGE":
         if (line.includes("on")){
             write("M71");
@@ -281,7 +279,7 @@ export class WinNC_sinumerik{
         write("For correction register nr."+element[1].trim()+" compensation values are: tool tip quadrant: "+element[2].trim()+" xyz values: "+element[3].trim()+" "+element[4].trim()+" "+element[5].trim()+" nose radius is: "+element[6].trim());
         break;
 
-        case "COMPENSATION_CHG":
+        case "COMPENSATION_SET":
         write("For tool on slot nr."+element[1].trim()+" the set compensation register is: "+element[2].trim());
         break;
 
@@ -313,15 +311,19 @@ export class WinNC_sinumerik{
         }
         break;
 
-        case("ROTHED"):
+        case "TOOL":
+            write("T="+element[1].trim());
+            break;
+
+        case "ROTHED":
         write("Rotation of the head: axis "+element[1].trim()+" type of angle (absolute/incremental) "+element[2].trim()+" direction of rotation "+element[3].trim()+" angle "+element[4].trim());
         break;
 
-        case("ROTABL"):
+        case "ROTABL":
         write("Rotation of the table axis "+element[1].trim()+" type of angle (absolute/incremental) "+element[2].trim()+" direction of rotation "+element[3].trim()+" angle "+element[4].trim());
         break;
 
-        case("MILL_TURRET_INVERSION"):
+        case "MILL_TURRET_INVERSION":
         write("The mill turret is inverted");
         break;
 
@@ -371,25 +373,42 @@ export class WinNC_sinumerik{
             j = elements[5];
             k = elements[6];
 
+            x_2 = String(x).replace(/^X/, "");
+            y_2 = String(y).replace(/^Y/, "");
+            z_2 = String(z).replace(/^Z/, "");
+
             if (x === "X++"){
                 x = "";
             }
-            else if (y === "Y++"){
+            else {
+                this.ls_x = +x_2;
+            }
+            if (y === "Y++"){
                 y = "";
             }
-            else if (z === "Z++"){
+            else {
+                this.ls_y = +y_2;
+            }
+            if (z === "Z++"){
                 z = "";
             }
-            else if (i === "I++"){
+            else {
+                this.ls_z = +z_2;
+            }
+
+             if (i === "I++"){
                 i = "";
             }
-            else if (j === "J++"){
+
+             if (j === "J++"){
                 j = "";
             }
-            else if (k === "K++"){
+
+             if (k === "K++"){
                 k = "";
             }
             write(x+" "+y+" "+z+" "+i+" "+j+" "+k);
+            write("This program does not yet support multi axial machining")
         }
         break;
     

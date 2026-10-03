@@ -29,7 +29,7 @@ export class catiav5_1_0{
             this.ls_feed_speed;
             this.rapid = false;
             this.ls_movement = "CUT";
-            this.rapto;
+            this.rapto = false;
             this.header = false;
             this.cycleon = false;
             this.ls_tool_axis;
@@ -39,16 +39,13 @@ export class catiav5_1_0{
             this.ls_normds = false;
             this.ls_normps = false;
             this.ls_l_r = "";
-        }
+    }
     parseline(line){
             let elements;
             let elements2;
             let centar_x;
             let centar_y;
             let centar_z;
-            let centar2_x;
-            let centar2_y;
-            let centar2_z;
             let kraj_x;
             let kraj_y;
             let kraj_z;
@@ -78,17 +75,6 @@ export class catiav5_1_0{
             let start;
             let end;
             let angle;
-
-            let cycle_typ;
-            let total_depth;
-            let plunge;
-            let axial_depth;
-            let dwell_in_time;
-            let clearance;
-            let cycle_feed;
-            let cycle_spindle;
-            let depth_decrement;
-            let aditional_element;
 
             let amplitude;
             let element;
@@ -207,7 +193,7 @@ export class catiav5_1_0{
         case "PPRINT":
         case "TPRINT":
             D = element[1];
-            kk("COMMENT: ")
+            kk("COMMENT: "+ D);
             break;
         
         case "TOOLNO":
@@ -414,7 +400,7 @@ export class catiav5_1_0{
                 this.ls_z += z;
 
 
-                this.ls_cyc_coord += "/ "+ this.ls_x +", "+ this.ls_y +", "+ this.ls_z+" ";
+                this.ls_cycle_coord += "/ "+ this.ls_x +", "+ this.ls_y +", "+ this.ls_z+" ";
             }
             else {
             if (this.rapid === true){
@@ -429,9 +415,6 @@ export class catiav5_1_0{
                     this.ls_movement = "CUT";
                 }
             }
-            koord_x="";
-             koord_y="";
-             koord_z="";
 
             if (this.ls_dim_typ !== "MOVEMENT: incremental"){
                 kk("MOVEMENT: incremental");
@@ -443,43 +426,55 @@ export class catiav5_1_0{
                 z = +elements[3];
             }
             else if (elements.length === 2){
-                x = "++";
-                y = "++";
+                x = 0;
+                y = 0;
                 z = +elements[1];
             }
             else {
                 kk("ERROR: GODLTA ELEMENTS ARE INCOMPLETE" + line);
                 break;
             }
-            this.ls_x += x;
+            this.ls_x +=x;
             this.ls_y +=y;
             this.ls_z +=z;
             
-            if (x !== "++"){
+            if (x !== 0){
                 koord_x = " X" + x;
             }
-            if (y !== "++"){
+            else{
+                koord_x = " X++";
+            }
+
+            if (y !== 0){
                 koord_y = " Y" + y;
             }
-            if (z !== "++"){
-                koord_z = " Z" + z;
+            else{
+                koord_x = " Y++";
             }
 
-            if (this.rapto === 1) {
-                 dist = Math.hypot(x, y, z);
-                 ratio = dist !== 0 ? this.rapto_num / dist : 0;
-                 rdtx = ratio*x;
-                 rdty = ratio*y;
-                 rdtz = ratio*z;
-                 koord__x = koord_x-rdtx;
-                 koord__y = koord_y-rdty;
-                 koord__z = koord_z-rdtz;
+            if (z !== 0){
+                koord_z = " Z" + z;
+            }
+            else{
+                koord_x = " Z++";
+            }
 
-                kk("AIR");
-                kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z);
-                kk("CUT");
+            if (this.rapto === true) {
+                dist = Math.hypot(x, y, z);
+                if (dist >= this.rapto_num){
+                    ratio = dist !== 0 ? this.rapto_num / dist : 0;
+                    rdtx = ratio*x;
+                    rdty = ratio*y;
+                    rdtz = ratio*z;
+                    koord__x = x-rdtx;
+                    koord__y = y-rdty;
+                    koord__z = z-rdtz;
 
-                this.rapto = 0;
+                    kk("AIR");
+                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z);
+                    kk("CUT");
+                }
+                this.rapto = false;
             }
             kk("LINE:" + koord_x + koord_y + koord_z);
             }
@@ -512,10 +507,6 @@ export class catiav5_1_0{
                 }
             }
 
-             koord_x=" X++";
-             koord_y=" Y++";
-             koord_z=" Z++";
-
             if (this.ls_dim_typ !== "MOVEMENT: absolute"){
                 kk("MOVEMENT: absolute");
                 this.ls_dim_typ = "MOVEMENT: absolute";
@@ -524,32 +515,45 @@ export class catiav5_1_0{
              y = +elements[2];
              z = +elements[3];
 
-            if (x !== this.ls_x){
-                 koord_x = " X" + x;
+            if (x !== 0){
+                koord_x = " X" + x;
             }
-            if (y !== this.ls_y){
-                 koord_y = " Y" + y;
+            else{
+                koord_x = " X++";
             }
-            if (z !== this.ls_z){
-                 koord_z = " Z" + z;
-            }
-            if (this.rapto === 1){
-                 dtx = this.ls_x - x;
-                 dty = this.ls_y - y;
-                 dtz = this.ls_z - z;
-                 dist = Math.hypot(dtx, dty, dtz);
-                 ratio = dist !== 0 ? this.rapto_num / dist : 0;
-                 rdtx = ratio*dtx;
-                 rdty = ratio*dty;
-                 rdtz = ratio*dtz;
-                 koord__x = koord_x-rdtx;
-                 koord__y = koord_y-rdty;
-                 koord__z = koord_z-rdtz;
-                kk("AIR");
-                kk("LINE: X"+ koord__x + " Y" + koord__y + " Z" + koord__z);
-                kk("CUT");
 
-                this.rapto = 0;
+            if (y !== 0){
+                koord_y = " Y" + y;
+            }
+            else{
+                koord_x = " Y++";
+            }
+
+            if (z !== 0){
+                koord_z = " Z" + z;
+            }
+            else{
+                koord_x = " Z++";
+            }
+
+            if (this.rapto === true){
+                dtx = this.ls_x - x;
+                dty = this.ls_y - y;
+                dtz = this.ls_z - z;
+                dist = Math.hypot(dtx, dty, dtz);
+                if (dist >= this.rapto_num){
+                    ratio = dist !== 0 ? this.rapto_num / dist : 0;
+                    rdtx = ratio*dtx;
+                    rdty = ratio*dty;
+                    rdtz = ratio*dtz;
+                    koord__x = x-rdtx;
+                    koord__y = y-rdty;
+                    koord__z = z-rdtz;
+                    kk("AIR");
+                    kk("LINE: X"+ koord__x + " Y" + koord__y + " Z" + koord__z);
+                    kk("CUT");
+                }
+                this.rapto = false;
             }
             kk("LINE:"+koord_x + koord_y + koord_z);
 
@@ -602,6 +606,10 @@ export class catiav5_1_0{
                     D = "rev";
                     break;
             }
+            if (line.includes("RAPTO")){
+                this.rapto = true;
+                this.rapto_num = +elements2[4];
+            }
             this.ls_tip_posmak = D;
             kk("FEEDRATE: "+D+", "+elements[1].trim());
             break;
@@ -616,9 +624,9 @@ export class catiav5_1_0{
                     kk("MOVEMENT: absolute");
                     this.ls_dim_typ = "MOVEMENT: absolute";
                 }
-                 x = +elements[1];
-                 y = +elements[2];
-                 z = +elements[3];
+                 x = +elements[2];
+                 y = +elements[3];
+                 z = +elements[4];
 
                 if (x !== this.ls_x){
                      koord_x = " X" + x;
@@ -630,27 +638,8 @@ export class catiav5_1_0{
                      koord_z = " Z" + z;
                 }
 
-                if (this.rapto === 1){
-                     dtx = this.ls_x - x;
-                     dty = this.ls_y - y;
-                     dtz = this.ls_z - z;
-                     dist = Math.hypot(dtx, dty, dtz);
-                     ratio = dist !== 0 ? this.rapto_num / dist : 0;
-                     rdtx = ratio*dtx;
-                     rdty = ratio*dty;
-                     rdtz = ratio*dtz;
-                     koord__x = koord_x-rdtx;
-                     koord__y = koord_y-rdty;
-                     koord__z = koord_z-rdtz;
-                    kk("AIR");
-                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z);
-                    kk("CUT");
-
-                    this.rapto = 0;
-                }
                 kk("AIR");
                 kk("LINE: " + koord_x + koord_y + koord_z);
-                kk("CUT");
             
                 this.ls_x=x;
                 this.ls_y=y;
@@ -666,15 +655,15 @@ export class catiav5_1_0{
                     kk("MOVEMENT: incremental");
                     this.ls_dim_typ = "MOVEMENT: incremental";
                 }
-                if (elements.length === 4){
-                     x = +elements[1];
-                     y = +elements[2];
-                     z = +elements[3];
+                if (elements.length === 5){
+                     x = +elements[2];
+                     y = +elements[3];
+                     z = +elements[4];
                 }
-                else if (elements.length === 2){
-                     x = "++";
-                     y = "++";
-                     z = +elements[1];
+                else if (elements.length === 3){
+                     x = 0;
+                     y = 0;
+                     z = +elements[2];
                 }
                 else {
                     kk("ERROR: GODLTA ELEMENTS ARE INCOMPLETE " + line);
@@ -687,37 +676,30 @@ export class catiav5_1_0{
                 if (x !== 0){
                     koord_x = " X" + x;
                 }
+                else{
+                    koord_x = " X++";
+                }
+
                 if (y !== 0){
                     koord_y = " Y" + y;
                 }
+                else{
+                    koord_x = " Y++";
+                }
+
                 if (z !== 0){
                     koord_z = " Z" + z;
                 }
-
-                if (this.rapto === 1) {
-                     dist = Math.hypot(x, y, z);
-                    ratio = dist !== 0 ? this.rapto_num / dist : 0;
-                     rdtx = ratio*x;
-                     rdty = ratio*y;
-                     rdtz = ratio*z;
-                     koord__x = koord_x-rdtx;
-                     koord__y = koord_y-rdty;
-                     koord__z = koord_z-rdtz;
-
-                    kk("AIR");
-                    kk("LINE: X" + koord__x + " Y" + koord__y + " Z" + koord__z);
-                    kk("CUT");
-
-                    this.rapto = 0;
+                else{
+                    koord_x = " Z++";
                 }
+
                 kk("AIR");
                 kk("LINE: " + koord_x + koord_y + koord_z);
-                kk("CUT");
 
             }
-            else {
-                this.rapid = true;
-            }
+            this.rapid = true;
+
             break;
         
         case "COOLNT":
@@ -746,6 +728,10 @@ export class catiav5_1_0{
             }
             break;
         
+        case "AIR_PURGE":
+                kk(line);
+                break;
+        
         case "DELAY":
             D=elements2[1];
             if (line.includes("REV")){
@@ -764,12 +750,14 @@ export class catiav5_1_0{
                     break;
                 case "DATA":
                     this.ls_cyc_data = line.trim();
+                    this.cycleon = true;
                     break;
                 case "OFF":
                     kk(this.ls_cyc_name);
                     kk(this.ls_cyc_data);
                     kk(this.ls_cyc_specific);
                     kk("CYCLE/COORD"+this.ls_cycle_coord);
+                    this.cycleon = false;
                     break;
                 default:
                     this.ls_cyc_specific = line.trim();
@@ -873,6 +861,10 @@ export class catiav5_1_0{
             this.ls_clnt_typ = elements2[4];
             break;
         
+        case "rawG":
+            kk(line);
+            break;
+            
         default:
             if (line.startsWith("ERROR")){
                 kk(line);
@@ -886,6 +878,7 @@ export class catiav5_1_0{
     if (!line.startsWith("RAPID")) {
             this.rapid = false;
     }
+
     console.log(line);
     }
 }
