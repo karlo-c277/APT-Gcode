@@ -193,4 +193,111 @@ Use "rawKK" if you want to bypass a translation layer into KK meaning the code y
 
 ## ROTABL
 - check ROTHED syntacs except ROTHED => ROTABL
+<br>
 
+## TLAXIS
+- for canned cycles tool axis is needed to determine which way does the tool need to go  
+- tlaxis values are defining a unit vector over the I J K vector axies   
+    - `TLAXIS: 0.7071, 0, -0.7071`  
+<br>
+ 
+## LINE  
+- defines a linear movement  
+- line is defined by the 3 coordinates and 3 vectors or 3 angles  
+    - `LINE: X10 Y++ Z30 A24 B35 C++`  
+        - if the multax is off the 3 vectors or angles must not be defined  
+        - if the numerical value hasn't changed or is equal to 0 in incremental it may be valued ++  
+<br>
+
+## DWELL  
+- defines a pause before the next line  
+- dwell values must define type of waiting and amount to wait  
+    - `DWELL: time, 12`  
+        - type can be valued as `time` for time units or `rev` for number of rotations  
+<br>
+
+## ARCH  
+- defines a circular movement  
+- this movement must be executed in the 3 planes but does not need to have a predefined plane  
+- one arch must have a defined centre, circle axis, a vector tangent to it's beginning point, aditional information and the end point  
+    - `ARCH/CENTER, 10, 20, 30`  
+        - defines the center point of the arch  
+        - all 3 coordinates must be defined with numbers  
+    - `ARCH/AXIS, 0.707, -0.707, 0`  
+        - defines the vector of the axis of the arch  
+        - all 3 base vectors must be defined with numbers  
+    - `ARCH/TANGENT, 0.707, -0.707, 0`  
+        - defines the tangent vector to the beginning point  
+        - all 3 base vectors must be defined with numbers  
+    - `ARCH/INFO, 12, cw, 34`  
+        - it must define the arch radius, direction of movement (`cw` or `ccw`)  and the angle between the endpoints and the centre  
+    - `ARCH/END, 11, 22, 33`  
+        - defines the end point of the arch  
+<br>
+
+## SINUS  
+- defines a sinusoidal movement  
+- this movement must be executed in the 3 planes but does not need to have a predefined plane  
+- one sinus must have a defined centre, circle axis, a vector tangent to it's beginning point, aditional information and the end point  
+    - `SINUS/CENTER, 10, 20, 30`  
+        - defines the center point of the sinus  
+        - all 3 coordinates must be defined with numbers  
+    - `SINUS/AXIS, 0.707, -0.707, 0`  
+        - defines the vector of the axis of the sinus  
+        - all 3 base vectors must be defined with numbers   
+    - `SINUS/TANGENT, 0.707, -0.707, 0`  
+        - defines the tangent vector to the beginning point  
+        - all 3 base vectors must be defined with numbers  
+    - `SINUS/INFO, 12`  
+        - it must define the sinus amplitude  
+    - `SINUS/END, 11, 22, 33`  
+        - defines the end point of the sinus  
+<br>
+
+## HELIX
+- defines a helical/spiral movement  
+- this movement must be executed in the 3 planes but does not need to have a predefined plane  
+- one sinus must have a defined centre, circle axis, a vector tangent to it's beginning point, aditional information and the end point  
+    - `HELIX/CENTER, 10, 20, 30`  
+        - defines the center point of the helix  
+        - all 3 coordinates must be defined with numbers  
+    - `HELIX/AXIS, 0.707, -0.707, 0`  
+        - defines the vector of the axis of the helix  
+        - all 3 base vectors must be defined with numbers   
+    - `HELIX/TANGENT, 0.707, -0.707, 0`  
+        - defines the tangent vector to the beginning point  
+        - all 3 base vectors must be defined with numbers  
+    - `HELIX/INFO, 12, cw, 34`  
+        - it must define the helix pitch, radius, height and full turns  
+    - `HELIX/END, 11, 22, 33`  
+        - defines the end point of the helix  
+<br>
+
+## CYCLE  
+- defines a cycle  
+- this movement needs a predefined `TLAXIS` to work  
+- a complete `CYCLE` syntacs must have defined name, general information, specific cycle definition and it's data and coordinates  
+    - `CYCLE/NAME,`  
+        - the name of the cycle  
+    - `CYCLE/DATA,`  
+        - it must define total depth, clearance (not counted in total depth), feedrate type and value, spindle type and value, retaction type (1 = rapid 0 = feed) retract feed  
+        - all of the information must be defined and written with numbers exept for spindle and feed types  
+        - retract feed may be excluded if the retraction type is rapid   
+    - `CYCLE/`:  
+        - `CY0,` 
+            -no aditional parameters  
+        - `CY1,`  
+            - dwell mode defining if it set in time `2` revolutions `1` or none `0`  
+            - dwell value a numerical value  
+        - `CY2,`  
+            - dwell mode defining if it set in time `2` revolutions `1` or none `0`  
+            - dwell value a numerical value  
+            - peck size  
+        - `CY3,`  
+            - dwell mode defining if it set in time `2` revolutions `1` or none `0`  
+            - dwell value a numerical value  
+            - peck size  
+            - decrement rate defining how much does the peck size get smaller in comparison to the previous one  
+            - decrement limit defining how many times will the peck get smaller  
+        - `CY4,`  
+            - thread pitch  
