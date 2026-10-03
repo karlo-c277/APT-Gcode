@@ -119,15 +119,6 @@ export class WinNC_sinumerik{
         write(";"+elements);
         }
         break;
-    
-        case "ADD":
-        if (line.includes("RADIUS")){
-            write("DIAMOF");
-        }
-        else if (line.includes("DIAMETER")){
-            write("DIAMON");
-        }
-        break;
         
         case "rawG":
             D = line.replace("rawG:", "");

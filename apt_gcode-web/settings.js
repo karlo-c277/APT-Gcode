@@ -17,7 +17,7 @@ export function getSettings(){
         output: {}
     };
     if (input === "catiav5_1_0"){
-        window.add_command = "ADD: RADIUS";
+        window.add_command = "";
     }
     else{
         window.add_command = "";
