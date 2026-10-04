@@ -671,7 +671,7 @@ export class WinNC_sinumerik{
 
                             while (this.total_depth > currentDepth){
                                 if (loop_nr <= this.decrement_limit && currentPeck >= 0.05*this.peck){
-                                    currentPeck = this.peck*Math.pow(this.decrement, loop_nr);
+                                    currentPeck = this.peck*Math.pow((1-this.decrement), loop_nr);
                                 }
                                 loop_nr += 1;
                                 write("G1 Z"+(currentPeck*this.tool_k));
@@ -850,10 +850,10 @@ export class WinNC_sinumerik{
                             let currentPeck = this.peck;
                             while (this.total_depth > currentDepth){
                                 if (loop_nr <= this.decrement_limit && currentPeck >= 0.05*this.peck){
-                                    currentPeck = this.peck*Math.pow(this.decrement, loop_nr);
+                                    currentPeck = this.peck*Math.pow((1-this.decrement), loop_nr);
                                 }
                                 loop_nr += 1;
-                                write("G1 Y"+(currentPeck*this.tool_k));
+                                write("G1 Y"+(currentPeck*this.tool_j));
                                 D = this.total_depth - currentDepth;
                                 currentDepth += currentPeck;
                                 write(this.cyc_dwell);
@@ -1029,10 +1029,10 @@ export class WinNC_sinumerik{
                             let currentPeck = this.peck;
                             while (this.total_depth > currentDepth){
                                 if (loop_nr <= this.decrement_limit && currentPeck >= 0.05*this.peck){
-                                    currentPeck = this.peck*Math.pow(this.decrement, loop_nr);
+                                    currentPeck = this.peck*Math.pow((1-this.decrement), loop_nr);
                                 }
                                 loop_nr += 1;
-                                write("G1 X"+(currentPeck*this.tool_k));
+                                write("G1 X"+(currentPeck*this.tool_i));
                                 D = this.total_depth - currentDepth;
                                 currentDepth += currentPeck;
                                 write(this.cyc_dwell);

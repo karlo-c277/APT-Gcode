@@ -10,19 +10,20 @@ There are some .txt files those are for testing your code.
 
 calculate the axis for the circles and see that is the 3d circle
 calculate axis for the sinus/cylindr which is the direction of the center line
-make function for linesplit if there is 3 values 4 values 5 or 6
+see how does catia define decrement
+see how catia defines decrement limit
 catia start what is axis lock
-                    axis move
-                    CUTCOM  normds/ps
-            nc machining axis does it matter
-            mill turet orientation/inversion
-            head rotation
-            table rotation
-            nc origin
-            see how to implement circular milling if at all
-            same for lathe thread and t slot
-            what are all coolant supply sytacs
-catia enb
+                        axis move
+                        CUTCOM  normds/ps
+                        nc machining axis does it matter
+                        mill turet orientation/inversion
+                        head rotation
+                        table rotation
+                        nc origin
+                        see how to implement circular milling if at all
+                        same for lathe thread and t slot
+                        what are all coolant supply sytacs
+catia end
 do auto code recognition
 do like fast code input like for the manual writing there is a menu with like code blocks and user click on one it sawns in the text box and he has to enter the data
 does the winnc im talking about actually support iso mode

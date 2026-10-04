@@ -447,14 +447,14 @@ export class catiav5_1_0{
                 koord_y = " Y" + y;
             }
             else{
-                koord_x = " Y++";
+                koord_y = " Y++";
             }
 
             if (z !== 0){
                 koord_z = " Z" + z;
             }
             else{
-                koord_x = " Z++";
+                koord_z = " Z++";
             }
 
             if (this.rapto === true) {
@@ -682,14 +682,14 @@ export class catiav5_1_0{
                     koord_y = " Y" + y;
                 }
                 else{
-                    koord_x = " Y++";
+                    koord_y = " Y++";
                 }
 
                 if (z !== 0){
                     koord_z = " Z" + z;
                 }
                 else{
-                    koord_x = " Z++";
+                    koord_z = " Z++";
                 }
 
                 kk("AIR");
