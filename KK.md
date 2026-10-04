@@ -295,7 +295,9 @@ Use "rawKK" if you want to bypass a translation layer into KK meaning the code y
             - peck size  
         - `CY3,`  
             - dwell mode defining if it set in time `2` revolutions `1` or none `0`  
-            - dwell value a numerical value  
+            - dwell value in time  
+            - dwell value in revolutions  
+                - if dwell mode is set in revs dwell value can be defined as 0 and vice versa  
             - peck size  
             - decrement rate defining how much does the peck size get smaller in comparison to the previous one  
             - decrement limit defining how many times will the peck get smaller  

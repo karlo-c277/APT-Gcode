@@ -85,8 +85,6 @@ export class catiav5_1_0{
             this.header = true;
         }
         if (!line || !line.trim()) {return};
-        console.log(line);
-        
 
         elements = line.split(/[,/ ]+/);
         elements2 = line.split(/[,/]/);
@@ -135,7 +133,7 @@ export class catiav5_1_0{
             x = elements[1].trim();
             y = elements[2].trim();
             z = elements[3].trim();
-            kk("TLAXIS "+x+" "+y+" "+z);
+            kk("TLAXIS: "+x+", "+y+", "+z);
             this.multax = false;
             kk("MULTAX: off")
             break;
@@ -592,7 +590,7 @@ export class catiav5_1_0{
                             x = "surface";
                             break;
                     }
-                    this.ls_spindle = "SPINDLE: on, "+elements2[1].trim()+", "+x+", "+D+", 1";
+                    this.ls_spindle = "SPINDLE: on, "+elements2[1].trim()+", "+x+", "+D;
                     break;
             }
             break;
@@ -752,7 +750,14 @@ export class catiav5_1_0{
                     this.ls_cyc_data = line.trim();
                     this.cycleon = true;
                     break;
-                case "OFF":
+                case "CY0":
+                case "CY1":
+                case "CY2":
+                case "CY3":
+                case "CY4":
+                    this.ls_cyc_specific = line.trim();
+                    break;                
+                case "END":
                     kk(this.ls_cyc_name);
                     kk(this.ls_cyc_data);
                     kk(this.ls_cyc_specific);
@@ -884,7 +889,7 @@ export class catiav5_1_0{
             this.rapid = false;
     }
 
-    console.log(line);
+
     }
 }
 export class kkod{

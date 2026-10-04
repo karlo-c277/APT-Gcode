@@ -6,6 +6,7 @@ let jsonOutput = [];
 
 export function kk(line){
     jsonOutput.push(line.trim());
+    console.log("***"+line);
 }
 
 
@@ -34,7 +35,10 @@ export function clearOutput(){
 
 
 export function write(line){
+    if (!(line.trim() === "")){
     output.push(line.trim());
+    }
+    console.log("###"+line);
 }
 
 
