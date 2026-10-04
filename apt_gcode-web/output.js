@@ -79,7 +79,84 @@ export function downloadOutput(text,settings){
     link.click();
     URL.revokeObjectURL(link.href);
 }
+
+
 export function getLastJSON() {
     return jsonOutput[jsonOutput.length - 1];
 }
+
+
+export function findDirection2D(tang1, begin1, center1, tang2, begin2, center2){
+    let D = tang1*(begin2-center2)-tang2*(begin1-center1);
+    if (D<0){
+        return "G3";
+    }
+    else if (D>0){
+        return "G2";
+    }
+    else{
+        return false;
+    }
+}
+
+// true means the coordinate is stable does not change- not a part of the plane
+export function getPlane(...coords){
+    let x_value = true;
+    let y_value = true;
+    let z_value = true;
+    let x_last;
+    let y_last;
+    let z_last;
+    for (const [x,y,z,id] of coords){
+        if (id === "vec"){
+            if (x!=0){
+                x_value = false;
+            }
+            if (y!=0){
+                y_value = false;
+            }
+            if (z!=0){
+                z_value = false;
+            }
+        }
+        else if (id === "cor"){
+            if (typeof x_last === "undefined" || x_last == x){
+                x_last = x;
+            }
+            else{
+                x_value = false;
+            }
+
+            if (typeof y_last === "undefined" || y_last == y){
+                y_last = y;
+            }
+            else{
+                y_value = false;
+            }
+
+            if (typeof z_last === "undefined" || z_last == z){
+                z_last = z;
+            }
+            else{
+                z_value = false;
+            }
+        }
+    }
+    if (x_value && y_value){
+        return "xy";
+    }
+    else if (x_value && z_value){
+        return "xz";
+    }
+    else if (y_value && z_value){
+        return "yz";
+    }
+    else if (x_value && y_value && z_value){
+        return null;
+    }
+    else{
+        return false;
+    }
+}
+
 {}

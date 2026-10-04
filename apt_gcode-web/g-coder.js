@@ -1,4 +1,4 @@
-import {write} from "./output.js";
+import {write, findDirection2D} from "./output.js";
 
 export class WinNC_sinumerik{
     constructor(settings){
@@ -61,9 +61,6 @@ export class WinNC_sinumerik{
         let i;
         let j;
         let k;
-        let vektor2_x;
-        let vektor2_y;
-        let vektor2_z;
         let kraj_x;
         let kraj_y;
         let kraj_z;
@@ -411,6 +408,7 @@ export class WinNC_sinumerik{
             }
             break;
 
+                    console.log(element);
         case "#":
         write(line);
         break;
@@ -1111,64 +1109,37 @@ export class WinNC_sinumerik{
                     kraj_x = +element[1];
                     kraj_y = +element[2];
                     kraj_z = +element[3];
-                    console.log(element);
+
+                    getPlane(
+                        [this.ls_x, this.ls_y, this.ls_z, "cor"],
+                        [this.helix_center_x, this.helix_center_y, this.helix_center_z, "cor"],
+                        [this.ls_i, this.ls_j, this.ls_k, "ver"]
+                    );
                 
                     if (Math.abs(this.helix_axis_j) === 1){
-                        vektor2_x = this.ls_x - this.helix_center_x;
-                        vektor2_z = this.ls_z - this.helix_center_z;
-                        D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
+                        movement = findDirection2D(this.ls_k, this.ls_z, this.helix_center_z, this.ls_i, this.ls_x, this.helix_center_x);
                         if (this.plane !== "xz"){
                             write("G18");
-                        }
-                
-                        if (D>0){
-                            movement = "G3";
-                        }
-                        else if (D<0){
-                            movement = "G2";
-                        }
-                        else {
-                            write("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
                         }
                         coord = ("I"+this.helix_center_x+" K"+this.helix_center_z);
                     }   
                     else if (Math.abs(this.helix_axis_k)=== 1){
-                        vektor2_x = this.ls_x - this.helix_center_x;
-                        vektor2_y = this.ls_y - this.helix_center_y;
-                        D = this.ls_i * vektor2_y - vektor2_x * this.ls_j;
+                        movement = findDirection2D(this.ls_i, this.ls_x, this.helix_center_x, this.ls_j, this.ls_y, this.helix_center_y);
                         if (this.plane !== "xy"){
                             write("G17");
-                        }
-
-                        if (D<0){
-                            movement = "G3";
-                        }
-                        else if (D>0){
-                            movement = "G2";
-                        }
-                        else {
-                            write("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
                         }
                         coord = ("I"+this.helix_center_x+" J"+this.helix_center_y);
                     }
                     else if (Math.abs(this.helix_axis_i) === 1){
-                        vektor2_y = this.ls_y - this.helix_center_y;
-                        vektor2_z = this.ls_z - this.helix_center_z;
-                        D = this.ls_j * vektor2_z - vektor2_y * this.ls_k;
+                        movement = findDirection2D(this.ls_j, this.ls_y, this.helix_center_y, this.ls_k, this.ls_z, this.helix_center_z);
                         if (this.plane !== "zy"){
                             write("G19");
                         }
 
-                        if (D<0){
-                        movement = "G3";
-                        }
-                        else if (D>0){
-                            movement = "G2";
-                        }
-                        else {
-                            write("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
-                        }
                         coord = ("J"+this.helix_center_y+" K"+this.helix_center_z);
+                    }
+                    if (!movement){
+                        write("ERROR center is on the arch tangent");
                     }
                 write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+" TURN="+this.helix_turns);
                 this.ls_x = kraj_x;
