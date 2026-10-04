@@ -218,7 +218,7 @@ Use "rawKK" if you want to bypass a translation layer into KK meaning the code y
 
 ## ARCH  
 - defines a circular movement  
-- this movement must be executed in the 3 planes but does not need to have a predefined plane  
+- this movement must be executed in the 3 planes and needs to have a predefined plane  
 - one arch must have a defined centre, circle axis, a vector tangent to it's beginning point, aditional information and the end point  
     - `ARCH/CENTER, 10, 20, 30`  
         - defines the center point of the arch  

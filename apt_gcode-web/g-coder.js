@@ -42,6 +42,7 @@ export class WinNC_sinumerik{
         this.decrement;
         this.decrement_limit;
         this.pitch;
+        this.plane;
 
     }
     gcoder(line){
@@ -109,12 +110,15 @@ export class WinNC_sinumerik{
         case "PLANE":
         if (line.includes("xy")){
             write("G17");
+            this.plane = "xy";
         }
         else if (line.includes("xz")){
             write("G18");
+            this.plane = "xz";
         }
         else if (line.includes("zy")){
             write("G19");
+            this.plane = "zy";
         }
         break;
 
@@ -377,36 +381,36 @@ export class WinNC_sinumerik{
         }            
         break;
     
-        case "ARCH/CENTER":
-        case "ARCH/AXIS":
-        case "ARCH/TANGENT":
-        break;
+        case "ARCH":
+            switch(start[1].trim()){
 
-        case "ARCH/INFO":
-            this.arch_radius = +element[1];
-            this.arch_direction = +element[2];
-            this.arch_angle = +element[3];
-        break;
-        
-        case "ARCH/END":
-        this.ls_x = +element[1];
-        this.ls_y = +element[2];
-        this.ls_z = +element[3];
+                case "INFO":
+                    this.arch_radius = +element[1];
+                    this.arch_direction = +element[2];
+                    this.arch_angle = +element[3];
+                break;
+
+                case "END":
+                    this.ls_x = +element[1];
+                    this.ls_y = +element[2];
+                    this.ls_z = +element[3];
 
 
-        if (this.arch_direction === "cw"){
-            this.arch_direction = "G2";
-        }
-        else if (this.arch_direction === "ccw"){
-            this.arch_direction = "G3";
-        }
-        if (this.arch_angle > 180){
-            this.arch_radius = (-1)*this.arch_radius;
-        }
-        write(this.arch_direction + " X" + this.ls_x + " Y" +  this.ls_y + " Z" +  this.ls_z + " R" +  this.arch_radius);
-        this.rapid = false;
-        break;
-    
+                    if (this.arch_direction === "cw"){
+                        this.arch_direction = "G2";
+                    }
+                    else if (this.arch_direction === "ccw"){
+                        this.arch_direction = "G3";
+                    }
+                    if (this.arch_angle > 180){
+                        this.arch_radius = (-1)*this.arch_radius;
+                    }
+                    write(this.arch_direction + " X" + this.ls_x + " Y" +  this.ls_y + " Z" +  this.ls_z + " R" +  this.arch_radius);
+                    this.rapid = false;
+                break;
+            }
+            break;
+
         case "#":
         write(line);
         break;
@@ -1074,92 +1078,107 @@ export class WinNC_sinumerik{
         case "SINUS":
             write("ERROR this controler does not support sinusoidal movement");
             break;
+   
+        case "HELIX":
+            switch (start[1].trim()){
 
-        case "HELIX/CENTER":
-            this.helix_center_x = +element[1];
-            this.helix_center_y = +element[2];
-            this.helix_center_z = +element[3];
-        break;
+                case "CENTER":
+                    this.helix_center_x = +element[1];
+                    this.helix_center_y = +element[2];
+                    this.helix_center_z = +element[3];
+                break;
 
-        case "HELIX/TANGENT":
-            this.ls_i = +element[1];
-            this.ls_j = +element[2];
-            this.ls_k = +element[3];
-        break;
+                case "TANGENT":
+                    this.ls_i = +element[1];
+                    this.ls_j = +element[2];
+                    this.ls_k = +element[3];
+                break;
 
-        case "HELIX/AXIS":
-            this.helix_axis_i = +element[1];
-            this.helix_axis_j = +element[2];
-            this.helix_axis_k = +element[3];
-        break;
+                case "AXIS":
+                    this.helix_axis_i = +element[1];
+                    this.helix_axis_j = +element[2];
+                    this.helix_axis_k = +element[3];
+                break;
 
-        case "HELIX/INFO":
-            this.helix_pitch = +element[1];
-            this.helix_radius = +element[2];
-            this.helix_height = +element[3];
-            this.helix_turns = +element[4];
-        break;
+                case "INFO":
+                    this.helix_pitch = +element[1];
+                    this.helix_radius = +element[2];
+                    this.helix_height = +element[3];
+                    this.helix_turns = +element[4];
+                break;
 
-        case "HELIX/END":
-            kraj_x = +elements[1];
-            kraj_y = +elements[2];
-            kraj_z = +elements[3];
-
-        
-        if (Math.abs(this.helix_axis_j) === 1){
+                case "END":
+                    kraj_x = +element[1];
+                    kraj_y = +element[2];
+                    kraj_z = +element[3];
+                    console.log(element);
+                
+                    if (Math.abs(this.helix_axis_j) === 1){
                         vektor2_x = this.ls_x - this.helix_center_x;
                         vektor2_z = this.ls_z - this.helix_center_z;
                         D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
-        
-                        if (D<0){
-                            movement = "G2";
+                        if (this.plane !== "xz"){
+                            write("G18");
                         }
-                        else if (D>0){
+                
+                        if (D>0){
                             movement = "G3";
+                        }
+                        else if (D<0){
+                            movement = "G2";
                         }
                         else {
                             write("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line)
                         }
                         coord = ("I"+this.helix_center_x+" K"+this.helix_center_z);
-        }
-        else if (Math.abs(this.helix_axis_k)=== 1){
-                            vektor2_x = this.ls_x - this.helix_center_x;
-                            vektor2_y = this.ls_y - this.helix_center_y;
-                            D = this.ls_i * vektor2_y - vektor2_x * this.ls_j;
-        
-                            if (D<0){
-                                movement = "G2";
-                            }
-                            else if (D>0){
-                                movement = "G3";
-                            }
-                            else {
-                                write("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
-                            }
-                            coord = ("I"+this.helix_center_x+" J"+this.helix_center_y);
-        }
-        else if (Math.abs(this.helix_axis_2) === 1){
-                            vektor2_y = this.ls_y - this.helix_center_y;
-                            vektor2_z = this.ls_z - this.helix_center_z;
-                            D = this.ls_j * vektor2_z - vektor2_y * this.ls_k;
-        
-                            if (D<0){
+                    }   
+                    else if (Math.abs(this.helix_axis_k)=== 1){
+                        vektor2_x = this.ls_x - this.helix_center_x;
+                        vektor2_y = this.ls_y - this.helix_center_y;
+                        D = this.ls_i * vektor2_y - vektor2_x * this.ls_j;
+                        if (this.plane !== "xy"){
+                            write("G17");
+                        }
+
+                        if (D<0){
+                            movement = "G3";
+                        }
+                        else if (D>0){
                             movement = "G2";
-                            }
-                            else if (D>0){
-                                movement = "G3";
-                            }
-                            else {
-                                write("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
-                            }
-                            coord = ("J"+this.helix_center_y+" K"+this.helix_center_z);
-        }
-        write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+" TURN="+this.helix_turns);
-        this.ls_x = +kraj_x;
-        this.ls_y = +kraj_y;
-        this.ls_z = +kraj_z;
+                        }
+                        else {
+                            write("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line)
+                        }
+                        coord = ("I"+this.helix_center_x+" J"+this.helix_center_y);
+                    }
+                    else if (Math.abs(this.helix_axis_i) === 1){
+                        vektor2_y = this.ls_y - this.helix_center_y;
+                        vektor2_z = this.ls_z - this.helix_center_z;
+                        D = this.ls_j * vektor2_z - vektor2_y * this.ls_k;
+                        if (this.plane !== "zy"){
+                            write("G19");
+                        }
+
+                        if (D<0){
+                        movement = "G3";
+                        }
+                        else if (D>0){
+                            movement = "G2";
+                        }
+                        else {
+                            write("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line)
+                        }
+                        coord = ("J"+this.helix_center_y+" K"+this.helix_center_z);
+                    }
+                write(movement+" X"+kraj_x+" Y"+kraj_y+" Z"+kraj_z+" "+coord+" TURN="+this.helix_turns);
+                this.ls_x = kraj_x;
+                this.ls_y = kraj_y;
+                this.ls_z = kraj_z;
+                break;
+
+            }
         break;
-    
+
         default:
         write("UNREGISTERD COMMAND" + line);
         break;

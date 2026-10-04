@@ -248,11 +248,11 @@ export class catiav5_1_0{
                     D = this.ls_i * vektor2_z - vektor2_x * this.ls_k;
 
 
-                    if (D<0){
-                        movement = "cw";
-                    }
-                    else if (D>0){
+                    if (D>0){
                         movement = "ccw";
+                    }
+                    else if (D<0){
+                        movement = "cw";
                     }
                     else {
                         kk("ERROR CIRCLE CENTER XZ IS ON THE CIRCLE TANGENT " + line);
@@ -282,10 +282,10 @@ export class catiav5_1_0{
 
 
                     if (D<0){
-                        movement = "cw";
+                        movement = "ccw";
                     }
                     else if (D>0){
-                        movement = "ccw";
+                        movement = "cw";
                     }
                     else {
                         kk("ERROR CIRCLE CENTER XY IS ON THE CIRCLE TANGENT " + line);
@@ -314,10 +314,10 @@ export class catiav5_1_0{
                     D = +this.ls_j * vektor2_z - vektor2_y * +this.ls_k;
 
                     if (D<0){
-                    movement = "cw";
+                    movement = "ccw";
                     }
                     else if (D>0){
-                        movement = "ccw";
+                        movement = "cw";
                     }
                     else {
                         kk("ERROR CIRCLE CENTER ZY IS ON THE CIRCLE TANGENT " + line);
@@ -385,6 +385,7 @@ export class catiav5_1_0{
         
         case "HELICAL":
             D = line.replace("HELICAL","HELIX");
+            kk(D);
             break;
         
         case "GODLTA":
@@ -435,27 +436,6 @@ export class catiav5_1_0{
             this.ls_x +=x;
             this.ls_y +=y;
             this.ls_z +=z;
-            
-            if (x !== 0){
-                koord_x = " X" + x;
-            }
-            else{
-                koord_x = " X++";
-            }
-
-            if (y !== 0){
-                koord_y = " Y" + y;
-            }
-            else{
-                koord_y = " Y++";
-            }
-
-            if (z !== 0){
-                koord_z = " Z" + z;
-            }
-            else{
-                koord_z = " Z++";
-            }
 
             if (this.rapto === true) {
                 dist = Math.hypot(x, y, z);
@@ -474,20 +454,18 @@ export class catiav5_1_0{
                 }
                 this.rapto = false;
             }
-            kk("LINE:" + koord_x + koord_y + koord_z);
+            kk("LINE: X" + x + " Y" + y + " Z" + z);
             }
             break;
         
         case "GOTO":
+            x = +elements[1];
+            y = +elements[2];
+            z = +elements[3];
             if (this.cycleon === true) {
-                x = +elements[1];
-                y = +elements[2];
-                z = +elements[3];
-
                 this.ls_x = x;
                 this.ls_y = y;
                 this.ls_z = z;
-
 
                 this.ls_cycle_coord += "/ "+ this.ls_x +", "+ this.ls_y +", "+ this.ls_z+" ";
             }
@@ -509,30 +487,6 @@ export class catiav5_1_0{
                 kk("MOVEMENT: absolute");
                 this.ls_dim_typ = "MOVEMENT: absolute";
             }
-             x = +elements[1];
-             y = +elements[2];
-             z = +elements[3];
-
-            if (x !== 0){
-                koord_x = " X" + x;
-            }
-            else{
-                koord_x = " X++";
-            }
-
-            if (y !== 0){
-                koord_y = " Y" + y;
-            }
-            else{
-                koord_x = " Y++";
-            }
-
-            if (z !== 0){
-                koord_z = " Z" + z;
-            }
-            else{
-                koord_x = " Z++";
-            }
 
             if (this.rapto === true){
                 dtx = this.ls_x - x;
@@ -553,11 +507,12 @@ export class catiav5_1_0{
                 }
                 this.rapto = false;
             }
-            kk("LINE:"+koord_x + koord_y + koord_z);
+            kk("LINE: X"+ x + " Y" + y + " Z" + z);
 
             this.ls_x=x;
             this.ls_y=y;
             this.ls_z=z;
+
             }
             break;
         
