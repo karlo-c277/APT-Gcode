@@ -158,5 +158,20 @@ export function getPlane(...coords){
         return false;
     }
 }
+export function checkVector(i,j,k){
+    let isPlanar = false;
+    let isSingle = false;
+    let isCorrect = false;
+    if ((i.trim()!== "")&&(j.trim()!== "")&&(k.trim()!== "")&&((Math.abs(Math.pow(i,2) + Math.pow(j,2) + Math.pow(k,2) - 1)) < 0.01)){
+            isCorrect = true;
+        if ((i !==0) || (j!==0) || (k!==0)){
+            isPlanar = true;
+                if ((Math.abs(i) === 1) || (Math.abs(j) === 1) || (Math.abs(k) === 1)){
+                    isSingle = true;
+                }
+        }
+    }
+    return [isCorrect,isPlanar,isSingle];
+}
 
 {}
