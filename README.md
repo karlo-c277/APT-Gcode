@@ -1,10 +1,10 @@
 # APT-Gcode
 This is an open source post processor for ATP files outputed by CAM programs  
 It features - translating ATP commands into G-code, also it has select presets for output files, so you dont need to worry if your controler will open the file. But also it allows to make a costum file header, name and extension  
-            - a very cool background in both localhosting and website use 
+            - a very cool background in both localhosting and website use   
   
 # Usage
-Just open up this link below, there are some DEMO files there for those who dont have APT files ready 
+Just open up this link below, there are some DEMO files there for those who dont have APT files ready   
 http://karlougrin.com/apt_gcode-web/index-apt.html  
   
 ![alt text](image_3.png)  
@@ -27,13 +27,11 @@ v2.+ Support for other CNC controlers and APT codes
   
   
 # Local run
-1. Have VS Code or VS Codium  
-2. Have Latest-ih version of Node.js  
-3. Download zip file or clone the repo  
-4. Open in either one in editor  
-5. Run: npm install  
-6. Run: npm run dev   
-7. open this link: http://localhost:5173/index-apt.html  
+1. Download VS Code or Codium
+2. Download Live server extension
+3. In the folder apt-gcode-web, open index-apt.html
+4. In bottom right corner there is a button "Go Live", click it
+5. Once done so the extension will automatically open a card in a dedicated browser routed a local port where you can use it
   
   
 NOTE: doing so will open the newest version which may include some minor issues or bugs but it will contain some newer features that aren't available on website version 

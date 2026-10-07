@@ -8,6 +8,8 @@ export class catiav5_1_0{
         this.tool_k;
         this.multax;
         this.autops = false;
+        this.ls_coord;
+        this.ls_circle_tan;
 
     }
     parseline(line){
@@ -38,9 +40,7 @@ export class catiav5_1_0{
             case "TLAXIS":
                 D = tlaxis(elements2);
                 if (D[0]){
-                    this.tool_i = D[1];
-                    this.tool_j = D[2];
-                    this.tool_k = D[3];
+                    this.tool_axis = [+D[1], +D[2], +D[3]];
                     this.multax = false;
                     console.log("***"+line);
                 }
@@ -161,7 +161,8 @@ export class catiav5_1_0{
             break;
 
             case "TLON":
-                D = tlon(line);
+                D = tlon(line, ...this.ls_coord, ...this.ls_circle_tan);
+
         }
     }
 }

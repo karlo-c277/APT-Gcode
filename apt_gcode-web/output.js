@@ -98,6 +98,18 @@ export function findDirection2D(tang1, begin1, center1, tang2, begin2, center2){
         return false;
     }
 }
+export function findDirection(tang1, begin1, center1, tang2, begin2, center2){
+    let D = tang1*(begin2-center2)-tang2*(begin1-center1);
+    if (D<0){
+        return "ccw";
+    }
+    else if (D>0){
+        return "cw";
+    }
+    else{
+        return false;
+    }
+}
 
 // true means the coordinate is stable does not change- not a part of the plane
 export function getPlane(...coords){
@@ -107,34 +119,37 @@ export function getPlane(...coords){
     let x_last;
     let y_last;
     let z_last;
-    for (const [x,y,z,id] of coords){
+    for (const [id,x,y,z] of coords){
+        x = Number(x);
+        y = Number(y);
+        z = Number(z);
         if (id === "vec"){
-            if (x!=0){
+            if (x!==0){
                 x_value = false;
             }
-            if (y!=0){
+            if (y!==0){
                 y_value = false;
             }
-            if (z!=0){
+            if (z!==0){
                 z_value = false;
             }
         }
         else if (id === "cor"){
-            if (typeof x_last === "undefined" || x_last == x){
+            if (typeof x_last === "undefined" || x_last === x){
                 x_last = x;
             }
             else{
                 x_value = false;
             }
 
-            if (typeof y_last === "undefined" || y_last == y){
+            if (typeof y_last === "undefined" || y_last === y){
                 y_last = y;
             }
             else{
                 y_value = false;
             }
 
-            if (typeof z_last === "undefined" || z_last == z){
+            if (typeof z_last === "undefined" || z_last === z){
                 z_last = z;
             }
             else{
@@ -142,8 +157,8 @@ export function getPlane(...coords){
             }
         }
     }
-    if (x_value && y_value){
-        return "xy";
+    if (x_value && y_value && z_value){
+        return null;
     }
     else if (x_value && z_value){
         return "xz";
@@ -151,8 +166,8 @@ export function getPlane(...coords){
     else if (y_value && z_value){
         return "yz";
     }
-    else if (x_value && y_value && z_value){
-        return null;
+    else if (x_value && y_value){
+        return "xy";
     }
     else{
         return false;
