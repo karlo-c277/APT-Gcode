@@ -152,7 +152,7 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
         start:      ["cor",start_x,start_y,start_z],
         tangent:    ["vec",tan_x,tan_y,tan_z]}
         );
-        return false;
+        return [false];
     }
     else if (!D){
         write("ERROR with plane definition, check console log");
@@ -162,7 +162,7 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
         start:      ["cor",start_x,start_y,start_z],
         tangent:    ["vec",tan_x,tan_y,tan_z]}
         );
-        return false
+        return [false];
     }
     else{
         switch (D.trim()){
@@ -204,12 +204,134 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
 }
 
 export function helix(start, center, tan, axis, info, end){
+    let tan_x = +tan[0];
+    let tan_y = +tan[1];
+    let tan_z = +tan[2];
+
+    let start_x = +start[0];
+    let start_y = +start[1];
+    let start_z = +start[2];
+
+    let center_x = +center[0];
+    let center_y = +center[1];
+    let center_z = +center[2];
+
+    let end_x = +end[0];
+    let end_y = +end[1];
+    let end_z = +end[2];
+
+    let turns = +info[3];
     getPlane(
         ["cor",...center],
         ["cor",...start],
         ["vec",...tan],
         ["axs",...axis]
     );
+    if (D === null){
+        write("ERROR with plane definition not enough data to define a plane, check console log");
+        console.error("ERROR with plane definition not enough data to define a plane, this are the given inputs",{
+        center:     ["cor",...center],
+        axis:       ["axs",...axis],
+        start:      ["cor",...start],
+        tangent:    ["vec",...tan]}
+        );
+        return [false];
+    }
+    else if (!D){
+        write("ERROR with plane definition, check console log");
+        console.error("ERROR with plane definition, this are the given inputs",{
+        center:     ["cor",...center],
+        axis:       ["axs",...axis],
+        start:      ["cor",...start],
+        tangent:    ["vec",...tan]}
+        );
+        return [false];
+    }
+    else{
+        switch (D.trim()){
+            case "xy":
+                write("G17");
+                direction =findDirection(tan_x,start_x,center_x,tan_y,start_y,center_y);
+                report_data = [tan_x,start_x,center_x,tan_y,start_y,center_y];
+                report_data2 ="tan_x,start_x,center_x,tan_y,start_y,center_y";
+            break;
+            case "xz":
+                write("G18");
+                direction =findDirection(tan_z,start_z,center_z,tan_x,start_x,center_x);
+                report_data = [tan_z,start_z,center_z,tan_x,start_x,center_x];
+                report_data2 ="tan_z,start_z,center_z,tan_x,start_x,center_x";
+            break;
+            case "yz":
+                write("G19");
+                direction =findDirection(tan_y,start_y,center_y,tan_z,start_z,center_z);
+                report_data = [tan_y,start_y,center_y,tan_z,start_z,center_z];
+                report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
+            break;
+        }
+    
+
+        if (!direction){
+            write("ERROR with direction definition check console log"+ report_data+"\n"+report_data2);
+            console.error("ERROR with direction definition check this is the given data: "+ report_data+"\n"+report_data2);
+            return [false];
+        }
+        else if (direction === "cw"){
+            write("G2 X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
+            return [true,[end_x,end_y,end_z]];
+        }
+        else{
+            write("G3 X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
+            return [true,[end_x,end_y,end_z]];
+        }
+    }
+}
+
+export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
+    let dim;
+    let move;
+
+    if (dim_typ !== "G91"){
+        write("G91");
+        dim = "G91";
+    }
+
+    if (rapid && (movement === "G1")){
+        write("G1");
+        move = "G1";
+    }
+    else if (movement === "G0"){
+        write("G0");
+        move = "G0";
+    }
+    
+    if (rapto){
+        let ratio;
+        let rdtx;
+        let rdty;
+        let rdtz;
+        let koord__x;
+        let koord__y;
+        let koord__z;
+        let dist = Math.hypot(...coord);
+        if (dist >= rapto_num){
+            ratio = dist !== 0 ? rapto_num / dist : 0;
+            rdtx = ratio*+coord[0];
+            rdty = ratio*+coord[1];
+            rdtz = ratio*+coord[2];
+            koord__x = +coord[0]-rdtx;
+            koord__y = +coord[1]-rdty;
+            koord__z = +coord[2]-rdtz;
+
+            write("G0");
+            write("X" + rdtx + " Y" + rdty + " Z" + rdtz);
+            if (move==="G1"){
+                write("G1");
+            }
+        }
+        write("X" + koord__x + " Y" + koord__y + " Z" + koord__z);
+
+    }
+    return[dim,move];
 }
 
 

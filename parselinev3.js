@@ -20,7 +20,7 @@ export class catiav5_1_0{
         const {
             compensation_chg,   tlaxis,         loadtl,     writeComment,   selectl,
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
-            tlon
+            tlon,               helix,          godlta
         } = this.func;
 
         let D;
@@ -156,7 +156,7 @@ export class catiav5_1_0{
                     }
                     else if(D[1]==="circle"){
                         if (!D[2][0]){
-                            wError("ERROR with determinating if the arch is cw or ccw");
+                            wError("ERROR with element determination (cw or ccw/plane definition)");
                         }
                         else{
                             this.ls_coord = D[2][1];
@@ -182,9 +182,39 @@ export class catiav5_1_0{
                     case "END":
                         this.helix_end = [+elements[2],+elements[2],+elements[4]];
                         D = helix(this.ls_coord,this.helix_center, this.helix_tan, this.helix_axis, this.helix_info, this.helix_end);
-                        els = true;
+                        if (!D[0]){
+                            wError("ERROR with element determination (cw or ccw/plane definition)");
+                        }
+                        else{
+                            this.ls_coord = D[1];
+                        }
                     break;
                 }
+            break;
+
+            case "GODLTA":
+                if (elements.length===4){
+                    els = [+elements[1],+elements[2],+elements[3]];
+                }
+                else if (elements.length===2){
+                    els = [0,0,+elements[1]];
+                }
+                else{
+                    wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
+                }
+
+                this.ls_coord = coord.map((v, i) => v + abc[i]);
+                if (this.cycleon){
+                    this.cyc_coord.push(this.ls_coord);
+                }
+                else{
+                    D = godlta(coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                    this.rapto = false;
+                    this.ls_dim_typ = D[0];
+                    this.ls_movement = D[1];
+                }
+
+                   
 
 
         }
