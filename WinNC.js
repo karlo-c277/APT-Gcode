@@ -203,15 +203,18 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
     }
 }
 
+export function helix(start, center, tan, axis, info, end){
+    getPlane(
+        ["cor",...center],
+        ["cor",...start],
+        ["vec",...tan],
+        ["axs",...axis]
+    );
+}
+
 
 export function writeComment(el){
     write(";"+el);
     console.log("**.**;"+el)
     return true;
 }
-
-TLON,GOFWD/ (CIRCLE/ Xc, Yc, Zc,Rad),ON,(LINE/ Xc, Yc, Zc, Xe, Ye, Ze)
-TLON,GOFWD/ CIRCLE/ Xc, Yc, Zc,Rad,ON,LINE/ Xc, Yc, Zc, Xe, Ye, Ze
-
-TLON,GOFWD/ (CIRCLE/ Xc, Yc, Zc,Rad),ON,2,INTOF,(LINE/ Xc, Yc, Zc, Xe, Ye, Ze)
-TLON,GOFWD/ CIRCLE/ Xc, Yc, Zc,Rad,2,LINE/ Xc, Yc, Zc, Xe, Ye, Ze

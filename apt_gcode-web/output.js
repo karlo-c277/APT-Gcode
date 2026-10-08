@@ -9,6 +9,11 @@ export function kk(line){
     console.log("***"+line);
 }
 
+export function wError (line){
+    write(line);
+    console.error(line)
+}
+
 
 export function getJSON(){
     return JSON.stringify(
@@ -154,6 +159,17 @@ export function getPlane(...coords){
             }
             else{
                 z_value = false;
+            }
+        }
+        else if (id==="axs"){
+            if (Math.abs(x)===1){
+                x = false;
+            }
+            if (Math.abs(y)===1){
+                y = false;
+            }
+            if(Math.abs(z)===1){
+                z = false;
             }
         }
     }

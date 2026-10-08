@@ -1,15 +1,19 @@
+import { wError,  write} from "./output.js";
 let func;
 func = await import("./WinNC.js"); 
 export class catiav5_1_0{
     constructor(settings, func){
         this.func = func;
-        this.tool_i;
-        this.tool_j;
-        this.tool_k;
+        this.tool_axis;
         this.multax;
         this.autops = false;
         this.ls_coord;
         this.ls_circle_tan;
+        this.helix_center;
+        this.helix_tan;
+        this.helix_axis;
+        this.helix_info;
+        this.helix_end;
 
     }
     parseline(line){
@@ -31,9 +35,7 @@ export class catiav5_1_0{
                     console.log(line);
                 }
                 else{
-                    write("ERROR with compensation-compensation_chg ***"+ line+"\nElements: "+elements2);
-                    console.error("ERROR with compensation compensation_chg \n***"+ line);
-                    console.error("Elements: "+elements2);
+                    wError("ERROR with compensation compensation_chg \n***"+ line+"\nElements: "+elements2);
                 }                
             break;
             
@@ -46,15 +48,10 @@ export class catiav5_1_0{
                 }
                 else{
                     if (D[1] === "notSingleVec"){
-                        write("ERROR with TLAXIS-given vectors indicate multi axial tool axis, which is not supported");
-                        write(line);
-                        console.error("ERROR with TLAXIS-given vectors indicate multi axial tool axis, which is not supported\n*"+line);
+                        wError("ERROR with TLAXIS-given vectors indicate multi axial tool axis, which is not supported\n*"+line);
                     }
                     else{
-                        write("ERROR with TLAXIS-given vectors aren't complete");
-                        write(line);
-                        console.error("ERROR with TLAXIS-given vectors aren't complete\n*"+line);
-                        console.log(elements2);
+                        wError("ERROR with TLAXIS-given vectors aren't complete\n*"+line+"\n"+elements2);
                     }
                 }
             break;
@@ -65,8 +62,7 @@ export class catiav5_1_0{
                 }
                 else {
                     this.multax = true;
-                    write("ERROR multi axial work is not supported");
-                    console.error("ERROR multi axial work is not supported");
+                    wError("ERROR multi axial work is not supported");
                 }
             break;
 
@@ -76,8 +72,7 @@ export class catiav5_1_0{
                     console.log("***"+line);
                 }
                 else{
-                    write( "ERROR with LOADTL, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with LOADTL, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with LOADTL, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
 
@@ -88,8 +83,7 @@ export class catiav5_1_0{
                     console.log("***"+line);
                 }
                 else{
-                    write( "ERROR with SELECTL, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with SELECTL, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with SELECTL, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
 
@@ -99,8 +93,7 @@ export class catiav5_1_0{
                     console.log("***"+line);
                 }
                 else{
-                    write( "ERROR with INTOL, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with INTOL, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with INTOL, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
 
@@ -110,8 +103,7 @@ export class catiav5_1_0{
                     console.log("***"+line);
                 }
                 else{
-                    write( "ERROR with OUTTOL, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with OUTTOL, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with OUTTOL, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
 
@@ -121,16 +113,14 @@ export class catiav5_1_0{
                     console.log("***"+line);
                 }
                 else{
-                    write( "ERROR with TOLER, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with TOLER, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with TOLER, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
 
             case "END":
                 D = programEnd(true);
                 if (!D){
-                    write( "ERROR with END, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with END, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with END, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
 
@@ -138,8 +128,7 @@ export class catiav5_1_0{
                 els = line.replace(/^PARTNO/, "Part number: ");
                 D =partno(els);
                 if (!D){
-                    write( "ERROR with PARTNO, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with PARTNO, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with PARTNO, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
 
@@ -148,20 +137,55 @@ export class catiav5_1_0{
             case "TOOLNO":
             case "REWIND":
             case "PARTNO":
+            case "AUTOPS":
             case "OPERATION NAME":
                 D = writeComment(line);
                 if (!D){
-                    write( "ERROR with OPERATION NAME, check for empty elements or incomplete elements\n*"+line);
-                    console.error("ERROR with OPERATION NAME, check for empty elements or incomplete elements\n*"+line);
+                    wError("ERROR with OPERATION NAME, check for empty elements or incomplete elements\n*"+line);
                 }
-            break;
-
-            case "AUTOPS":
-                this.autops = true;
             break;
 
             case "TLON":
                 D = tlon(line, ...this.ls_coord, ...this.ls_circle_tan);
+                if(!D[0]){
+                    wError("ERROR unknown command/error with command recognition-should be a gofwd\n"+line);
+                }
+                else{
+                    if (!D[1]){
+                        wError("ERROR unknown command/error with command recognition-should be a circle or a cylind(sinusoide)\n"+line);
+                    }
+                    else if(D[1]==="circle"){
+                        if (!D[2][0]){
+                            wError("ERROR with determinating if the arch is cw or ccw");
+                        }
+                        else{
+                            this.ls_coord = D[2][1];
+                        }
+                    }
+                }
+            break;
+            
+            case "HELICAL":
+                switch (elements[1].trim()){
+                    case "CENTER":
+                        this.helix_center = [+elements[2],+elements[2],+elements[4]];
+                    break;
+                    case "TANGENT":
+                        this.helix_tan = [+elements[2],+elements[2],+elements[4]];
+                    break;
+                    case "AXIS":
+                        this.helix_axis = [+elements[2],+elements[2],+elements[4]];
+                    break;
+                    case "INFO":
+                        this.helix_info = [+elements[2],+elements[2],+elements[4],+elements[5]];
+                    break;
+                    case "END":
+                        this.helix_end = [+elements[2],+elements[2],+elements[4]];
+                        D = helix(this.ls_coord,this.helix_center, this.helix_tan, this.helix_axis, this.helix_info, this.helix_end);
+                        els = true;
+                    break;
+                }
+
 
         }
     }

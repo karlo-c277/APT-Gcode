@@ -1111,9 +1111,9 @@ export class WinNC_sinumerik{
                     kraj_z = +element[3];
 
                     getPlane(
-                        [this.ls_x, this.ls_y, this.ls_z, "cor"],
-                        [this.helix_center_x, this.helix_center_y, this.helix_center_z, "cor"],
-                        [this.ls_i, this.ls_j, this.ls_k, "ver"]
+                        ["cor", this.ls_x, this.ls_y, this.ls_z],
+                        ["cor", this.helix_center_x, this.helix_center_y, this.helix_center_z],
+                        ["ver", this.ls_i, this.ls_j, this.ls_k]
                     );
                 
                     if (Math.abs(this.helix_axis_j) === 1){
