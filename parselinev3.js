@@ -14,13 +14,20 @@ export class catiav5_1_0{
         this.helix_axis;
         this.helix_info;
         this.helix_end;
+        this.rapid  = false;
+        this.cyc_coord;
+        this.cycleon;
+        this.ls_dim_typ;
+        this.rapto = false;
+        this.rapto_num;
+        this.ls_movement;
 
     }
     parseline(line){
         const {
             compensation_chg,   tlaxis,         loadtl,     writeComment,   selectl,
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
-            tlon,               helix,          godlta
+            tlon,               helix,          godlta,     goto
         } = this.func;
 
         let D;
@@ -42,7 +49,7 @@ export class catiav5_1_0{
             case "TLAXIS":
                 D = tlaxis(elements2);
                 if (D[0]){
-                    this.tool_axis = [+D[1], +D[2], +D[3]];
+                    this.tool_axis = +D[1], +D[2], +D[3];
                     this.multax = false;
                     console.log("***"+line);
                 }
@@ -168,19 +175,19 @@ export class catiav5_1_0{
             case "HELICAL":
                 switch (elements[1].trim()){
                     case "CENTER":
-                        this.helix_center = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_center = +elements[2],+elements[2],+elements[4];
                     break;
                     case "TANGENT":
-                        this.helix_tan = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_tan = +elements[2],+elements[2],+elements[4];
                     break;
                     case "AXIS":
-                        this.helix_axis = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_axis = +elements[2],+elements[2],+elements[4];
                     break;
                     case "INFO":
-                        this.helix_info = [+elements[2],+elements[2],+elements[4],+elements[5]];
+                        this.helix_info = +elements[2],+elements[2],+elements[4],+elements[5];
                     break;
                     case "END":
-                        this.helix_end = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_end = +elements[2],+elements[2],+elements[4];
                         D = helix(this.ls_coord,this.helix_center, this.helix_tan, this.helix_axis, this.helix_info, this.helix_end);
                         if (!D[0]){
                             wError("ERROR with element determination (cw or ccw/plane definition)");
@@ -194,10 +201,10 @@ export class catiav5_1_0{
 
             case "GODLTA":
                 if (elements.length===4){
-                    els = [+elements[1],+elements[2],+elements[3]];
+                    els = +elements[1],+elements[2],+elements[3];
                 }
                 else if (elements.length===2){
-                    els = [0,0,+elements[1]];
+                    els = 0,0,+elements[1];
                 }
                 else{
                     wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
@@ -213,7 +220,22 @@ export class catiav5_1_0{
                     this.ls_dim_typ = D[0];
                     this.ls_movement = D[1];
                 }
+            break;
 
+            case "GOTO":
+                if (elements.length===4){
+                    wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
+                }
+                coord = +elements[1],+elements[2],+elements[3];
+                if (this.cycleon){
+                    this.cyc_coord.push(this.ls_coord);
+                }
+                else{
+                    D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                    this.rapto = false;
+                    this.ls_dim_typ = D[0];
+                    this.ls_movement = D[1];
+                }
                    
 
 

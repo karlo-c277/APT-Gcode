@@ -329,9 +329,59 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
             }
         }
         write("X" + koord__x + " Y" + koord__y + " Z" + koord__z);
-
+    }
+    else{
+        write("X"+ coord[0]+" Y"+ coord[1]+" Z"+ coord[2]);
     }
     return[dim,move];
+}
+export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement){
+    let dim;
+    let move;
+
+    if (dim_typ !== "G90"){
+        write("G90");
+        dim = "G90";
+    }
+
+    if (rapid && (movement === "G1")){
+        write("G1");
+        move = "G1";
+    }
+    else if (movement === "G0"){
+        write("G0");
+        move = "G0";
+    }
+    if (rapto === true){
+        let ratio;
+        let rdtx;
+        let rdty;
+        let rdtz;
+        let koord__x;
+        let koord__y;
+        let koord__z;
+        let dtx = +ls_coord[0] - +coord[0];
+        let dty = +ls_coord[1] - +coord[1];
+        let dtz = +ls_coord[2] - +coord[2];
+        let dist = Math.hypot(dtx, dty, dtz);
+        if (dist >= rapto_num){
+            ratio = dist !== 0 ? rapto_num / dist : 0;
+            rdtx = ratio*dtx;
+            rdty = ratio*dty;
+            rdtz = ratio*dtz;
+            koord__x = +coord[0]-rdtx;
+            koord__y = +coord[1]-rdty;
+            koord__z = +coord[2]-rdtz;
+            write("G0");
+            write("X" + rdtx + " Y" + rdty + " Z" + rdtz);
+            if (move==="G1"){
+                write("G1");
+            }
+        }
+        this.rapto = false;
+    }
+    kk("LINE: X"+ x + " Y" + y + " Z" + z);
+
 }
 
 
