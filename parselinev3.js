@@ -30,7 +30,7 @@ export class catiav5_1_0{
             compensation_chg,   tlaxis,         loadtl,     writeComment,   selectl,
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
             tlon,               helix,          godlta,     goto,           spindle,
-            feed
+            feed,               coolant,        airPurge,   delay
         } = this.func;
 
         let D;
@@ -226,9 +226,6 @@ export class catiav5_1_0{
             break;
 
             case "GOTO":
-                if (elements.length===4){
-                    wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
-                }
                 coord = +elements[1],+elements[2],+elements[3];
                 if (this.cycleon){
                     this.cyc_coord.push(this.ls_coord);
@@ -302,6 +299,89 @@ export class catiav5_1_0{
                 }
             break;
 
+            case "RAPID":
+                this.rapid = true;
+                if (line.includes("GOTO")){
+                    coord = +elements[2],+elements[3],+elements[4];
+                D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                this.rapto = false;
+                this.ls_dim_typ = D[0];
+                this.ls_movement = D[1];
+                }
+                else if (line.includes("GODLTA")){
+                    if (elements.length===4){
+                        els = +elements[2],+elements[3],+elements[4];
+                    }
+                    else if (elements.length===2){
+                        els = 0,0,+elements[2];
+                    }
+                    else{
+                        wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
+                    }
+
+                    this.ls_coord = coord.map((v, i) => v + abc[i]);
+                    if (this.cycleon){
+                        this.cyc_coord.push(this.ls_coord);
+                    }
+                    else{
+                        D = godlta(coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                        this.rapto = false;
+                        this.ls_dim_typ = D[0];
+                        this.ls_movement = D[1];
+                    }
+                }
+            break;
+            
+            case "COOLNT":
+                D = coolant(elements2[1].trim(),this.coolant);
+                if (!D){
+                    wError("Coolant syntacs is not supported\n"+line);
+                }
+                else{
+                    this.coolant = D[1].trim();
+                }
+            break;
+
+            case "AIR_PURGE":
+                D = airPurge(elements2[1].trim());
+                if (!D){
+                    wError("Air purge syntacs is not supporteds\n"+line);
+                }
+            break;
+
+            case "DELAY":
+                delay(elements2[1].trim(), elements2[2].trim());
+            break;
+
+            case "CYCLE":
+                switch(elements2[1].trim()){
+                    case "NAME":
+                        this.cyc_name = line.replace("CYCLE/NAME,","").trim();
+                        break;
+                    case "DATA":
+                        this.cyc_data = line.replace("CYCLE/DATA,","").trim();
+                        this.cycleon = true;
+                        break;
+                    case "CY0":
+                    case "CY1":
+                    case "CY2":
+                    case "CY3":
+                    case "CY4":
+                        this.cyc_specific = line.replace("CYCLE/","").trim();
+                        break;                
+                    case "END":
+                        D = cycle(this.cyc_name, this.cyc_data, this.cyc_specific, this.cyc_coord)
+                        kk(this.ls_cyc_name);
+                        kk(this.ls_cyc_data);
+                        kk(this.ls_cyc_specific);
+                        kk("CYCLE/COORD"+this.ls_cycle_coord);
+                        this.cycleon = false;
+                        break;
+                    default:
+                        this.ls_cyc_specific = line.trim();
+                        break;
+                }
+            break;
 
         }
     }

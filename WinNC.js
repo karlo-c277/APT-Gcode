@@ -444,6 +444,51 @@ export function feed(typ, value){
     return [typ, value];
 }
 
+export function coolant(typ, coolant){
+    switch(typ){
+        case "FLOOD":
+            write("M8");
+            return [true, "M8"];
+        
+        case "MIST":
+            write("M7");
+            return [true, "M7"];
+
+        case "ON":
+            write(coolant);
+            return  [true, coolant];
+
+        case "OFF":
+            write("M9");
+            return [true, "M9"];
+        default:
+            return [false];
+    }
+}
+
+export function airPurge(state){
+    if (state === "ON"){
+        write("M71");
+        return true;
+    }
+    else if (state === "OFF"){
+        write("M72");
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+export function delay(val, typ){
+    if (typ === "REV"){
+        write("G4 S"+val);
+    }
+    else{
+        write("G4 R"+val);
+    }
+}
+
 
 export function writeComment(el){
     write(";"+el);
