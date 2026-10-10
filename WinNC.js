@@ -335,6 +335,7 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
     }
     return[dim,move];
 }
+
 export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement){
     let dim;
     let move;
@@ -357,21 +358,15 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
         let rdtx;
         let rdty;
         let rdtz;
-        let koord__x;
-        let koord__y;
-        let koord__z;
         let dtx = +ls_coord[0] - +coord[0];
         let dty = +ls_coord[1] - +coord[1];
         let dtz = +ls_coord[2] - +coord[2];
         let dist = Math.hypot(dtx, dty, dtz);
         if (dist >= rapto_num){
             ratio = dist !== 0 ? rapto_num / dist : 0;
-            rdtx = ratio*dtx;
-            rdty = ratio*dty;
-            rdtz = ratio*dtz;
-            koord__x = +coord[0]-rdtx;
-            koord__y = +coord[1]-rdty;
-            koord__z = +coord[2]-rdtz;
+            rdtx = ratio*dtx+ +coord[0];
+            rdty = ratio*dty+ +coord[1];
+            rdtz = ratio*dtz+ +coord[2];
             write("G0");
             write("X" + rdtx + " Y" + rdty + " Z" + rdtz);
             if (move==="G1"){
@@ -380,8 +375,58 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
         }
         this.rapto = false;
     }
-    kk("LINE: X"+ x + " Y" + y + " Z" + z);
+    write("X"+ coord[0] + " Y" +coord[1] + " Z" + coord[3]);
+    return [dim,move];
 
+}
+
+export function spindle(typ, spindle){
+    switch (typ){
+        case "on":
+            if (spindle.length === 3){
+                    write(spindle[0]+" "+spindle[1]+" S"+spindle[2]);
+                    return [true];
+            }
+            else{
+                return [false];
+            }
+
+        case "off":
+            write("M05");
+        break;
+
+        case "lock":
+            write("WARNING no specific spindle LOCK syntacs, M05 was used\nM05");
+        break;
+
+        case "set":
+            let el1;
+            let el3;
+            if(spindle[0].trim() === "RPM"){
+                el1 = "G97";
+            }
+            else if (spindle[0].trim() === "SFM"){
+                el1 = "G96";
+            }
+            else{
+                return [false,"typ"];
+            }
+
+            if(spindle[1].trim() === "CLW"){
+                el3 = "M03";
+            }
+            else if (spindle[1].trim() === "CCLW"){
+                el3 = "M04";
+            }
+            else{
+                return [false,"dir"];
+            }
+
+            write(el3+" "+el1+" S"+spindle[2].trim());
+            return [el3,el1,spindle[2].trim()];
+
+        
+    }
 }
 
 

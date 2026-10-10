@@ -21,13 +21,14 @@ export class catiav5_1_0{
         this.rapto = false;
         this.rapto_num;
         this.ls_movement;
+        this.spindle;
 
     }
     parseline(line){
         const {
             compensation_chg,   tlaxis,         loadtl,     writeComment,   selectl,
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
-            tlon,               helix,          godlta,     goto
+            tlon,               helix,          godlta,     goto,           spindle
         } = this.func;
 
         let D;
@@ -236,6 +237,44 @@ export class catiav5_1_0{
                     this.ls_dim_typ = D[0];
                     this.ls_movement = D[1];
                 }
+            break;
+
+            case "SPINDL":
+                switch(elements2[1].trim()){
+                    case "ON":
+                        D = spindle("on",this.ls_spindle);
+                        if (!D[0]){
+                            wError("The previous Spindle function was incorectly set there should be 3 elements\n"+this.ls_spindle);
+                        }
+                    break;
+
+                    case "OFF":
+                        D = spindle("off");
+                    break;
+
+                    case "LOCK":
+                        D = spindle("lock");
+                    break;
+
+                    default:
+                        let spindl = [elements2[2].trim(), elements2[1], D];
+
+                        D = spindle("set",spindl);
+                        if(!D[0]){
+                            if (D[1].trim()==="typ"){
+                                wError("Unknown spindle type (sfm/rpm)\n"+line);
+                            }
+                            else if (D[1].trim()==="dir"){
+                                wError("Unknown spindle type (clw/cclw)\n"+line);
+                            }
+                        }
+                        else{
+                            this.spindle = D;
+                        }
+                    break;
+
+                }
+            break;
                    
 
 
