@@ -22,13 +22,15 @@ export class catiav5_1_0{
         this.rapto_num;
         this.ls_movement;
         this.spindle;
+        this.feedrate;
 
     }
     parseline(line){
         const {
             compensation_chg,   tlaxis,         loadtl,     writeComment,   selectl,
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
-            tlon,               helix,          godlta,     goto,           spindle
+            tlon,               helix,          godlta,     goto,           spindle,
+            feed
         } = this.func;
 
         let D;
@@ -257,7 +259,7 @@ export class catiav5_1_0{
                     break;
 
                     default:
-                        let spindl = [elements2[2].trim(), elements2[1], D];
+                        let spindl = [elements2[2].trim(), elements2[3].trim(), elements2[1].trim()];
 
                         D = spindle("set",spindl);
                         if(!D[0]){
@@ -275,7 +277,30 @@ export class catiav5_1_0{
 
                 }
             break;
-                   
+            
+            case "FEDRAT":
+                D = feed(elements2[2].trim(),elements2[1].trim());
+                if (!D[0]){
+                    if(!D[1]){
+                        wError("Unknown feedrate number\n"+line);
+                    }
+                    else{
+                        wError("Unknwn feedrate type\n"+line);
+                    }
+                }
+                else{
+                    this.feedrate = D;
+                }
+                if (line.includes("RAPTO")){
+                    this.rapto = true;
+                    if(!elements2[4]){
+                        wError("Rapto value was not defined\n"+line);
+                    }
+                    else{
+                        this.rapto_num = +elements2[4];
+                    }
+                }
+            break;
 
 
         }

@@ -423,10 +423,25 @@ export function spindle(typ, spindle){
             }
 
             write(el3+" "+el1+" S"+spindle[2].trim());
-            return [el3,el1,spindle[2].trim()];
-
-        
+            return [el3,el1,spindle[2].trim()];        
     }
+}
+
+export function feed(typ, value){
+    if (typ.trim() === "MMPR"){
+        typ = "G95";
+    }
+    else if (typ.trim() === "MMPM"){
+        typ = "G96";
+    }
+    else{
+        return [false, true];
+    }
+    if (!value){
+        return [false, false];
+    }
+    write(typ+" F"+value);
+    return [typ, value];
 }
 
 
