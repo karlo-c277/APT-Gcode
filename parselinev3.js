@@ -23,6 +23,9 @@ export class catiav5_1_0{
         this.ls_movement;
         this.spindle;
         this.feedrate;
+        this.cyc_name;
+        this.cyc_data;
+        this.cyc_specific;
 
     }
     parseline(line){
@@ -30,7 +33,7 @@ export class catiav5_1_0{
             compensation_chg,   tlaxis,         loadtl,     writeComment,   selectl,
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
             tlon,               helix,          godlta,     goto,           spindle,
-            feed,               coolant,        airPurge,   delay
+            feed,               coolant,        airPurge,   delay,          cycle
         } = this.func;
 
         let D;
@@ -52,7 +55,7 @@ export class catiav5_1_0{
             case "TLAXIS":
                 D = tlaxis(elements2);
                 if (D[0]){
-                    this.tool_axis = +D[1], +D[2], +D[3];
+                    this.tool_axis = [+D[1], +D[2], +D[3]];
                     this.multax = false;
                     console.log("***"+line);
                 }
@@ -204,10 +207,10 @@ export class catiav5_1_0{
 
             case "GODLTA":
                 if (elements.length===4){
-                    els = +elements[1],+elements[2],+elements[3];
+                    els = [+elements[1],+elements[2],+elements[3]];
                 }
                 else if (elements.length===2){
-                    els = 0,0,+elements[1];
+                    els = [0,0,+elements[1]];
                 }
                 else{
                     wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
@@ -226,7 +229,7 @@ export class catiav5_1_0{
             break;
 
             case "GOTO":
-                coord = +elements[1],+elements[2],+elements[3];
+                coord = [+elements[1],+elements[2],+elements[3]];
                 if (this.cycleon){
                     this.cyc_coord.push(this.ls_coord);
                 }
@@ -367,20 +370,13 @@ export class catiav5_1_0{
                     case "CY2":
                     case "CY3":
                     case "CY4":
-                        this.cyc_specific = line.replace("CYCLE/","").trim();
-                        break;                
+                        this.cyc_specific = elements2.slice(1);
+                        break;
                     case "END":
-                        D = cycle(this.cyc_name, this.cyc_data, this.cyc_specific, this.cyc_coord)
-                        kk(this.ls_cyc_name);
-                        kk(this.ls_cyc_data);
-                        kk(this.ls_cyc_specific);
-                        kk("CYCLE/COORD"+this.ls_cycle_coord);
-                        this.cycleon = false;
-                        break;
-                    default:
-                        this.ls_cyc_specific = line.trim();
-                        break;
+                        D = cycle(this.cyc_name, this.cyc_data, this.cyc_specific, this.cyc_coord, this.tool_axis);
+                    break;
                 }
+
             break;
 
         }

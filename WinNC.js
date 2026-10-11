@@ -489,6 +489,186 @@ export function delay(val, typ){
     }
 }
 
+export function cycle(name, general, specific, coords, tlaxis){
+
+    if (name){
+        write(";"+name);
+    }
+    else{
+        return ["name"];
+    }
+    let total_depth = +general[0];
+    let clearance = +general[1];
+    let feed_1 = +general[2];
+    let feed_typ = general[3].trim();
+    let spindle_ = +general[4];
+    let spindle_unit = general[5].trim();
+    let retract = +general[6];
+    let feed_2 = +general[7];
+    let dir;
+    let pos;
+
+    let dwell = false;
+    let peck_y = false;
+    let peck_d = false;
+
+    let cyc_dwell;
+    let peck;
+    let decrement;
+    let decrement_limit;
+    let D;
+
+    if (!retract){
+        feed_2 = "rapid";
+    }
+    switch (specific[0].trim()){
+        case "CY1":
+            dwell = true;
+            if (+specific[1] === 1){
+                cyc_dwell = "G4 S"+ specific[2].trim();
+            }
+            else if (+specific[1] === 2){
+                cyc_dwell = "G4 R"+ specific[3].trim();
+            }
+            else{
+                cyc_dwell = "";
+            }
+        break;
+        case "CY2":
+        case "CY3":
+            dwell = true;
+            peck_y = true;
+            if (+specific[1] === 1){
+                cyc_dwell = "G4 S"+ specific[2].trim();
+            }
+            else if (+specific[1] === 2){
+                cyc_dwell = "G4 R"+ specific[3].trim();
+            }
+            else{
+                cyc_dwell = "";
+            }
+            peck = +specific[4];
+            decrement = +specific[5];
+            decrement_limit = +specific[6];
+        break;
+    }
+    if (specific[0].trim()=== "CY3"){
+        peck_d = true;
+    }
+
+    if (Math.abs(+tlaxis[2])+Math.abs(+tlaxis[0])+Math.abs(+tlaxis[1]) !== 1) {
+        wError("Tlaxis is not valid "+tlaxis);
+        return ["tlaxisSum"];
+    }
+    else if(Math.abs(+tlaxis[2])=== 1){
+        dir = "Z";
+        if (+tlaxis[2] > 0){
+            pos = 1;
+        }
+        else{
+            pos = -1;
+        }
+    }
+    else if(Math.abs(+tlaxis[0])=== 1){
+        dir = "X";
+        if (+tlaxis[0] > 0){
+            pos = 1;
+        }
+        else{
+            pos = -1;
+        }
+    }
+    else if(Math.abs(+tlaxis[1])=== 1){
+        dir = "Y";
+        if (+tlaxis[1] > 0){
+            pos = 1;
+        }
+        else{
+            pos = -1;
+        }
+    }
+    else{
+        wError("ERROR: tlaxis not valid");
+        return ["tlaxisNot1"];
+    }
+
+    for (const set of coords){
+        let x = +set[0];
+        let y = +set[1];
+        let z = +set[2];
+        let coord = "X"+x+" Y"+y+" Z"+z;
+        
+        write("G0 "+coord);
+        write("G91");
+        write(dir+(clearance* pos));
+
+        if (feed_typ === "MMPR"){
+            write("G95 F"+feed_1);
+        }
+        else{
+            write("G94 F"+feed_1);
+        }
+
+        if (spindle_unit === "RPM"){
+            write ("G97 S"+spindle_);
+        }
+        else{
+            write ("G96 S"+spindle_);
+        }
+
+        if (peck_y){
+            let loop_nr = 0;
+            let currentPeck = peck;
+
+            let currentDepth = 0;
+
+            while (total_depth > currentDepth){
+                if (!peck_d){
+                    if (loop_nr <= decrement_limit && currentPeck >= 0.05*peck){
+                        currentPeck = peck*Math.pow((1-decrement), loop_nr);
+                    }
+                    loop_nr += 1;
+                    write("G1 "+dir+(currentPeck*pos));
+                    D = total_depth - currentDepth;
+                    currentDepth += currentPeck;
+                    if (dwell){
+                        write(cyc_dwell);
+                    }
+                }
+                else {
+                    write("G1 "+dir+peck);
+                    currentDepth += peck;
+                    if (dwell){
+                        write(cyc_dwell);
+                    }
+                }
+            }
+        }
+
+        write("G1 "+dir+(D*pos));
+        if (dwell){
+            write(cyc_dwell);
+        }
+
+        if (feed_2 === "rapid"){
+            write("G90");
+            write("G0 "+coord);
+        }
+        else{
+            if (feed_typ === "MMPR"){
+                write("G95 F"+feed_2);
+            }
+            else{
+                write("G94 F"+feed_2);
+            }
+            write("G90");
+            write(coord);
+        }
+    }
+}
+
+    
+
 
 export function writeComment(el){
     write(";"+el);
