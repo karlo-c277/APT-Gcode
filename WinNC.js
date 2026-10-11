@@ -423,7 +423,11 @@ export function spindle(typ, spindle){
             }
 
             write(el3+" "+el1+" S"+spindle[2].trim());
-            return [el3,el1,spindle[2].trim()];        
+            return [el3,el1,spindle[2].trim()];   
+            
+        case "max":
+            write("G26 "+spindle);
+        break;
     }
 }
 
@@ -666,6 +670,47 @@ export function cycle(name, general, specific, coords, tlaxis){
         }
     }
 }
+
+export function psis(i,j,k){
+    D = getPlane(["axs",i,j,k]);
+    if (D === null){
+        write("ERROR with plane definition not enough data to define a plane, check console log");
+        console.error("ERROR with plane definition not enough data to define a plane, this are the given inputs",{
+        axis:       ["axs",...axis]}
+        );
+        return [false];
+    }
+    else if (!D){
+        write("ERROR with plane definition, check console log");
+        console.error("ERROR with plane definition, this are the given inputs",{
+        axis:       ["axs",...axis]}
+        );
+        return [false];
+    }
+    else{
+        switch (D.trim()){
+            case "xy":
+                write("G17");
+                direction =findDirection(tan_x,start_x,center_x,tan_y,start_y,center_y);
+                report_data = [tan_x,start_x,center_x,tan_y,start_y,center_y];
+                report_data2 ="tan_x,start_x,center_x,tan_y,start_y,center_y";
+            break;
+            case "xz":
+                write("G18");
+                direction =findDirection(tan_z,start_z,center_z,tan_x,start_x,center_x);
+                report_data = [tan_z,start_z,center_z,tan_x,start_x,center_x];
+                report_data2 ="tan_z,start_z,center_z,tan_x,start_x,center_x";
+            break;
+            case "yz":
+                write("G19");
+                direction =findDirection(tan_y,start_y,center_y,tan_z,start_z,center_z);
+                report_data = [tan_y,start_y,center_y,tan_z,start_z,center_z];
+                report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
+            break;
+        }
+    }
+}
+
 
     
 

@@ -33,7 +33,8 @@ export class catiav5_1_0{
             compensation_chg,   tlaxis,         loadtl,     writeComment,   selectl,
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
             tlon,               helix,          godlta,     goto,           spindle,
-            feed,               coolant,        airPurge,   delay,          cycle
+            feed,               coolant,        airPurge,   delay,          cycle,
+            psis,               writeComment
         } = this.func;
 
         let D;
@@ -378,7 +379,30 @@ export class catiav5_1_0{
                 }
 
             break;
+            
+            case "PSIS":
+                els = [+elements[3], +elements[4], +elements[5]];
+                if (!(a.length === b.length && a.every((v, i) => v === b[i]))){
+                    goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                }
+                this.ls_coord = els;
+                D = psis(+elements[7], +elements[8],+elements[9]);
+            break;
 
+            case "INDIRV":
+                this.ls_circle_tan = [+elements2[1],+elements2[2],+elements2[3]];
+            break;
+
+            case "MAXSPINDL":
+                spindle("max", +elements2[1]);
+            break;
+
+            case "$$":
+                D = line.replace("$$","");
+                writeComment(D);
+            break;
+
+            
         }
     }
 }
