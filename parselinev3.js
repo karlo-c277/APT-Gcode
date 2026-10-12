@@ -26,7 +26,7 @@ export class catiav5_1_0{
         this.cyc_name;
         this.cyc_data;
         this.cyc_specific;
-        this.cut_com;
+        this.cut_com = [null,null,null];
 
     }
     parseline(line){
@@ -151,7 +151,6 @@ export class catiav5_1_0{
             case "TPRINT":
             case "TOOLNO":
             case "REWIND":
-            case "PARTNO":
             case "AUTOPS":
             case "OPERATION NAME":
                 D = writeComment(line);
@@ -183,19 +182,19 @@ export class catiav5_1_0{
             case "HELICAL":
                 switch (elements[1].trim()){
                     case "CENTER":
-                        this.helix_center = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_center = [+elements[2],+elements[3],+elements[4]];
                     break;
                     case "TANGENT":
-                        this.helix_tan = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_tan = [+elements[2],+elements[3],+elements[4]];
                     break;
                     case "AXIS":
-                        this.helix_axis = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_axis = [+elements[2],+elements[3],+elements[4]];
                     break;
                     case "INFO":
-                        this.helix_info = [+elements[2],+elements[2],+elements[4],+elements[5]];
+                        this.helix_info = [+elements[2],+elements[3],+elements[4],+elements[5]];
                     break;
                     case "END":
-                        this.helix_end = [+elements[2],+elements[2],+elements[4]];
+                        this.helix_end = [+elements[2],+elements[3],+elements[4]];
                         D = helix(this.ls_coord,this.helix_center, this.helix_tan, this.helix_axis, this.helix_info, this.helix_end);
                         if (!D[0]){
                             wError("ERROR with element determination (cw or ccw/plane definition)");
@@ -223,7 +222,7 @@ export class catiav5_1_0{
                     this.cyc_coord.push(this.ls_coord);
                 }
                 else{
-                    D = godlta(coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                    D = godlta(els, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                     this.rapto = false;
                     this.ls_dim_typ = D[0];
                     this.ls_movement = D[1];
@@ -231,17 +230,18 @@ export class catiav5_1_0{
             break;
 
             case "GOTO":
-                coord = [+elements[1],+elements[2],+elements[3]];
+                els = [+elements[1],+elements[2],+elements[3]];
                 if (this.cycleon){
-                    this.cyc_coord.push(coord);
+                    this.cyc_coord.push(els);
                 }
                 else{
-                    D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                    D = goto(this.ls_coord, els, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                     this.rapto = false;
                     this.ls_dim_typ = D[0];
                     this.ls_movement = D[1];
                 }
-                this.ls_coord = coord;
+                this.ls_coord = els;
+                this.rapto = false;
             break;
 
             case "SPINDL":
@@ -386,9 +386,10 @@ export class catiav5_1_0{
             case "PSIS":
                 els = [+elements[3], +elements[4], +elements[5]];
                 if (!(this.ls_coord.length === els.length && this.ls_coord.every((v, i) => v === els[i]))){
-                    goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                    goto(this.ls_coord, els, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                 }
                 this.ls_coord = els;
+                elements = line.replace(/[()]/g, "").split(/[,/:]/);
                 D = psis(+elements[7], +elements[8],+elements[9]);
             break;
 
@@ -402,18 +403,77 @@ export class catiav5_1_0{
 
             case "$$":
                 D = line.replace("$$","");
-                writeComment(D);
+                els = writeComment(D);
+                if (!els){
+                    wError("Invalid comment syntacs "+line);
+                }
             break;
-
+            
             case "CUTCOM":
-                D = cutcom(elements2[1].trim(), ...this.cut_com);
-                if (D[0]){
-                    this.cut_com = [D[1],D[2],D[3]];
-                }
-                else{
-                    wError(line);
+                switch (elements2.trim()){
+                    case "ON":
+                        D = cutcom("ON", ...this.cut_com);
+                        if (D[0]){
+                            this.cut_com = [D[1],D[2],D[3]];
+                        }
+                        else{
+                            wError("CUTCOM ERROR "+line);
+                        }
+                    break;
+
+                    case "OFF":
+                        D = cutcom("OFF", ...this.cut_com);
+                        if (D[0]){
+                            this.cut_com = [D[1],D[2],D[3]];
+                        }
+                        else{
+                            wError("CUTCOM ERROR "+line);
+                        }
+                    break;
+                    
+                    case "SAME":
+                        D = cutcom("NORMDS_ON", ...this.cut_com);
+                        if (D[0]){
+                            this.cut_com = [D[1],D[2],D[3]];
+                        }
+                        else{
+                            wError("CUTCOM ERROR "+line);
+                        }
+                    break;
+
+                    case "NORMPS":
+                        D = cutcom("NORMPS_ON", ...this.cut_com);
+                        if (D[0]){
+                            this.cut_com = [D[1],D[2],D[3]];
+                        }
+                        else{
+                            wError("CUTCOM ERROR "+line);
+                        }
+                    break;
+
+                    case "LEFT":
+                        D = cutcom("LEFT", ...this.cut_com);
+                        if (D[0]){
+                            this.cut_com = [D[1],D[2],D[3]];
+                        }
+                        else{
+                            wError("CUTCOM ERROR "+line);
+                        }
+                    break;
+
+                    case "RIGHT":
+                        D = cutcom("RIGHT", ...this.cut_com);
+                        if (D[0]){
+                            this.cut_com = [D[1],D[2],D[3]];
+                        }
+                        else{
+                            wError("CUTCOM ERROR "+line);
+                        }
+                    break;
                 }
             break;
+            
+
 
             case "CHANGE_TOOL":
                 D = change_tool(elements2[1].trim(),elements2[2].trim(),elements2[3].trim());

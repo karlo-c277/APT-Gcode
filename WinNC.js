@@ -229,7 +229,7 @@ export function helix(start, center, tan, axis, info, end){
     let D;
 
     let turns = +info[3];
-    getPlane(
+    D = getPlane(
         ["cor",...center],
         ["cor",...start],
         ["vec",...tan],
@@ -312,7 +312,7 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
         move = "G0";
     }
     
-    if (rapto){
+    if (rapto&& dist > rapto_num){
         let ratio;
         let rdtx;
         let rdty;
@@ -321,20 +321,18 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
         let koord__y;
         let koord__z;
         let dist = Math.hypot(...coord);
-        if (dist >= rapto_num){
-            ratio = dist !== 0 ? rapto_num / dist : 0;
-            rdtx = ratio*+coord[0];
-            rdty = ratio*+coord[1];
-            rdtz = ratio*+coord[2];
-            koord__x = +coord[0]-rdtx;
-            koord__y = +coord[1]-rdty;
-            koord__z = +coord[2]-rdtz;
+        ratio = dist !== 0 ? rapto_num / dist : 0;
+        rdtx = ratio*+coord[0];
+        rdty = ratio*+coord[1];
+        rdtz = ratio*+coord[2];
+        koord__x = +coord[0]-rdtx;
+        koord__y = +coord[1]-rdty;
+        koord__z = +coord[2]-rdtz;
 
-            write("G0");
-            write("X" + rdtx + " Y" + rdty + " Z" + rdtz);
-            if (move==="G1"){
-                write("G1");
-            }
+        write("G0");
+        write("X" + rdtx + " Y" + rdty + " Z" + rdtz);
+        if (move==="G1"){
+            write("G1");
         }
         write("X" + koord__x + " Y" + koord__y + " Z" + koord__z);
     }
@@ -381,7 +379,6 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
                 write("G1");
             }
         }
-        this.rapto = false;
     }
     write("X"+ coord[0] + " Y" +coord[1] + " Z" + coord[2]);
     return [dim,move];
@@ -684,7 +681,7 @@ export function cycle(name, general, specific, coords, tlaxis){
 }
 
 export function psis(i,j,k){
-    D = getPlane(["axs",i,j,k]);
+    let D = getPlane(["axs",i,j,k]);
     if (D === null){
         write("ERROR with plane definition not enough data to define a plane, check console log");
         console.error("ERROR with plane definition not enough data to define a plane, this are the given inputs",{
@@ -703,21 +700,12 @@ export function psis(i,j,k){
         switch (D.trim()){
             case "xy":
                 write("G17");
-                direction =findDirection(tan_x,start_x,center_x,tan_y,start_y,center_y);
-                report_data = [tan_x,start_x,center_x,tan_y,start_y,center_y];
-                report_data2 ="tan_x,start_x,center_x,tan_y,start_y,center_y";
             break;
             case "xz":
                 write("G18");
-                direction =findDirection(tan_z,start_z,center_z,tan_x,start_x,center_x);
-                report_data = [tan_z,start_z,center_z,tan_x,start_x,center_x];
-                report_data2 ="tan_z,start_z,center_z,tan_x,start_x,center_x";
             break;
             case "yz":
                 write("G19");
-                direction =findDirection(tan_y,start_y,center_y,tan_z,start_z,center_z);
-                report_data = [tan_y,start_y,center_y,tan_z,start_z,center_z];
-                report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
             break;
         }
     }
@@ -725,15 +713,19 @@ export function psis(i,j,k){
 
 export function cutcom(value, general, ps, ds){
     switch (value.trim()){
+        case "ON":
+            write(general);
+            return [true, general, ps, ds];
+            return 
         case "LEFT":
             write("G41");
-            return [true, "left", ps, ds];
+            return [true, "G41", ps, ds];
         case "RIGHT":
             write("G42");
-            return [true, "right", ps, ds];
+            return [true, "G42", ps, ds];
         case "OFF":
             write("G40");
-            return [true, "off", ps, ds];
+            return [true, general, ps, ds];
         case "NORMDS_ON":
             wError("Unknown command NORMDS_ON");
             return [false, general, ps, "normds_on"];
@@ -759,12 +751,14 @@ export function change_tool(name){
     }
 }
 
-
-    
-
-
 export function writeComment(el){
-    write(";"+el);
-    console.log("**.**;"+el)
-    return true;
+    if (el){
+        write(";"+el);
+        console.log("**.**;"+el)
+        return true;
+    }
+    else{
+        return false;
+    }
+    
 }

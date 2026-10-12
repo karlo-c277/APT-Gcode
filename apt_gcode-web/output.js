@@ -163,13 +163,13 @@ export function getPlane(...coords){
         }
         else if (id==="axs"){
             if (Math.abs(x)===1){
-                x = false;
+                x_value = false;
             }
             if (Math.abs(y)===1){
-                y = false;
+                y_value = false;
             }
             if(Math.abs(z)===1){
-                z = false;
+                z_value = false;
             }
         }
     }
