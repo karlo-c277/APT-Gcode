@@ -1,6 +1,7 @@
+import { wError } from "./apt_gcode-web/output.js";
 import {write, checkVector, getPlane, findDirection} from "./output.js";
 export function compensation_chg(el){
-    if(el.length === 6 && el.every((x,i)=> i in el && x !== undefined && x.trim()!=="")){
+    if(el.length === 7 && el.every((x,i)=> i in el && x !== undefined && x.trim()!=="")){
         write("For correction register nr. "+el[1].trim()+", tool tip quadrant is P"+el[2].trim()+", tool offset values are X"+el[3].trim()+", Y"+el[4].trim()+", Z"+el[5].trim()+", nose radius is "+el[6].trim());
         return true;
     }
@@ -36,7 +37,7 @@ export function loadtl(el){
 }
 
 export function selectl(el){
-    if (el != "undefined" || el.trim()!== ""){
+    if (el != "undefined" && el.trim()!== ""){
         writeComment(";"+el);
         return true;
     }
@@ -46,7 +47,7 @@ export function selectl(el){
 }
 
 export function insideToler(el){
-    if (el != "undefined" || el.trim()!== ""){
+    if (el != "undefined" && el.trim()!== ""){
         writeComment("Inside path tolerance is "+el);
         return true;
     }
@@ -56,7 +57,7 @@ export function insideToler(el){
 }
 
 export function outsideToler(el){
-    if (el != "undefined" || el.trim()!== ""){
+    if (el != "undefined" && el.trim()!== ""){
         writeComment("Outside path tolerance is "+el);
         return true;
     }
@@ -66,7 +67,7 @@ export function outsideToler(el){
 }
 
 export function Toler(el){
-    if (el != "undefined" || el.trim()!== ""){
+    if (el != "undefined" && el.trim()!== ""){
         writeComment("Path tolerance is "+el);
         return true;
     }
@@ -113,6 +114,10 @@ export function tlon(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
             return [true, false];
         }
     }
+}
+
+export function sinus(){
+    wError("This controler does not support sinusoidal movement");
 }
 
 export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
@@ -219,6 +224,9 @@ export function helix(start, center, tan, axis, info, end){
     let end_x = +end[0];
     let end_y = +end[1];
     let end_z = +end[2];
+
+    let direction;
+    let D;
 
     let turns = +info[3];
     getPlane(
@@ -375,7 +383,7 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
         }
         this.rapto = false;
     }
-    write("X"+ coord[0] + " Y" +coord[1] + " Z" + coord[3]);
+    write("X"+ coord[0] + " Y" +coord[1] + " Z" + coord[2]);
     return [dim,move];
 
 }
@@ -494,7 +502,7 @@ export function delay(val, typ){
 }
 
 export function cycle(name, general, specific, coords, tlaxis){
-
+    
     if (name){
         write(";"+name);
     }
@@ -619,33 +627,37 @@ export function cycle(name, general, specific, coords, tlaxis){
         else{
             write ("G96 S"+spindle_);
         }
+        D = total_depth
 
         if (peck_y){
             let loop_nr = 0;
             let currentPeck = peck;
+            let remaining = total_depth;
 
-            let currentDepth = 0;
-
-            while (total_depth > currentDepth){
+            while (remaining > 0){
                 if (!peck_d){
-                    if (loop_nr <= decrement_limit && currentPeck >= 0.05*peck){
-                        currentPeck = peck*Math.pow((1-decrement), loop_nr);
+                    if (loop_nr <= decrement_limit && currentPeck >= 0.05 * peck){
+                        currentPeck = peck * Math.pow((1 - decrement), loop_nr);
                     }
                     loop_nr += 1;
-                    write("G1 "+dir+(currentPeck*pos));
-                    D = total_depth - currentDepth;
-                    currentDepth += currentPeck;
-                    if (dwell){
-                        write(cyc_dwell);
-                    }
                 }
                 else {
-                    write("G1 "+dir+peck);
-                    currentDepth += peck;
-                    if (dwell){
-                        write(cyc_dwell);
-                    }
+                    currentPeck = peck;
                 }
+
+                let peck_this = Math.min(currentPeck, remaining);
+                write("G1 " + dir + (peck_this * pos));
+                remaining -= peck_this;
+
+                if (dwell){
+                    write(cyc_dwell);
+                }
+            }
+        }
+        else {
+            write("G1 " + dir + (total_depth * pos));
+            if (dwell){
+                write(cyc_dwell);
             }
         }
 
@@ -708,6 +720,42 @@ export function psis(i,j,k){
                 report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
             break;
         }
+    }
+}
+
+export function cutcom(value, general, ps, ds){
+    switch (value.trim()){
+        case "LEFT":
+            write("G41");
+            return [true, "left", ps, ds];
+        case "RIGHT":
+            write("G42");
+            return [true, "right", ps, ds];
+        case "OFF":
+            write("G40");
+            return [true, "off", ps, ds];
+        case "NORMDS_ON":
+            wError("Unknown command NORMDS_ON");
+            return [false, general, ps, "normds_on"];
+        case "NORMDS_OFF":
+            wError("Unknown command NORMDS_OFF");
+            return [false, general, ps, "normds_off"];
+        case "NORMPS_ON":
+            wError("Unknown command NORMPS_ON");
+            return [false, general, ps, "normds_on"];
+        case "NORMPS_OFF":
+            wError("Unknown command NORMPS_OFF");
+            return [false, general, ps, "normds_off"];
+    }
+}
+
+export function change_tool(name){
+    if (name){
+        write("T="+name);
+        return [true];
+    }
+    else{
+        return [false, "name"];
     }
 }
 

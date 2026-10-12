@@ -26,6 +26,7 @@ export class catiav5_1_0{
         this.cyc_name;
         this.cyc_data;
         this.cyc_specific;
+        this.cut_com;
 
     }
     parseline(line){
@@ -34,7 +35,7 @@ export class catiav5_1_0{
             insideToler,        outsideToler,   Toler,      programEnd,     partno,
             tlon,               helix,          godlta,     goto,           spindle,
             feed,               coolant,        airPurge,   delay,          cycle,
-            psis,               writeComment
+            psis,               cutcom,         change_tool
         } = this.func;
 
         let D;
@@ -182,19 +183,19 @@ export class catiav5_1_0{
             case "HELICAL":
                 switch (elements[1].trim()){
                     case "CENTER":
-                        this.helix_center = +elements[2],+elements[2],+elements[4];
+                        this.helix_center = [+elements[2],+elements[2],+elements[4]];
                     break;
                     case "TANGENT":
-                        this.helix_tan = +elements[2],+elements[2],+elements[4];
+                        this.helix_tan = [+elements[2],+elements[2],+elements[4]];
                     break;
                     case "AXIS":
-                        this.helix_axis = +elements[2],+elements[2],+elements[4];
+                        this.helix_axis = [+elements[2],+elements[2],+elements[4]];
                     break;
                     case "INFO":
-                        this.helix_info = +elements[2],+elements[2],+elements[4],+elements[5];
+                        this.helix_info = [+elements[2],+elements[2],+elements[4],+elements[5]];
                     break;
                     case "END":
-                        this.helix_end = +elements[2],+elements[2],+elements[4];
+                        this.helix_end = [+elements[2],+elements[2],+elements[4]];
                         D = helix(this.ls_coord,this.helix_center, this.helix_tan, this.helix_axis, this.helix_info, this.helix_end);
                         if (!D[0]){
                             wError("ERROR with element determination (cw or ccw/plane definition)");
@@ -217,7 +218,7 @@ export class catiav5_1_0{
                     wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
                 }
 
-                this.ls_coord = coord.map((v, i) => v + abc[i]);
+                this.ls_coord = this.ls_coord.map((v, i) => v + els[i]);
                 if (this.cycleon){
                     this.cyc_coord.push(this.ls_coord);
                 }
@@ -232,7 +233,7 @@ export class catiav5_1_0{
             case "GOTO":
                 coord = [+elements[1],+elements[2],+elements[3]];
                 if (this.cycleon){
-                    this.cyc_coord.push(this.ls_coord);
+                    this.cyc_coord.push(coord);
                 }
                 else{
                     D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
@@ -240,12 +241,13 @@ export class catiav5_1_0{
                     this.ls_dim_typ = D[0];
                     this.ls_movement = D[1];
                 }
+                this.ls_coord = coord;
             break;
 
             case "SPINDL":
                 switch(elements2[1].trim()){
                     case "ON":
-                        D = spindle("on",this.ls_spindle);
+                        D = spindle("on",this.spindle);
                         if (!D[0]){
                             wError("The previous Spindle function was incorectly set there should be 3 elements\n"+this.ls_spindle);
                         }
@@ -306,24 +308,25 @@ export class catiav5_1_0{
             case "RAPID":
                 this.rapid = true;
                 if (line.includes("GOTO")){
-                    coord = +elements[2],+elements[3],+elements[4];
-                D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
-                this.rapto = false;
-                this.ls_dim_typ = D[0];
-                this.ls_movement = D[1];
+                    let coord = [+elements[2],+elements[3],+elements[4]];
+                    D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                    this.rapto = false;
+                    this.ls_dim_typ = D[0];
+                    this.ls_movement = D[1];
+                    this.ls_coord = coord;
                 }
                 else if (line.includes("GODLTA")){
                     if (elements.length===4){
-                        els = +elements[2],+elements[3],+elements[4];
+                        els = [+elements[2],+elements[3],+elements[4]];
                     }
                     else if (elements.length===2){
-                        els = 0,0,+elements[2];
+                        els = [0,0,+elements[2]];
                     }
                     else{
                         wError("Invalid godlta syntacs "+line+"\n"+elements+"\n"+els);
                     }
 
-                    this.ls_coord = coord.map((v, i) => v + abc[i]);
+                    this.ls_coord = coord.map((v, i) => v + els[i]);
                     if (this.cycleon){
                         this.cyc_coord.push(this.ls_coord);
                     }
@@ -382,7 +385,7 @@ export class catiav5_1_0{
             
             case "PSIS":
                 els = [+elements[3], +elements[4], +elements[5]];
-                if (!(a.length === b.length && a.every((v, i) => v === b[i]))){
+                if (!(this.ls_coord.length === els.length && this.ls_coord.every((v, i) => v === els[i]))){
                     goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                 }
                 this.ls_coord = els;
@@ -402,7 +405,40 @@ export class catiav5_1_0{
                 writeComment(D);
             break;
 
-            
+            case "CUTCOM":
+                D = cutcom(elements2[1].trim(), ...this.cut_com);
+                if (D[0]){
+                    this.cut_com = [D[1],D[2],D[3]];
+                }
+                else{
+                    wError(line);
+                }
+            break;
+
+            case "CHANGE_TOOL":
+                D = change_tool(elements2[1].trim(),elements2[2].trim(),elements2[3].trim());
+                if (!D[0]){
+                    if (D[1]==="name"){
+                        wError("The tool has no name "+line);
+                    }
+                }
+            break;
+
+            case "rawG":
+                write(line);
+            break;
+
+            default:
+                if (line.startsWith("ERROR")){
+                    wError(line);
+                }
+                else{
+                    wError("ERROR: unrecognized command " + line);
+                }
+            break;
+        }
+        if (!line.startsWith("RAPID")){
+            this.rapid = false;
         }
     }
 }
