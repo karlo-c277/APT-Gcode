@@ -1,6 +1,5 @@
 import { wError,  write} from "./output.js";
-let func;
-func = await import("./WinNC.js"); 
+
 export class catiav5_1_0{
     constructor(settings, func){
         this.func = func;
@@ -385,6 +384,9 @@ export class catiav5_1_0{
             
             case "PSIS":
                 els = [+elements[3], +elements[4], +elements[5]];
+            case "kkod":
+                parser = new catiav5_1_0(settings, funcModule);
+                break;
                 if (!(this.ls_coord.length === els.length && this.ls_coord.every((v, i) => v === els[i]))){
                     goto(this.ls_coord, els, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                 }

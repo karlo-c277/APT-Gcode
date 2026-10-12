@@ -1,8 +1,7 @@
 
 import {getSettings, validateSettings} from "./settings.js";
-import {clearOutput, buildOutput, downloadOutput, getJSON, kk} from "./output.js";
-import {catiav5_1_0} from "./parselinev2.js";
-import {WinNC_sinumerik, Karlov_kod} from "./g-coder.js";
+import {clearOutput, buildOutput, downloadOutput, getJSON, wError} from "./output.js";
+import {catiav5_1_0} from "./parselinev22.js";
 const textInputToggle = document.getElementById("textInputToggle");
 const textInput = document.getElementById("textInput");
 
@@ -20,16 +19,29 @@ async function translateAPT(){
         const aptText = await loadAPT(settings);
         const commands = splitAPT(aptText);
         const parserType = document.getElementById("apt-code-version").value;
+        const g_code_type = document.getElementById("preset").value;
 
         let parser;
+        let funcModule;
+
+        if (g_code_type === "WinNC_sinumerik" || (g_code_type === "custom" && document.getElementById("core_output").value === "WinNC_sinumerik")) {
+            funcModule = await import("./WinNC.js");
+        } 
+        else if (g_code_type === "Karlov_kod" || (g_code_type === "custom" && document.getElementById("core_output").value === "Karlov_kod")) {
+            funcModule = await import("./Karlov_kod.js");
+        }
+        else{
+            wError("Unknown parser type");
+        }
 
         switch (parserType) {
             case "catiav5_1_0":
-                parser = new catiav5_1_0(settings);
+                parser = new catiav5_1_0(settings, funcModule);
                 break;
             default:
                 throw new Error("APT parser not selected");
         }
+
 
         for (const command of commands) {
             parser.parseline(command);
@@ -48,7 +60,7 @@ async function translateAPT(){
         const g_code_type = document.getElementById("preset").value;
         window.core = g_code_type;
         let gcoder;
-        kk("END");
+        write("END");
         
         switch (g_code_type) {
             case "WinNC_sinumerik":
