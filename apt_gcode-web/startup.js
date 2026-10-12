@@ -1,7 +1,7 @@
 
 import {getSettings, validateSettings} from "./settings.js";
 import {clearOutput, buildOutput, downloadOutput, getJSON, kk} from "./output.js";
-import {catiav5_1_0, kkod} from "./parselinev2.js";
+import {catiav5_1_0} from "./parselinev2.js";
 import {WinNC_sinumerik, Karlov_kod} from "./g-coder.js";
 const textInputToggle = document.getElementById("textInputToggle");
 const textInput = document.getElementById("textInput");
@@ -26,9 +26,6 @@ async function translateAPT(){
         switch (parserType) {
             case "catiav5_1_0":
                 parser = new catiav5_1_0(settings);
-                break;
-            case "kkod":
-                parser = new kkod(settings);
                 break;
             default:
                 throw new Error("APT parser not selected");
@@ -57,16 +54,9 @@ async function translateAPT(){
             case "WinNC_sinumerik":
                 gcoder = new WinNC_sinumerik(settings);
                 break;
-            case "Karlov_kod":
-                gcoder = new Karlov_kod(settings);
-                break;
             case "custom":
                 if (document.getElementById("core_output").value === "WinNC_sinumerik"){
                     gcoder = new WinNC_sinumerik(settings);
-                    break;
-                }
-                else if (document.getElementById("core_output").value === "Karlov_kod"){
-                    gcoder = new Karlov_kod(settings);
                     break;
                 }
                 break;

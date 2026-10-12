@@ -1,4 +1,4 @@
-import { wError } from "./apt_gcode-web/output.js";
+import { wError } from "./output.js";
 import {write, checkVector, getPlane, findDirection} from "./output.js";
 export function compensation_chg(el){
     if(el.length === 7 && el.every((x,i)=> i in el && x !== undefined && x.trim()!=="")){
