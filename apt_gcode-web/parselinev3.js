@@ -1,7 +1,7 @@
 import { wError,  write} from "./output.js";
 
 export class catiav5_1_0{
-    constructor(settings, func){
+    constructor(func){
         this.func = func;
         this.tool_axis;
         this.multax;

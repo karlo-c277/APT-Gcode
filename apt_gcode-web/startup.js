@@ -1,7 +1,7 @@
 
 import {getSettings, validateSettings} from "./settings.js";
 import {clearOutput, buildOutput, downloadOutput, getJSON, wError} from "./output.js";
-import {catiav5_1_0} from "./parselinev22.js";
+import {catiav5_1_0} from "./parselinev3.js";
 const textInputToggle = document.getElementById("textInputToggle");
 const textInput = document.getElementById("textInput");
 
@@ -14,7 +14,6 @@ async function translateAPT(){
     clearOutput();
     const settings = getSettings();
     try {
-
         validateSettings(settings);
         const aptText = await loadAPT(settings);
         const commands = splitAPT(aptText);
@@ -36,8 +35,18 @@ async function translateAPT(){
 
         switch (parserType) {
             case "catiav5_1_0":
-                parser = new catiav5_1_0(settings, funcModule);
+                let docModulePath = "./WinNC.js";
+                
+                if (document.getElementById("preset").value === "custom") {
+                    const coreOutput = document.getElementById("core_output").value;
+                    if (coreOutput === "WinNC_sinumerik") docModulePath = "./WinNC.js";
+                    else if (coreOutput === "Other") docModulePath = "./Other.js";
+                }
+                const docModule = await import(docModulePath);
+                parser = new catiav5_1_0(settings, docModule);
+
                 break;
+
             default:
                 throw new Error("APT parser not selected");
         }
