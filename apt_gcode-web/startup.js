@@ -1,6 +1,5 @@
-
-import {getSettings, validateSettings} from "./settings.js";
-import {clearOutput, buildOutput, downloadOutput, getJSON, wError} from "./output.js";
+import {getSettings} from "./settings.js";
+import {clearOutput, buildOutput, downloadOutput, getJSON, wError, write} from "./output.js";
 import {catiav5_1_0} from "./parselinev3.js";
 const textInputToggle = document.getElementById("textInputToggle");
 const textInput = document.getElementById("textInput");
@@ -11,10 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function translateAPT(){
+    const terminal = document.getElementById("terminalOutput");
+    if (terminal) {
+        terminal.scrollIntoView({ behavior: "smooth", block: "start" });
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    document.body.classList.add("no-scroll");
     clearOutput();
     const settings = getSettings();
     try {
-        validateSettings(settings);
         const aptText = await loadAPT(settings);
         const commands = splitAPT(aptText);
         const parserType = document.getElementById("apt-code-version").value;
@@ -36,14 +40,14 @@ async function translateAPT(){
         switch (parserType) {
             case "catiav5_1_0":
                 let docModulePath = "./WinNC.js";
-                
+
                 if (document.getElementById("preset").value === "custom") {
                     const coreOutput = document.getElementById("core_output").value;
                     if (coreOutput === "WinNC_sinumerik") docModulePath = "./WinNC.js";
                     else if (coreOutput === "Other") docModulePath = "./Other.js";
                 }
                 const docModule = await import(docModulePath);
-                parser = new catiav5_1_0(settings, docModule);
+                parser = new catiav5_1_0(docModule);
 
                 break;
 
@@ -52,8 +56,9 @@ async function translateAPT(){
         }
 
 
-        for (const command of commands) {
-            parser.parseline(command);
+        for (let i = 0; i < commands.length; i++) {
+            parser.parseline(commands[i]);
+            await new Promise(resolve => setTimeout(resolve, 10)); 
         }
     }
     
@@ -62,44 +67,10 @@ async function translateAPT(){
             error.message;
         console.error(error);
     }
-
-    try{
-        validateSettings(settings);
-        const aptText = await loadAPT(settings);
-        const g_code_type = document.getElementById("preset").value;
-        window.core = g_code_type;
-        let gcoder;
-        write("END");
-        
-        switch (g_code_type) {
-            case "WinNC_sinumerik":
-                gcoder = new WinNC_sinumerik(settings);
-                break;
-            case "custom":
-                if (document.getElementById("core_output").value === "WinNC_sinumerik"){
-                    gcoder = new WinNC_sinumerik(settings);
-                    break;
-                }
-                break;
-        default:
-            throw new Error("G-code generator not selected");
-        }
-
-        const jsonLines = JSON.parse(getJSON());
-        for (const line of jsonLines) {
-            gcoder.gcoder(line);
-        }
-        const result = buildOutput(settings);
-        document.getElementById("terminalOutput").textContent = result;
-
+    finally{
+        document.body.classList.remove("no-scroll");
     }
-    
-    catch (error) {
-        document.getElementById("terminalOutput").textContent=
-            error.message;
-        console.error(error);
-    
-    }
+
     if (document.getElementById("downloadOutputCheck").checked){
     downloadOutput(buildOutput(settings),settings)}
 }

@@ -1,5 +1,18 @@
 import { wError } from "./output.js";
 import {write, checkVector, getPlane, findDirection} from "./output.js";
+
+export function header(){
+    let name = document.getElementById("customFilename").value.trim()
+    if (document.getElementById("preset").value === "custom"){
+        write(document.getElementById("output_header").value);
+    }
+    else{
+        write("%_N_{"+name+"}_MPF");
+        write("#DEFINE THE WORKPIECE");
+        write("G71\nG55\nDIAMOF");
+    }
+}
+
 export function compensation_chg(el){
     if(el.length === 7 && el.every((x,i)=> i in el && x !== undefined && x.trim()!=="")){
         write("For correction register nr. "+el[1].trim()+", tool tip quadrant is P"+el[2].trim()+", tool offset values are X"+el[3].trim()+", Y"+el[4].trim()+", Z"+el[5].trim()+", nose radius is "+el[6].trim());
@@ -300,8 +313,8 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
 
     if (dim_typ !== "G91"){
         write("G91");
-        dim = "G91";
     }
+    dim = "G91";
 
     if (rapid && (movement === "G1")){
         write("G1");
@@ -345,11 +358,11 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
 export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement){
     let dim;
     let move;
-
+    console.log("goto func recieved:"+dim_typ);
     if (dim_typ !== "G90"){
         write("G90");
-        dim = "G90";
     }
+    dim = "G90";
 
     if (rapid && (movement === "G1")){
         write("G1");

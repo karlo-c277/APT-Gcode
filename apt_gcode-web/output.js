@@ -1,13 +1,5 @@
-import { generateHeader } from "./settings.js";
-
 let output = [];
 let jsonOutput = [];
-
-
-export function kk(line){
-    jsonOutput.push(line.trim());
-    console.log("***"+line);
-}
 
 export function wError (line){
     write(line);
@@ -40,10 +32,22 @@ export function clearOutput(){
 
 
 export function write(line){
-    if (!(line.trim() === "")){
-    output.push(line.trim());
+    if (!line) line = "";
+    const trimmedLine = line.trim();
+    
+    if (trimmedLine !== ""){
+        output.push(trimmedLine);
+        const terminal = document.getElementById("terminalOutput");
+        if (terminal) {
+            if (terminal.textContent === "Translating... Please wait." || terminal.textContent === "") {
+                terminal.textContent = trimmedLine;
+            } else {
+                terminal.textContent += "\n" + trimmedLine;
+            }
+            terminal.scrollTop = terminal.scrollHeight;
+        }
     }
-    console.log("###"+line);
+    console.log("###" + line);
 }
 
 
@@ -52,22 +56,8 @@ export function getOutput(){
 }
 
 
-export function buildOutput(settings){
-    let finalOutput = [];
-    if (settings.output.header && settings.output.header.trim() !==""){
-        finalOutput.push(generateHeader(settings));
-    }
-
-    finalOutput.push(document.getElementById("add").value.replaceAll(/\\n/g, "\n"));
-    if (window.core !== "Karlov_kod") {
-        finalOutput.push("#DEFINE THE WORKPIECE");
-    }
-    finalOutput.push(window.postheader);
-    if (finalOutput.length > 0){
-        finalOutput.push("");
-    }
-    finalOutput.push(...output);
-    return finalOutput.join("\n");
+export function buildOutput(){
+    return output.join("\n");
 }
 
 
@@ -193,7 +183,7 @@ export function checkVector(i,j,k){
     let isPlanar = false;
     let isSingle = false;
     let isCorrect = false;
-    if ((i.trim()!== "")&&(j.trim()!== "")&&(k.trim()!== "")&&((Math.abs(Math.pow(i,2) + Math.pow(j,2) + Math.pow(k,2) - 1)) < 0.01)){
+    if ((String(i).trim()!== "")&&(String(j).trim()!== "")&&(String(k).trim()!== "")&&((Math.abs(Math.pow(i,2) + Math.pow(j,2) + Math.pow(k,2) - 1)) < 0.01)){
             isCorrect = true;
         if ((i !==0) || (j!==0) || (k!==0)){
             isPlanar = true;

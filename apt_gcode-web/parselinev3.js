@@ -131,6 +131,7 @@ export class catiav5_1_0{
                 }
             break;
 
+            case "FINI":
             case "END":
                 D = programEnd(true);
                 if (!D){
@@ -234,9 +235,11 @@ export class catiav5_1_0{
                     this.cyc_coord.push(els);
                 }
                 else{
+                    console.log("parseline sent:" +this.ls_dim_typ);
                     D = goto(this.ls_coord, els, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                     this.rapto = false;
                     this.ls_dim_typ = D[0];
+                    console.log("parseline recieved:" +this.ls_dim_typ);
                     this.ls_movement = D[1];
                 }
                 this.ls_coord = els;
@@ -340,7 +343,7 @@ export class catiav5_1_0{
             
             case "COOLNT":
                 D = coolant(elements2[1].trim(),this.coolant);
-                if (!D){
+                if (!D[0]){
                     wError("Coolant syntacs is not supported\n"+line);
                 }
                 else{
@@ -384,9 +387,9 @@ export class catiav5_1_0{
             
             case "PSIS":
                 els = [+elements[3], +elements[4], +elements[5]];
+            break;
+
             case "kkod":
-                parser = new catiav5_1_0(settings, funcModule);
-                break;
                 if (!(this.ls_coord.length === els.length && this.ls_coord.every((v, i) => v === els[i]))){
                     goto(this.ls_coord, els, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                 }
@@ -475,8 +478,6 @@ export class catiav5_1_0{
                 }
             break;
             
-
-
             case "CHANGE_TOOL":
                 D = change_tool(elements2[1].trim(),elements2[2].trim(),elements2[3].trim());
                 if (!D[0]){

@@ -460,3 +460,9 @@ input[type="checkbox"]{
     font-weight: 400;
     cursor: pointer;
 }
+
+body.no-scroll {
+    overflow: hidden;
+    width: 100%;
+    overflow-y: scroll;
+}
