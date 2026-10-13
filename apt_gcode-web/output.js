@@ -3,7 +3,7 @@ let jsonOutput = [];
 
 export function wError (line){
     write(line);
-    console.error(line)
+    console.error(line);
 }
 
 

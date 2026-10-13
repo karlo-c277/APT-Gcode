@@ -270,6 +270,7 @@ button:active {
     font-size: 14px;
     line-height: 1.5;
     white-space: pre-wrap;
+    transition: max-height 0.2s ease;
 }
 
 #errorBox {
@@ -346,7 +347,6 @@ h6 {
     border-radius: 50%;
     transition: 0.25s;
 }
-
 
 .switch input:checked + .slider {
     background: #878400;
@@ -459,10 +459,4 @@ input[type="checkbox"]{
     color: white;
     font-weight: 400;
     cursor: pointer;
-}
-
-body.no-scroll {
-    overflow: hidden;
-    width: 100%;
-    overflow-y: scroll;
 }
