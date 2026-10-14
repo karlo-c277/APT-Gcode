@@ -235,11 +235,9 @@ export class catiav5_1_0{
                     this.cyc_coord.push(els);
                 }
                 else{
-                    console.log("parseline sent:" +this.ls_dim_typ);
                     D = goto(this.ls_coord, els, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
                     this.rapto = false;
                     this.ls_dim_typ = D[0];
-                    console.log("parseline recieved:" +this.ls_dim_typ);
                     this.ls_movement = D[1];
                 }
                 this.ls_coord = els;

@@ -254,7 +254,7 @@ button:active {
 
 #terminalOutput {
     min-height: 250px;
-    max-height: 7500px;
+    max-height: 300px;
     overflow-y: auto;
     margin: 0;
     padding: 16px;
@@ -271,6 +271,32 @@ button:active {
     line-height: 1.5;
     white-space: pre-wrap;
     transition: max-height 0.2s ease;
+}
+
+#terminalOutput.expanded{
+
+    max-height: 7500px;
+}
+
+.view-more-btn{
+    display: block;
+    width: min(260px, 70%);
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: whitesmoke;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.view-more-btn:hover{
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    transform: translateY(-1px);
+    color: #a40000;
 }
 
 #errorBox {

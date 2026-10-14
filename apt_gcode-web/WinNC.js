@@ -358,7 +358,6 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
 export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement){
     let dim;
     let move;
-    console.log("goto func recieved:"+dim_typ);
     if (dim_typ !== "G90"){
         write("G90");
     }
@@ -767,7 +766,6 @@ export function change_tool(name){
 export function writeComment(el){
     if (el){
         write(";"+el);
-        console.log("**.**;"+el)
         return true;
     }
     else{
