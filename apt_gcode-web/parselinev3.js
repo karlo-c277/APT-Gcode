@@ -146,7 +146,7 @@ export class catiav5_1_0{
                     wError("ERROR with PARTNO, check for empty elements or incomplete elements\n*"+line);
                 }
             break;
-
+ 
             case "PPRINT":
             case "TPRINT":
             case "TOOLNO":
