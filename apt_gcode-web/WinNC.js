@@ -477,7 +477,7 @@ export function coolant(typ, coolant){
 
         case "ON":
             write(coolant);
-            return  [true, coolant];
+            return  [true, coolant+" "];
 
         case "OFF":
             write("M9");

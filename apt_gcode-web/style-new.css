@@ -196,18 +196,14 @@ input[type="checkbox"] {
 
 button {
     display: block;
-    width: min(500px, 90%);
+    width: min(250px, 90vw, 90vw);
+    aspect-ratio: 1.125 / 1;
     padding: 15px 20px;
     margin: 30px auto;
-    background: 
-        linear-gradient(
-            180deg,
-            #098d13,
-            #087a12
-        );
-    border: 1px solid #0ca518;
-    border-radius: 9px;
-    font-size: 17px;
+    background: #ba0000;
+    border: 1px solid #ac0202;
+    border-radius: 50%;
+    font-size: clamp(12px, 3vw, 17px);
     font-weight: 700;
     color: white;
     cursor: pointer;
@@ -218,12 +214,7 @@ button {
 }
 
 button:hover {
-    background:
-        linear-gradient(
-            180deg,
-            #0ba719,
-            #0b9418
-        );
+    background:#ff0000;
     box-shadow: 0 0 20px rgba(8, 148, 24, 0.25);
     color: #fff365;
     transform: translateY(-1px);
@@ -280,14 +271,18 @@ button:active {
 
 .view-more-btn{
     display: block;
-    width: min(260px, 70%);
-    margin-top: 12px;
+    width: fit-content;
+    height: auto;
+    aspect-ratio: auto;
+    padding: 4px 8px;
+    margin: 12px auto 0;
     font-size: 14px;
     font-weight: 600;
     color: whitesmoke;
     cursor: pointer;
     background: transparent;
     border: none;
+    border-radius: 0;
     box-shadow: none;
 }
 

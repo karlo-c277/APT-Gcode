@@ -486,7 +486,8 @@ export class catiav5_1_0{
             break;
 
             case "rawG":
-                write(line);
+                D = line.replace("rawG", "");
+                write(D);
             break;
 
             default:
