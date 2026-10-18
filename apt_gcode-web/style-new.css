@@ -196,14 +196,13 @@ input[type="checkbox"] {
 
 button {
     display: block;
-    width: min(250px, 90vw, 90vw);
-    aspect-ratio: 1.125 / 1;
+    width: min(500px, 90%);
     padding: 15px 20px;
     margin: 30px auto;
     background: #ba0000;
     border: 1px solid #ac0202;
-    border-radius: 50%;
-    font-size: clamp(12px, 3vw, 17px);
+    border-radius: 9px;
+    font-size: 17px; 
     font-weight: 700;
     color: white;
     cursor: pointer;
