@@ -43,8 +43,17 @@ export class catiav5_1_0{
         let elements2 = line.split(/[,/:]/);
 
         switch (elements[0].trim()){
+            case "CUTTER":
+                D = compensation_chg(true,elements2);
+                if (D){
+                    console.log(line);
+                }
+                else{
+                    wError("ERROR with cutter \n***"+ line+"\nElements: "+elements2);
+                }                
+            break;
             case "COMPENSATION":
-                D = compensation_chg(elements2);
+                D = compensation_chg(false,elements2);
                 if (D){
                     console.log(line);
                 }

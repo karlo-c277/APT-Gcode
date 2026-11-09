@@ -13,13 +13,28 @@ export function header(){
     }
 }
 
-export function compensation_chg(el){
-    if(el.length === 7 && el.every((x,i)=> i in el && x !== undefined && x.trim()!=="")){
-        write("For correction register nr. "+el[1].trim()+", tool tip quadrant is P"+el[2].trim()+", tool offset values are X"+el[3].trim()+", Y"+el[4].trim()+", Z"+el[5].trim()+", nose radius is "+el[6].trim());
-        return true;
+export function compensation_chg(is_cutter,el){
+    if (!is_cutter){
+        if(el.length === 7 && el.every((x,i)=> i in el && x !== undefined && x.trim()!=="")){
+            write("For correction register nr. "+el[1].trim()+", tool tip quadrant is P"+el[2].trim()+", tool offset values are X"+el[3].trim()+", Y"+el[4].trim()+", Z"+el[5].trim()+", nose radius is "+el[6].trim());
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     else{
-        return false;
+        if(el.length === 7){
+            write("Cutter diameter is "+el[1].trim()+", corner radius is"+el[2].trim()+", horizontal distance between radius center point and tool axis is "+el[3].trim()+", vertical distance between radius center point and cutter tip is "+el[4].trim()+", angle of cutter tip is "+el[5].trim()+", flank angle is "+el[6].trim()+", tool height is "+el[7].trim());
+            return true;
+        }
+        else if(el.length === 2){
+            write("Corner radius is "+el[1].trim());
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
 
