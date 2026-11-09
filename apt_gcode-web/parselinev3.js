@@ -238,6 +238,7 @@ export class catiav5_1_0{
                 }
             break;
 
+            case "FROM":
             case "GOTO":
                 els = [+elements[1],+elements[2],+elements[3]];
                 if (this.cycleon){
