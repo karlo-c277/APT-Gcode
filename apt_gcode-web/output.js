@@ -114,7 +114,7 @@ export function getPlane(...coords){
     let x_last;
     let y_last;
     let z_last;
-    for (const [id,x,y,z] of coords){
+    for (let [id,x,y,z] of coords){
         x = Number(x);
         y = Number(y);
         z = Number(z);
