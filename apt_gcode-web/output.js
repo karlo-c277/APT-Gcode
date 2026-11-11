@@ -155,11 +155,25 @@ export function getPlane(...coords){
             if (Math.abs(x)===1){
                 x_value = false;
             }
+            else if (x!==0){
+                wError("The x component of axis is not perpendicular to base planes");
+                return false;
+            }
+            
             if (Math.abs(y)===1){
                 y_value = false;
             }
+            else if (y!==0){
+                wError("The y component of axis is not perpendicular to base planes");
+                return false;
+            }
+
             if(Math.abs(z)===1){
                 z_value = false;
+            }
+            else if (z!==0){
+                wError("The z component of axis is not perpendicular to base planes");
+                return false;
             }
         }
     }
