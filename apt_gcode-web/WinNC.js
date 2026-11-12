@@ -1,5 +1,4 @@
-import { wError } from "./output.js";
-import {write, checkVector, getPlane, findDirection} from "./output.js";
+import {write, wError, checkVector, getPlane, getAngl, findDirection} from "./output.js";
 
 export function header(){
     let name = document.getElementById("customFilename").value.trim()
@@ -386,6 +385,9 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
         write("G0");
         move = "G0";
     }
+    let A = getAngl(+coord[4],+coord[5]);
+    let B = getAngl(+coord[3],+coord[5]);
+    let C = getAngl(+coord[3],+coord[4]);
     if (rapto === true){
         let ratio;
         let rdtx;
@@ -407,7 +409,12 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
             }
         }
     }
-    write("X"+ coord[0] + " Y" +coord[1] + " Z" + coord[2]);
+    if (coord.length===3){
+        write("X"+ coord[0] + " Y" +coord[1] + " Z" + coord[2]);
+    }
+    else{
+
+    }
     return [dim,move];
 
 }

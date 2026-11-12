@@ -240,7 +240,12 @@ export class catiav5_1_0{
 
             case "FROM":
             case "GOTO":
-                els = [+elements[1],+elements[2],+elements[3]];
+                if (elements.length===4){
+                    els = [+elements[1],+elements[2],+elements[3]];
+                }
+                else if (elements.length===7){
+                    els = [+elements[1],+elements[2],+elements[3],+elements[4],+elements[5],+elements[6]];
+                }
                 if (this.cycleon){
                     this.cyc_coord.push(els);
                 }

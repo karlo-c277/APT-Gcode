@@ -81,18 +81,6 @@ export function getLastJSON() {
 }
 
 
-export function findDirection2D(tang1, begin1, center1, tang2, begin2, center2){
-    let D = tang1*(begin2-center2)-tang2*(begin1-center1);
-    if (D<0){
-        return "G3";
-    }
-    else if (D>0){
-        return "G2";
-    }
-    else{
-        return false;
-    }
-}
 export function findDirection(tang1, begin1, center1, tang2, begin2, center2){
     let D = tang1*(begin2-center2)-tang2*(begin1-center1);
     if (D<0){
@@ -193,6 +181,8 @@ export function getPlane(...coords){
         return false;
     }
 }
+
+
 export function checkVector(i,j,k){
     let isPlanar = false;
     let isSingle = false;
@@ -209,4 +199,26 @@ export function checkVector(i,j,k){
     return [isCorrect,isPlanar,isSingle];
 }
 
+
+export function getAngl(v_hor, v_vert){
+    let angl;
+    let angle = Math.atan(Math.abs(v_vert)/Math.abs(v_vert));
+    if (v_hor>0&&v_vert>0){
+        angl=angle;
+    }
+    else if (v_hor<0&&v_vert>0){
+        angl=180-angle;
+    }
+    else if (v_hor<0&&v_vert<0){
+        angl=180+angle;
+    }
+    else if (v_hor>0&&v_vert<0){
+        angl=360-angle;
+    }
+    else if (v_hor===0){
+        if (v_vert>0){
+            
+        }
+    }
+}
 {}
