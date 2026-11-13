@@ -117,7 +117,7 @@ function splitAPT(text) {
     let current = "";
     for (const line of lines) {
         current += line.trim();
-        if (current.endsWith("$")||current.endsWith("/"){
+        if (current.endsWith("$")||current.endsWith("/")){
             current = current.slice(0, -1);
             continue;
         }
