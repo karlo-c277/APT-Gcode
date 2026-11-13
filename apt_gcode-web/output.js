@@ -217,8 +217,23 @@ export function getAngl(v_hor, v_vert){
     }
     else if (v_hor===0){
         if (v_vert>0){
-            
+            angl = 90;
+        }
+        else if (v_vert < 0){
+            angl = 270;
+        }
+        else{
+            angl = 0;
         }
     }
+    else if (v_vert===0){
+        if (v_hor < 0){
+            angl = 180;
+        }
+        else{
+            angl = 0;
+        }
+    }
+    return angl;
 }
 {}

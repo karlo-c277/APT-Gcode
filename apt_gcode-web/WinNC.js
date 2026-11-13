@@ -385,9 +385,19 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
         write("G0");
         move = "G0";
     }
-    let A = getAngl(+coord[4],+coord[5]);
-    let B = getAngl(+coord[3],+coord[5]);
-    let C = getAngl(+coord[3],+coord[4]);
+    let additional;
+    let A;
+    let B;
+    let C;
+    if (coord.length === 6){
+        A = getAngl(+coord[4],+coord[5]);
+        B = getAngl(+coord[3],+coord[5]);
+        C = getAngl(+coord[3],+coord[4]);
+        additional = " A"+A+" B"+B+" C"+C;
+    }
+    else{
+        additional = "";
+    }
     if (rapto === true){
         let ratio;
         let rdtx;
@@ -403,18 +413,14 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
             rdty = ratio*dty+ +coord[1];
             rdtz = ratio*dtz+ +coord[2];
             write("G0");
-            write("X" + rdtx + " Y" + rdty + " Z" + rdtz);
+            write("X" + rdtx + " Y" + rdty + " Z" + rdtz+additional);
             if (move==="G1"){
                 write("G1");
             }
         }
     }
-    if (coord.length===3){
-        write("X"+ coord[0] + " Y" +coord[1] + " Z" + coord[2]);
-    }
-    else{
-
-    }
+    write("X"+ coord[0] + " Y" + coord[1] + " Z" + coord[2]+additional);
+    
     return [dim,move];
 
 }
