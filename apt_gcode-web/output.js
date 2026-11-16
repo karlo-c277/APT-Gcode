@@ -95,7 +95,7 @@ export function findDirection(tang1, begin1, center1, tang2, begin2, center2){
 }
 
 // true means the coordinate is stable does not change- not a part of the plane
-export function getPlane(...coords){
+export function getPlane(coords){
     let x_value = true;
     let y_value = true;
     let z_value = true;
@@ -168,13 +168,13 @@ export function getPlane(...coords){
     if (x_value && y_value && z_value){
         return null;
     }
-    else if (x_value && z_value){
+    else if (!x_value && !z_value){
         return "xz";
     }
-    else if (y_value && z_value){
+    else if (!y_value && !z_value){
         return "yz";
     }
-    else if (x_value && y_value){
+    else if (!x_value && !y_value){
         return "xy";
     }
     else{
