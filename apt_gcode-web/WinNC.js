@@ -125,6 +125,7 @@ export function partno(el){
 }
 
 export function tlon(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
+    let D;
     if (!(line.includes("GOFWD"))){
         return [false];
     }
@@ -170,12 +171,12 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
     let report_data;
     let report_data2;
 
-    D = getPlane(
+    D = getPlane([
         ["cor",center_x,center_y,center_z],
         ["cor",end_x,end_y,end_z],
         ["cor",start_x,start_y,start_z],
         ["vec",tan_x,tan_y,tan_z]
-    );
+    ]);
     if (D === null){
         write("ERROR with plane definition not enough data to define a plane, check console log");
         console.error("ERROR with plane definition not enough data to define a plane, this are the given inputs",{
@@ -256,12 +257,12 @@ export function helix(start, center, tan, axis, info, end){
     let D;
 
     let turns = +info[3];
-    D = getPlane(
+    D = getPlane([
         ["cor",...center],
         ["cor",...start],
         ["vec",...tan],
         ["axs",...axis]
-    );
+    ]);
     if (D === null){
         write("ERROR with plane definition not enough data to define a plane, check console log");
         console.error("ERROR with plane definition not enough data to define a plane, this are the given inputs",{
