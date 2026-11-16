@@ -784,7 +784,7 @@ export function cutcom(value, general, ps, ds){
 
 export function change_tool(name){
     if (name){
-        write("T="+name);
+        write('T="' + name + '"');
         return [true];
     }
     else{
