@@ -227,11 +227,11 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
         }
         else if (direction === "cw"){
             write("G2 X"+end_x+" Y"+end_y+" Z"+end_z+" I=AC("+center_x+") J=AC("+center_y+") K=AC("+center_z+")");
-            return [true,[end_x,end_y,end_z]];
+            return [true,[end_x,end_y,end_z],"cw"];
         }
         else{
             write("G3 X"+end_x+" Y"+end_y+" Z"+end_z+" I=AC("+center_x+") J=AC("+center_y+") K=AC("+center_z+")");
-            return [true,[end_x,end_y,end_z]];
+            return [true,[end_x,end_y,end_z],"ccw"];
         }
     }
 }
@@ -313,11 +313,11 @@ export function helix(start, center, tan, axis, info, end){
         }
         else if (direction === "cw"){
             write("G2 X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
-            return [true,[end_x,end_y,end_z]];
+            return [true,[end_x,end_y,end_z],"cw"];
         }
         else{
             write("G3 X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
-            return [true,[end_x,end_y,end_z]];
+            return [true,[end_x,end_y,end_z],"ccw"];
         }
     }
 }
