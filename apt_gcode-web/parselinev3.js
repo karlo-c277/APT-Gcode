@@ -211,6 +211,7 @@ export class catiav5_1_0{
                         }
                         else{
                             this.ls_coord = D[1];
+                            this.ls_movement = D[2];
                         }
                     break;
                 }
