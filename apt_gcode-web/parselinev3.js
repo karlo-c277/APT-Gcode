@@ -20,6 +20,7 @@ export class catiav5_1_0{
         this.rapto = false;
         this.rapto_num;
         this.ls_movement;
+        this.ls_plane;
         this.spindle;
         this.feedrate;
         this.cyc_name;
@@ -169,7 +170,7 @@ export class catiav5_1_0{
             break;
 
             case "TLON":
-                D = tlon(line, ...this.ls_coord, ...this.ls_circle_tan);
+                D = tlon(line, ...this.ls_coord, ...this.ls_circle_tan, this.ls_movement, this.ls_plane);
                 if(!D[0]){
                     wError("ERROR unknown command/error with command recognition-should be a gofwd\n"+line);
                 }
@@ -184,6 +185,7 @@ export class catiav5_1_0{
                         else{
                             this.ls_coord = D[2][1];
                             this.ls_movement = D[2][2];
+                            this.ls_plane = D[2][3];
                         }
                     }
                 }
@@ -205,13 +207,14 @@ export class catiav5_1_0{
                     break;
                     case "END":
                         this.helix_end = [+elements[2],+elements[3],+elements[4]];
-                        D = helix(this.ls_coord,this.helix_center, this.helix_tan, this.helix_axis, this.helix_info, this.helix_end);
+                        D = helix(this.ls_coord,this.helix_center, this.helix_tan, this.helix_axis, this.helix_info, this.helix_end, this.ls_movement, this.ls_plane);
                         if (!D[0]){
                             wError("ERROR with element determination (cw or ccw/plane definition)");
                         }
                         else{
                             this.ls_coord = D[1];
                             this.ls_movement = D[2];
+                            this.ls_plane = D[3];
                         }
                     break;
                 }
@@ -326,11 +329,17 @@ export class catiav5_1_0{
                 this.rapid = true;
                 if (line.includes("GOTO")){
                     let coord = [+elements[2],+elements[3],+elements[4]];
-                    D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
-                    this.rapto = false;
-                    this.ls_dim_typ = D[0];
-                    this.ls_movement = D[1];
-                    this.ls_coord = coord;
+                    if (this.cycleon){
+                        this.cyc_coord.push(this.ls_coord);
+                    }
+                    else{
+                        D = goto(this.ls_coord, coord, this.rapid, this.ls_dim_typ, this.rapto, this.rapto_num, this.ls_movement);
+                        this.rapto = false;
+                        this.ls_dim_typ = D[0];
+                        this.ls_movement = D[1];
+                        this.ls_coord = coord;
+                        this.rapid = false;
+                    }
                 }
                 else if (line.includes("GODLTA")){
                     if (elements.length===4){
@@ -352,6 +361,7 @@ export class catiav5_1_0{
                         this.rapto = false;
                         this.ls_dim_typ = D[0];
                         this.ls_movement = D[1];
+                        this.rapid = false;
                     }
                 }
             break;

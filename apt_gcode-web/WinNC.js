@@ -124,14 +124,14 @@ export function partno(el){
     }
 }
 
-export function tlon(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
+export function tlon(line, start_x, start_y, start_z, tan_x, tan_y, tan_z, ls_movement, ls_plane){
     let D;
     if (!(line.includes("GOFWD"))){
         return [false];
     }
     else{
         if (line.includes("CIRCLE")){
-            D = circle(line,start_x, start_y, start_z, tan_x, tan_y, tan_z);
+            D = circle(line,start_x, start_y, start_z, tan_x, tan_y, tan_z, ls_movement, ls_plane);
             return [true, "circle", D];
         }
         else if (line.includes("CYLNDR")){
@@ -148,7 +148,7 @@ export function sinus(){
     wError("This controler does not support sinusoidal movement");
 }
 
-export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
+export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z, ls_movement, ls_plane){
     line = line.replace(/[()]/g, "");
     let elements = line.split(/[,/]/);
 
@@ -158,7 +158,6 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
         if (i !== -1) elements.splice(i, 1);
         });
     }
-
 
     let center_x = +elements[3];
     let center_y = +elements[4];
@@ -170,6 +169,7 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
     let D;
     let report_data;
     let report_data2;
+    let plane;
 
     D = getPlane([
         ["cor",center_x,center_y,center_z],
@@ -200,25 +200,35 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
     else{
         switch (D.trim()){
             case "xy":
-                write("G17");
+                if (ls_plane !== "G17"){
+                    write("G17");
+                    plane = "G17";
+                }
                 direction =findDirection(tan_x,start_x,center_x,tan_y,start_y,center_y);
                 report_data = [tan_x,start_x,center_x,tan_y,start_y,center_y];
                 report_data2 ="tan_x,start_x,center_x,tan_y,start_y,center_y";
             break;
             case "xz":
-                write("G18");
+                if (ls_plane !== "G18"){
+                    write("G18");
+                    plane = "G18";
+                }
                 direction =findDirection(tan_z,start_z,center_z,tan_x,start_x,center_x);
                 report_data = [tan_z,start_z,center_z,tan_x,start_x,center_x];
                 report_data2 ="tan_z,start_z,center_z,tan_x,start_x,center_x";
             break;
             case "yz":
-                write("G19");
+                if (ls_plane !== "G19"){
+                    write("G19");
+                    plane = "G19";
+                }
                 direction =findDirection(tan_y,start_y,center_y,tan_z,start_z,center_z);
                 report_data = [tan_y,start_y,center_y,tan_z,start_z,center_z];
                 report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
             break;
         }
-    
+
+        let dir_val;
 
         if (!direction){
             write("ERROR with direction definition check console log"+ report_data+"\n"+report_data2);
@@ -226,12 +236,18 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z){
             return [false];
         }
         else if (direction === "cw"){
-            write("G2 X"+end_x+" Y"+end_y+" Z"+end_z+" I=AC("+center_x+") J=AC("+center_y+") K=AC("+center_z+")");
-            return [true,[end_x,end_y,end_z],"cw"];
+            if (ls_movement !== "G2"){
+                dir_val="G2 ";
+            }
+            write(dir_val+"X"+end_x+" Y"+end_y+" Z"+end_z+" I=AC("+center_x+") J=AC("+center_y+") K=AC("+center_z+")");
+            return [true,[end_x,end_y,end_z],"G2",plane];
         }
         else{
-            write("G3 X"+end_x+" Y"+end_y+" Z"+end_z+" I=AC("+center_x+") J=AC("+center_y+") K=AC("+center_z+")");
-            return [true,[end_x,end_y,end_z],"ccw"];
+            if (ls_movement !== "G3"){
+                dir_val="G3 ";
+            }
+            write(dir_val+"X"+end_x+" Y"+end_y+" Z"+end_z+" I=AC("+center_x+") J=AC("+center_y+") K=AC("+center_z+")");
+            return [true,[end_x,end_y,end_z],"G3",plane];
         }
     }
 }
@@ -255,6 +271,7 @@ export function helix(start, center, tan, axis, info, end){
 
     let direction;
     let D;
+    let plane;
 
     let turns = +info[3];
     D = getPlane([
@@ -286,19 +303,28 @@ export function helix(start, center, tan, axis, info, end){
     else{
         switch (D.trim()){
             case "xy":
-                write("G17");
+                if (ls_plane !== "G17"){
+                    write("G17");
+                    plane = "G17";
+                }
                 direction =findDirection(tan_x,start_x,center_x,tan_y,start_y,center_y);
                 report_data = [tan_x,start_x,center_x,tan_y,start_y,center_y];
                 report_data2 ="tan_x,start_x,center_x,tan_y,start_y,center_y";
             break;
             case "xz":
-                write("G18");
+                if (ls_plane !== "G18"){
+                    write("G18");
+                    plane = "G18";
+                }
                 direction =findDirection(tan_z,start_z,center_z,tan_x,start_x,center_x);
                 report_data = [tan_z,start_z,center_z,tan_x,start_x,center_x];
                 report_data2 ="tan_z,start_z,center_z,tan_x,start_x,center_x";
             break;
             case "yz":
-                write("G19");
+                if (ls_plane !== "G19"){
+                    write("G19");
+                    plane = "G19";
+                }
                 direction =findDirection(tan_y,start_y,center_y,tan_z,start_z,center_z);
                 report_data = [tan_y,start_y,center_y,tan_z,start_z,center_z];
                 report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
@@ -312,12 +338,18 @@ export function helix(start, center, tan, axis, info, end){
             return [false];
         }
         else if (direction === "cw"){
-            write("G2 X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
-            return [true,[end_x,end_y,end_z],"cw"];
+            if (ls_movement !== "G2"){
+                dir_val="G2 ";
+            }
+            write(dir_val,"X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
+            return [true,[end_x,end_y,end_z],"G2",plane];
         }
         else{
-            write("G3 X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
-            return [true,[end_x,end_y,end_z],"ccw"];
+            if (ls_movement !== "G3"){
+                dir_val="G3 ";
+            }
+            write(dir_val+"X"+end_x+" Y"+end_y+" Z"+end_z+" I"+center_x+" J"+center_y+" K"+center_z+" TURN="+turns);
+            return [true,[end_x,end_y,end_z],"G3",plane];
         }
     }
 }
@@ -331,13 +363,13 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
     }
     dim = "G91";
 
-    if (rapid && (movement === "G1")){
-        write("G1");
-        move = "G1";
-    }
-    else if (movement === "G0"){
+    if (rapid && (movement !== "G0")){
         write("G0");
         move = "G0";
+    }
+    else if (!rapid && (movement !== "G1")){
+        write("G1");
+        move = "G1";
     }
     
     if (rapto&& dist > rapto_num){
@@ -378,13 +410,13 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
     }
     dim = "G90";
 
-    if (rapid && (movement === "G1")){
-        write("G1");
-        move = "G1";
-    }
-    else if (movement === "G0"){
+    if (rapid && (movement !== "G0")){
         write("G0");
         move = "G0";
+    }
+    else if (!rapid && (movement !== "G1")){
+        write("G1");
+        move = "G1";
     }
     let additional;
     let A;
