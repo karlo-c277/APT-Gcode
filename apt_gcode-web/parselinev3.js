@@ -267,9 +267,9 @@ export class catiav5_1_0{
             case "SPINDL":
                 switch(elements2[1].trim()){
                     case "ON":
-                        D = spindle("on",this.spindle);
+                        D = spindle("on", this.spindle);
                         if (!D[0]){
-                            wError("The previous Spindle function was incorectly set there should be 3 elements\n"+this.ls_spindle);
+                            wError("The previous Spindle function was incorectly set there should be 3 elements\n"+this.spindle);
                         }
                     break;
 
@@ -284,7 +284,7 @@ export class catiav5_1_0{
                     default:
                         let spindl = [elements2[2].trim(), elements2[3].trim(), elements2[1].trim()];
 
-                        D = spindle("set",spindl);
+                        D = spindle("set", spindl);
                         if(!D[0]){
                             if (D[1].trim()==="typ"){
                                 wError("Unknown spindle type (sfm/rpm)\n"+line);
