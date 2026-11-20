@@ -1,5 +1,5 @@
 import {getSettings} from "./settings.js";
-import {clearOutput, buildOutput, downloadOutput, getJSON, wError, write} from "./output.js";
+import {clearOutput, buildOutput, downloadOutput, wError} from "./output.js";
 import {catiav5_1_0} from "./parselinev3.js";
 const textInputToggle = document.getElementById("textInputToggle");
 const textInput = document.getElementById("textInput");
@@ -10,12 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function translateAPT(){
-    const terminal = document.getElementById("terminalOutput");
-    if (terminal) {
-        terminal.scrollIntoView({ behavior: "smooth", block: "start" });
-        await new Promise(resolve => setTimeout(resolve, 500));
-    }
-    document.body.classList.add("no-scroll");
     clearOutput();
     const settings = getSettings();
     try {
@@ -39,16 +33,7 @@ async function translateAPT(){
 
         switch (parserType) {
             case "catiav5_1_0":
-                let docModulePath = "./WinNC.js";
-
-                if (document.getElementById("preset").value === "custom") {
-                    const coreOutput = document.getElementById("core_output").value;
-                    if (coreOutput === "WinNC_sinumerik") docModulePath = "./WinNC.js";
-                    else if (coreOutput === "Other") docModulePath = "./Other.js";
-                }
-                const docModule = await import(docModulePath);
-                parser = new catiav5_1_0(docModule);
-
+                parser = new catiav5_1_0(funcModule);
                 break;
 
             default:

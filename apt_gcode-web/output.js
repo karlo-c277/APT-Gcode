@@ -1,5 +1,4 @@
 let output = [];
-let jsonOutput = [];
 
 export function wError (line){
     write(line);
@@ -7,23 +6,8 @@ export function wError (line){
 }
 
 
-export function getJSON(){
-    return JSON.stringify(
-        jsonOutput,
-        null,
-        2
-    );
-}
-
-
-export function clearJSON(){
-    jsonOutput = [];
-}
-
-
 export function clearOutput(){
     output = [];
-    jsonOutput = [];
     const terminal = document.getElementById("terminalOutput");
     if (terminal) {
         terminal.textContent = "Translating... Please wait."; 
@@ -32,7 +16,9 @@ export function clearOutput(){
 
 
 export function write(line){
-    if (!line) line = "";
+    if (!line) {
+        line = "";
+    }
     const trimmedLine = line.trim();
     
     if (trimmedLine !== ""){
@@ -51,11 +37,6 @@ export function write(line){
 }
 
 
-export function getOutput(){
-    return output.join("\n");
-}
-
-
 export function buildOutput(){
     return output.join("\n");
 }
@@ -69,15 +50,9 @@ export function downloadOutput(text,settings){
     });
     const link = document.createElement("a");
     link.href=URL.createObjectURL(blob);
-    link.download =
-        settings.output.filename + settings.output.extension;
+    link.download = settings.output.filename + settings.output.extension;
     link.click();
     URL.revokeObjectURL(link.href);
-}
-
-
-export function getLastJSON() {
-    return jsonOutput[jsonOutput.length - 1];
 }
 
 
