@@ -116,7 +116,8 @@ export function getPlane(coords){
         }
         else if (id==="axs"){
             if (Math.abs(x)===1){
-                x_value = false;
+                y_value = false;
+                z_value = false;
             }
             else if (x!==0){
                 wError("The x component of axis is not perpendicular to base planes");
@@ -124,7 +125,8 @@ export function getPlane(coords){
             }
             
             if (Math.abs(y)===1){
-                y_value = false;
+                z_value = false;
+                x_value = false;
             }
             else if (y!==0){
                 wError("The y component of axis is not perpendicular to base planes");
@@ -132,7 +134,8 @@ export function getPlane(coords){
             }
 
             if(Math.abs(z)===1){
-                z_value = false;
+                y_value = false;
+                x_value = false;
             }
             else if (z!==0){
                 wError("The z component of axis is not perpendicular to base planes");
@@ -164,7 +167,7 @@ export function checkVector(i,j,k){
     let isCorrect = false;
     if ((String(i).trim()!== "")&&(String(j).trim()!== "")&&(String(k).trim()!== "")&&((Math.abs(Math.pow(i,2) + Math.pow(j,2) + Math.pow(k,2) - 1)) < 0.01)){
             isCorrect = true;
-        if ((i !==0) || (j!==0) || (k!==0)){
+        if ((i===0) || (j===0) || (k===0)){
             isPlanar = true;
                 if ((Math.abs(i) === 1) || (Math.abs(j) === 1) || (Math.abs(k) === 1)){
                     isSingle = true;
