@@ -202,8 +202,8 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z, ls_
             case "xy":
                 if (ls_plane !== "G17"){
                     write("G17");
-                    plane = "G17";
                 }
+                plane = "G17";
                 direction =findDirection(tan_x,start_x,center_x,tan_y,start_y,center_y);
                 report_data = [tan_x,start_x,center_x,tan_y,start_y,center_y];
                 report_data2 ="tan_x,start_x,center_x,tan_y,start_y,center_y";
@@ -211,8 +211,8 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z, ls_
             case "xz":
                 if (ls_plane !== "G18"){
                     write("G18");
-                    plane = "G18";
                 }
+                plane = "G18";
                 direction =findDirection(tan_z,start_z,center_z,tan_x,start_x,center_x);
                 report_data = [tan_z,start_z,center_z,tan_x,start_x,center_x];
                 report_data2 ="tan_z,start_z,center_z,tan_x,start_x,center_x";
@@ -220,8 +220,8 @@ export function circle(line, start_x, start_y, start_z, tan_x, tan_y, tan_z, ls_
             case "yz":
                 if (ls_plane !== "G19"){
                     write("G19");
-                    plane = "G19";
                 }
+                plane = "G19";
                 direction =findDirection(tan_y,start_y,center_y,tan_z,start_z,center_z);
                 report_data = [tan_y,start_y,center_y,tan_z,start_z,center_z];
                 report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
@@ -305,8 +305,8 @@ export function helix(start, center, tan, axis, info, end){
             case "xy":
                 if (ls_plane !== "G17"){
                     write("G17");
-                    plane = "G17";
                 }
+                plane = "G17";
                 direction =findDirection(tan_x,start_x,center_x,tan_y,start_y,center_y);
                 report_data = [tan_x,start_x,center_x,tan_y,start_y,center_y];
                 report_data2 ="tan_x,start_x,center_x,tan_y,start_y,center_y";
@@ -314,8 +314,8 @@ export function helix(start, center, tan, axis, info, end){
             case "xz":
                 if (ls_plane !== "G18"){
                     write("G18");
-                    plane = "G18";
                 }
+                plane = "G18";
                 direction =findDirection(tan_z,start_z,center_z,tan_x,start_x,center_x);
                 report_data = [tan_z,start_z,center_z,tan_x,start_x,center_x];
                 report_data2 ="tan_z,start_z,center_z,tan_x,start_x,center_x";
@@ -323,8 +323,8 @@ export function helix(start, center, tan, axis, info, end){
             case "yz":
                 if (ls_plane !== "G19"){
                     write("G19");
-                    plane = "G19";
                 }
+                plane = "G19";
                 direction =findDirection(tan_y,start_y,center_y,tan_z,start_z,center_z);
                 report_data = [tan_y,start_y,center_y,tan_z,start_z,center_z];
                 report_data2 ="tan_y,start_y,center_y,tan_z,start_z,center_z";
@@ -363,13 +363,17 @@ export function godlta(coord, rapid, dim_typ, rapto, rapto_num, movement){
     }
     dim = "G91";
 
-    if (rapid && (movement !== "G0")){
-        write("G0");
+    if (rapid){
         move = "G0";
+        if (movement !== "G0"){
+            write("G0");
+        }
     }
-    else if (!rapid && (movement !== "G1")){
-        write("G1");
+    else if (!rapid){
         move = "G1";
+        if (movement !== "G1"){
+            write("G1");
+        }
     }
     
     if (rapto&& dist > rapto_num){
@@ -410,13 +414,17 @@ export function goto(ls_coord, coord, rapid, dim_typ, rapto, rapto_num, movement
     }
     dim = "G90";
 
-    if (rapid && (movement !== "G0")){
-        write("G0");
+    if (rapid){
         move = "G0";
+        if (movement !== "G0"){
+            write("G0");
+        }
     }
-    else if (!rapid && (movement !== "G1")){
-        write("G1");
+    else if (!rapid){
         move = "G1";
+        if (movement !== "G1"){
+            write("G1");
+        }
     }
     let additional;
     let A;
