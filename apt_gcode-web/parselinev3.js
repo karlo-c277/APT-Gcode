@@ -44,6 +44,10 @@ export class catiav5_1_0{
         let elements2 = line.split(/[,/:]/);
 
         switch (elements[0].trim()){
+            case "HEADER_CALL":
+                header();
+            break;
+
             case "CUTTER":
                 D = compensation_chg(true,elements2);
                 if (D){
