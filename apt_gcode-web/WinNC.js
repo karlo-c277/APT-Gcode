@@ -23,7 +23,7 @@ export function compensation_chg(is_cutter,el){
         }
     }
     else{
-        if(el.length === 7){
+        if(el.length === 8){
             write("Cutter diameter is "+el[1].trim()+", corner radius is"+el[2].trim()+", horizontal distance between radius center point and tool axis is "+el[3].trim()+", vertical distance between radius center point and cutter tip is "+el[4].trim()+", angle of cutter tip is "+el[5].trim()+", flank angle is "+el[6].trim()+", tool height is "+el[7].trim());
             return true;
         }
